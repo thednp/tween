@@ -11,7 +11,7 @@ npm install @thednp/tween
 
 ### createTween
 
-Creates a [store, tween] tuple that animates from current values and updates SolidJS reactiv on every frame.tsx
+Creates a [store, tween] tuple that animates from current values and updates SolidJS reactive store on every frame.
 
 ```tsx
 import { createTween } from "@thednp/tween/solid";
@@ -86,4 +86,4 @@ function AnimatedSequence() {
 }
 ```
 
-Same API notes as `useTween` — persistent instance, auto-cleanup, reactive state.
+Same API notes as `createTween` — persistent instance, auto-cleanup, reactive state.
