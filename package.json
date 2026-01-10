@@ -1,0 +1,97 @@
+{
+  "name": "@thednp/tween",
+  "version": "0.0.1",
+  "description": "✨ A Typescript sourced tweening engine",
+  "homepage": "https://github.com/thednp/tween",
+  "author": "thednp",
+  "license": "MIT",
+  "browser": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "files": [
+    "dist",
+    "package.json",
+    "README.md",
+    "Tween.md",
+    "Timeline.md",
+    "Easing.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    },
+    "./react": {
+      "require": "./dist/react.cjs",
+      "import": "./dist/react.mjs"
+    },
+    "./solid": {
+      "require": "./dist/solid.cjs",
+      "import": "./dist/solid.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "bugs": {
+    "url": "https://github.com/thednp/tween/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "pre-test": "pnpm clean-coverage",
+    "clean-coverage": "rm -rf coverage .nyc_output",
+    "test": "pnpm pre-test && vitest",
+    "test-ui": "pnpm pre-test && vitest --ui",
+    "badges": "npx -p dependency-version-badge update-badge typescript vitest vite",
+    "format": "deno fmt src",
+    "lint": "pnpm lint:ts && pnpm lint:types",
+    "lint:ts": "deno lint src",
+    "lint:types": "tsc --noEmit",
+    "fix:ts": "deno lint src --fix",
+    "build_": "vite build",
+    "build": "tsdown && vite build",
+    "prepublishOnly": "pnpm update --latest && pnpm format && pnpm lint && pnpm build && pnpm badges"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thednp/tween.git"
+  },
+  "keywords": [
+    "tween",
+    "timeline",
+    "cubic-bezier",
+    "cubic-tween",
+    "easing",
+    "ease",
+    "easing functions",
+    "animation engine",
+    "animation",
+    "animations",
+    "typescript"
+  ],
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@types/node": "^22.19.3",
+    "@vitest/coverage-istanbul": "^4.0.16",
+    "@vitest/ui": "^4.0.16",
+    "happy-dom": "^17.6.3",
+    "tsdown": "^0.18.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vite-plugin-strip-comments": "^0.0.5",
+    "vitest": "^4.0.16"
+  },
+  "packageManager": "pnpm@8.6.12",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=8.6.0"
+  },
+  "dependencies": {
+    "@types/react": "^19.2.8",
+    "react": "^19.2.3",
+    "solid-js": "^1.9.10"
+  },
+  "types": "./dist/index.d.cts"
+}
