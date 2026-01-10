@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { Tween, Timeline, type TweenProps } from "@thednp/tween";
+import { useEffect, useRef, useState } from "react";
+import { Timeline, Tween, type TweenProps } from "@thednp/tween";
 
 export * from "@thednp/tween";
 
@@ -12,7 +12,7 @@ export function useTween<T extends TweenProps>(initialValues: T) {
     tweenRef.current = new Tween({ ...initialValues }).onUpdate((newState) => {
       // Shallow copy is enough for most cases (nested objects are supported,
       // but deep changes are rare in animations)
-      setState({...newState});
+      setState({ ...newState });
     });
   }
 
@@ -32,9 +32,11 @@ export function useTimeline<T extends TweenProps>(initialValues: T) {
   const timelineRef = useRef<Timeline<T> | null>(null);
 
   if (!timelineRef.current) {
-    timelineRef.current = new Timeline({ ...initialValues }).onUpdate((newState) => {
-      setState({...newState});
-    });
+    timelineRef.current = new Timeline({ ...initialValues }).onUpdate(
+      (newState) => {
+        setState({ ...newState });
+      },
+    );
   }
 
   useEffect(() => {

@@ -1,10 +1,12 @@
 // Runtime.ts
-import { type Tween } from "./Tween";
-import { type Timeline } from "./Timeline";
-import {now} from "./Now";
+import { type Tween } from "./Tween.ts";
+import { type Timeline } from "./Timeline.ts";
+import { now } from "./Now.ts";
 
-export const Tweens: Tween<any>[] = [];
-export const Timelines: Timeline<any>[] = [];
+// @ts-expect-error - it's generic
+export const Tweens: Tween[] = [];
+// @ts-expect-error - it's generic
+export const Timelines: Timeline[] = [];
 export let rafID = 0;
 
 export function Runtime(t = now()) {

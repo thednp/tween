@@ -1,13 +1,13 @@
 // Tween.ts
 import type {
+  BaseTweenProps,
   EasingFunction,
   TweenCallback,
   TweenProps,
   TweenUpdateCallback,
-  BaseTweenProps,
-} from "./types";
-import { Runtime, rafID, Tweens } from "./Runtime";
-import {now} from "./Now";
+} from "./types.ts";
+import { rafID, Runtime, Tweens } from "./Runtime.ts";
+import { now } from "./Now.ts";
 
 export class Tween<T extends TweenProps> {
   static Interpolators = new Map<
@@ -105,7 +105,6 @@ export class Tween<T extends TweenProps> {
    * @returns true if the tween is still playing after the update, false
    * otherwise (calling update on a paused tween still returns true because
    * it is still playing, just paused).
-   *
    */
   update(time = now(), autoStart?: boolean) {
     if (!this._isPlaying) {
@@ -219,7 +218,8 @@ export class Tween<T extends TweenProps> {
     property: string,
     interpolateFn: <T extends never>(start: T, end: T, t: number) => T,
   ): void {
-    if (!Tween.Interpolators.has(property))
+    if (!Tween.Interpolators.has(property)) {
       Tween.Interpolators.set(property, interpolateFn);
+    }
   }
 }

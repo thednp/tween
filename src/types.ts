@@ -1,8 +1,9 @@
 // types.ts;
 
-export type BaseTweenProps = Record<string | symbol, number>;
+export type BaseTweenProps = Record<string, number>;
 export type TweenProps = Record<
-  string | symbol,
+  // string | symbol,
+  string,
   number | number[] | BaseTweenProps | MorphPathArray
 >;
 

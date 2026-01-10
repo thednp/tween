@@ -1,6 +1,6 @@
 //#region src/types.d.ts
-type BaseTweenProps = Record<string | symbol, number>;
-type TweenProps = Record<string | symbol, number | number[] | BaseTweenProps | MorphPathArray>;
+type BaseTweenProps = Record<string, number>;
+type TweenProps = Record<string, number | number[] | BaseTweenProps | MorphPathArray>;
 type TimelineCallback<T extends TweenProps> = (state: T, progress: number) => void;
 type TweenUpdateCallback<T extends TweenProps> = (obj: T, elapsed: number, progress: number) => void;
 type TweenCallback<T extends TweenProps> = (obj: T) => void;
@@ -65,7 +65,6 @@ declare class Tween<T extends TweenProps> {
    * @returns true if the tween is still playing after the update, false
    * otherwise (calling update on a paused tween still returns true because
    * it is still playing, just paused).
-   *
    */
   update(time?: number, autoStart?: boolean): boolean;
   onUpdate(callback?: TweenUpdateCallback<T>): this;
@@ -78,7 +77,7 @@ declare class Tween<T extends TweenProps> {
 }
 //#endregion
 //#region src/Timeline.d.ts
-declare class Timeline<T extends TweenProps = any> {
+declare class Timeline<T extends TweenProps> {
   static Interpolators: Map<string, <T_1 extends never>(start: T_1, end: T_1, value: number) => T_1>;
   state: T;
   _state: T;
@@ -149,8 +148,8 @@ declare const Easing: Readonly<{
 }>;
 //#endregion
 //#region src/Runtime.d.ts
-declare const Tweens: Tween<any>[];
-declare const Timelines: Timeline<any>[];
+declare const Tweens: Tween[];
+declare const Timelines: Timeline[];
 declare let rafID: number;
 declare function Runtime(t?: number): void;
 //#endregion

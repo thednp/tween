@@ -1,10 +1,10 @@
 // interpolators/path.ts
 import type {
-  LineValues,
   CubeValues,
+  LineValues,
   MorphPathArray,
   MorphPathSegment,
-} from "../types";
+} from "../types.ts";
 
 /**
  * NOTE: Path interpolation only works when both paths have:

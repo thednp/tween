@@ -1,9 +1,9 @@
 ## @thednp/tween
 [![Coverage Status](https://coveralls.io/repos/github/thednp/tween/badge.svg)](https://coveralls.io/github/thednp/tween)
 [![ci](https://github.com/thednp/tween/actions/workflows/ci.yml/badge.svg)](https://github.com/thednp/tween/actions/workflows/ci.yml)
-[![typescript version](https://img.shields.io/badge/typescript-5.8.3-brightgreen)](https://www.typescriptlang.org/)
-[![vitest version](https://img.shields.io/badge/vitest-3.1.4-brightgreen)](https://vitest.dev/)
-[![vite version](https://img.shields.io/badge/vite-6.3.5-brightgreen)](https://github.com/vitejs)
+[![typescript version](https://img.shields.io/badge/typescript-5.9.3-brightgreen)](https://www.typescriptlang.org/)
+[![vitest version](https://img.shields.io/badge/vitest-4.0.16-brightgreen)](https://vitest.dev/)
+[![vite version](https://img.shields.io/badge/vite-7.3.1-brightgreen)](https://github.com/vitejs)
 
 A Typescript sourced `Tween` engine forked from the excellent [@tweenjs/tweenjs](https://github.com/tweenjs/tween.js). In addition, this package also provides a simple to use `Timeline` which enables more advanced control over the update loop.
 

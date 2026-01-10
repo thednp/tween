@@ -21,6 +21,7 @@
    "noImplicitReturns": true,
    "removeComments": false,
    "allowSyntheticDefaultImports": true,
+   "allowImportingTsExtensions": true,
    "noEmit": true,
    "checkJs": true
  },

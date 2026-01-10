@@ -1,16 +1,16 @@
 // Timeline.ts
 import type {
-  TimelineEntry,
-  TweenProps,
-  TimelineEntryConfig,
-  TimelineCallback,
-  Position,
   BaseTweenProps,
-} from "./types";
-import { Timelines, Runtime, rafID } from "./Runtime";
-import {now} from "./Now";
+  Position,
+  TimelineCallback,
+  TimelineEntry,
+  TimelineEntryConfig,
+  TweenProps,
+} from "./types.ts";
+import { rafID, Runtime, Timelines } from "./Runtime.ts";
+import { now } from "./Now.ts";
 
-export class Timeline<T extends TweenProps = any> {
+export class Timeline<T extends TweenProps> {
   static Interpolators = new Map<
     string,
     <T extends never>(start: T, end: T, value: number) => T
@@ -196,10 +196,9 @@ export class Timeline<T extends TweenProps = any> {
   }
 
   private _updateEntries(elapsed: number) {
-    this._progress =
-      this._duration === 0 || elapsed >= this._duration
-        ? 1
-        : elapsed / this._duration;
+    this._progress = this._duration === 0 || elapsed >= this._duration
+      ? 1
+      : elapsed / this._duration;
 
     let i = 0;
     const entriesLen = this._entries.length;
@@ -299,7 +298,8 @@ export class Timeline<T extends TweenProps = any> {
     property: string,
     interpolateFn: <T extends never>(start: T, end: T, t: number) => T,
   ): void {
-    if (!Timeline.Interpolators.has(property))
+    if (!Timeline.Interpolators.has(property)) {
       Timeline.Interpolators.set(property, interpolateFn);
+    }
   }
 }
