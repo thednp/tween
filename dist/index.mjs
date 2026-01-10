@@ -3,14 +3,13 @@ let _nowFunc = () => performance.now();
 const now = () => {
 	return _nowFunc();
 };
-var Now_default = now;
 
 //#endregion
 //#region src/Runtime.ts
 const Tweens = [];
 const Timelines = [];
 let rafID = 0;
-function Runtime(t = Now_default()) {
+function Runtime(t = now()) {
 	let j = 0;
 	while (j < Timelines.length) if (Timelines[j].update(t)) j += 1;
 	else Timelines.splice(j, 1);
@@ -48,7 +47,7 @@ var Tween = class Tween {
 	get isPlaying() {
 		return this._isPlaying;
 	}
-	start(time = Now_default(), overrideStart = false) {
+	start(time = now(), overrideStart = false) {
 		if (this._isPlaying) return this;
 		if (!this._startIsSet || overrideStart) {
 			this._startIsSet = true;
@@ -62,7 +61,7 @@ var Tween = class Tween {
 		if (!rafID) Runtime();
 		return this;
 	}
-	startFromLast(time = Now_default()) {
+	startFromLast(time = now()) {
 		return this.start(time, true);
 	}
 	stop() {
@@ -97,7 +96,7 @@ var Tween = class Tween {
 	getDuration() {
 		return this._duration;
 	}
-	update(time = Now_default(), autoStart) {
+	update(time = now(), autoStart) {
 		if (!this._isPlaying) if (autoStart) this.start(time, true);
 		else return false;
 		if (time < this._startTime) return true;
@@ -214,11 +213,11 @@ var Timeline = class Timeline {
 	pause() {
 		if (!this._isPlaying) return this;
 		this._isPlaying = false;
-		this._pauseTime = Now_default();
+		this._pauseTime = now();
 		this._onPause?.(this.state, this.progress);
 		return this;
 	}
-	resume(time = Now_default()) {
+	resume(time = now()) {
 		if (this._isPlaying) return this;
 		this._isPlaying = true;
 		const dif = time - this._pauseTime;
@@ -286,7 +285,7 @@ var Timeline = class Timeline {
 	get duration() {
 		return this._duration;
 	}
-	update(time = Now_default()) {
+	update(time = now()) {
 		if (!this._isPlaying) return false;
 		if (this._lastTime === void 0) this._lastTime = time;
 		const delta = time - this._lastTime;
@@ -580,5 +579,5 @@ function interpolatePath(start, end, t) {
 }
 
 //#endregion
-export { Easing, Timeline, Tween, interpolateArray, interpolatePath };
+export { Easing, Runtime, Timeline, Timelines, Tween, Tweens, interpolateArray, interpolatePath, rafID };
 //# sourceMappingURL=index.mjs.map

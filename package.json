@@ -5,16 +5,14 @@
   "homepage": "https://github.com/thednp/tween",
   "author": "thednp",
   "license": "MIT",
-  "browser": "./dist/index.js",
+  "browser": "./dist/index.iife.js",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "files": [
+    "wiki",
     "dist",
     "package.json",
     "README.md",
-    "Tween.md",
-    "Timeline.md",
-    "Easing.md",
     "LICENSE"
   ],
   "exports": {

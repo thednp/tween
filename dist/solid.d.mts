@@ -1,10 +1,9 @@
-import { TweenProps } from "@thednp/tween";
-import * as solid_js0 from "solid-js";
+import { Timeline, Tween, TweenProps } from "@thednp/tween";
 export * from "@thednp/tween";
 
 //#region src/solid/index.d.ts
-declare function createTween<T extends TweenProps>(initialValues: T): [solid_js0.Accessor<T>, any];
-declare function createTimeline<T extends TweenProps>(initialValues: T): [solid_js0.Accessor<T>, any];
+declare function createTween<T extends TweenProps>(initialValues: T): [T, Tween<T>];
+declare function createTimeline<T extends TweenProps>(initialValues: T): [T, Timeline<T>];
 //#endregion
 export { createTimeline, createTween };
 //# sourceMappingURL=solid.d.mts.map

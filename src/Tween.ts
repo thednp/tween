@@ -7,7 +7,7 @@ import type {
   BaseTweenProps,
 } from "./types";
 import { Runtime, rafID, Tweens } from "./Runtime";
-import now from "./Now";
+import {now} from "./Now";
 
 export class Tween<T extends TweenProps> {
   static Interpolators = new Map<

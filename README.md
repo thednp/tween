@@ -131,9 +131,11 @@ Both `Tween` and `Timeline` have a static method to add custom interpolators, wh
 
 ### Other Guides and Resources
 * The original Tween.js [User Guide](https://github.com/tweenjs/tween.js/blob/main/docs/user_guide.md)
-* [Tween.md](Tween.md) - our official Tween guide
-* [Timeline.md](Timeline.md) - our official Timeline guide
-* [Easing.md](Easing.md) - an extensive guide on easing functions.
+* [Tween.md](wiki/Tween.md) - our official Tween guide
+* [Timeline.md](wiki/Timeline.md) - our official Timeline guide
+* [Easing.md](wiki/Easing.md) - an extensive guide on easing functions.
+* [React.md](wiki/React.md) - use `Tween` / `Timeline` with React with custom hooks.
+* [Solid.md](wiki/Solid.md) - use `Tween` / `Timeline` with SolidJS with primitives.
 
 
 ### Contributing

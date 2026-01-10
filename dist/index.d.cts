@@ -148,6 +148,12 @@ declare const Easing: Readonly<{
   pow(power?: number): EasingFunctionGroup;
 }>;
 //#endregion
+//#region src/Runtime.d.ts
+declare const Tweens: Tween<any>[];
+declare const Timelines: Timeline<any>[];
+declare let rafID: number;
+declare function Runtime(t?: number): void;
+//#endregion
 //#region src/interpolators/array.d.ts
 declare function interpolateArray<T extends number[]>(start: T, end: T, value: number): T;
 //#endregion
@@ -164,5 +170,5 @@ declare function interpolateArray<T extends number[]>(start: T, end: T, value: n
  */
 declare function interpolatePath<T extends MorphPathArray>(start: T, end: T, t: number): T;
 //#endregion
-export { BaseTweenProps, CubeValues, Easing, EasingFunction, EasingFunctionGroup, LineValues, MorphPathArray, MorphPathSegment, Position, Timeline, TimelineCallback, TimelineEntry, TimelineEntryConfig, Tween, TweenCallback, TweenProps, TweenUpdateCallback, interpolateArray, interpolatePath };
+export { BaseTweenProps, CubeValues, Easing, EasingFunction, EasingFunctionGroup, LineValues, MorphPathArray, MorphPathSegment, Position, Runtime, Timeline, TimelineCallback, TimelineEntry, TimelineEntryConfig, Timelines, Tween, TweenCallback, TweenProps, TweenUpdateCallback, Tweens, interpolateArray, interpolatePath, rafID };
 //# sourceMappingURL=index.d.cts.map

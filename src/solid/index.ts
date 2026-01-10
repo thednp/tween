@@ -1,22 +1,37 @@
 import { Tween, Timeline, type TweenProps } from "@thednp/tween";
-import { createSignal } from "solid-js";
+import { createStore } from "solid-js/store";
+import { onCleanup } from "solid-js";
 
 export * from "@thednp/tween";
 
 export function createTween<T extends TweenProps>(initialValues: T) {
-  const [state, setState] = createSignal(initialValues);
-  const tween = new Tween(initialValues).onUpdate((obj) =>
-    setState((prev) => Object.assign(prev, obj)),
-  );
+  const [state, setState] = createStore({ ...initialValues });
 
-  return [state, tween] as [typeof state, typeof tween];
+  const tween = new Tween({ ...initialValues }).onUpdate((newState) => {
+    for (const [prop, value] of Object.entries(newState) ) {
+      setState(prop as never, value as never)
+    }
+  });
+  
+  onCleanup(() => {
+    tween.stop();
+  });
+
+  return [state, tween] as [T, Tween<T>];
 }
 
 export function createTimeline<T extends TweenProps>(initialValues: T) {
-  const [state, setState] = createSignal(initialValues);
-  const timeline = new Timeline(initialValues).onUpdate((obj) =>
-    setState((prev) => Object.assign(prev, obj)),
-  );
+  const [state, setState] = createStore<T>({ ...initialValues });
 
-  return [state, timeline] as [typeof state, typeof timeline];
+  const timeline = new Timeline({ ...initialValues }).onUpdate((newState) => {
+    for (const [prop, value] of Object.entries(newState)) {
+      setState(prop as never, value as never)
+    }
+  });
+
+  onCleanup(() => {
+    timeline.stop();
+  });
+
+  return [state, timeline] as [T, Timeline<T>];
 }

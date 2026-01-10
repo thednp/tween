@@ -3,12 +3,30 @@ let _thednp_tween = require("@thednp/tween");
 
 //#region src/react/index.ts
 function useTween(initialValues) {
-	const [state, setState] = (0, react.useState)(initialValues);
-	return [state, new _thednp_tween.Tween(initialValues).onUpdate((obj) => setState(obj))];
+	const [state, setState] = (0, react.useState)({ ...initialValues });
+	const tweenRef = (0, react.useRef)(null);
+	if (!tweenRef.current) tweenRef.current = new _thednp_tween.Tween({ ...initialValues }).onUpdate((newState) => {
+		setState({ ...newState });
+	});
+	(0, react.useEffect)(() => {
+		return () => {
+			tweenRef.current?.stop();
+		};
+	}, []);
+	return [state, tweenRef.current];
 }
 function useTimeline(initialValues) {
-	const [state, setState] = (0, react.useState)(initialValues);
-	return [state, new _thednp_tween.Timeline(initialValues).onUpdate((obj) => setState(obj))];
+	const [state, setState] = (0, react.useState)({ ...initialValues });
+	const timelineRef = (0, react.useRef)(null);
+	if (!timelineRef.current) timelineRef.current = new _thednp_tween.Timeline({ ...initialValues }).onUpdate((newState) => {
+		setState({ ...newState });
+	});
+	(0, react.useEffect)(() => {
+		return () => {
+			timelineRef.current?.stop();
+		};
+	}, []);
+	return [state, timelineRef.current];
 }
 
 //#endregion

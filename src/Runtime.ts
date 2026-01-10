@@ -1,7 +1,7 @@
 // Runtime.ts
 import { type Tween } from "./Tween";
 import { type Timeline } from "./Timeline";
-import now from "./Now";
+import {now} from "./Now";
 
 export const Tweens: Tween<any>[] = [];
 export const Timelines: Timeline<any>[] = [];
