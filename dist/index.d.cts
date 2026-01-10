@@ -29,7 +29,7 @@ type MorphPathSegment = ["M" | "L", ...LineValues] | ["C", ...CubeValues] | ["Z"
 type MorphPathArray = Array<MorphPathSegment>;
 //#endregion
 //#region src/Tween.d.ts
-declare class Tween<T extends TweenProps> {
+declare class Tween<T extends TweenProps = never> {
   static Interpolators: Map<string, <T_1 extends never>(start: T_1, end: T_1, value: number) => T_1>;
   protected _object: T;
   protected _startIsSet: boolean;
@@ -77,7 +77,7 @@ declare class Tween<T extends TweenProps> {
 }
 //#endregion
 //#region src/Timeline.d.ts
-declare class Timeline<T extends TweenProps> {
+declare class Timeline<T extends TweenProps = never> {
   static Interpolators: Map<string, <T_1 extends never>(start: T_1, end: T_1, value: number) => T_1>;
   state: T;
   _state: T;
@@ -148,8 +148,8 @@ declare const Easing: Readonly<{
 }>;
 //#endregion
 //#region src/Runtime.d.ts
-declare const Tweens: Tween[];
-declare const Timelines: Timeline[];
+declare const Tweens: Tween<never>[];
+declare const Timelines: Timeline<never>[];
 declare let rafID: number;
 declare function Runtime(t?: number): void;
 //#endregion

@@ -10,7 +10,7 @@ import type {
 import { rafID, Runtime, Timelines } from "./Runtime.ts";
 import { now } from "./Now.ts";
 
-export class Timeline<T extends TweenProps> {
+export class Timeline<T extends TweenProps = never> {
   static Interpolators = new Map<
     string,
     <T extends never>(start: T, end: T, value: number) => T
@@ -76,7 +76,7 @@ export class Timeline<T extends TweenProps> {
     this._updateEntries(0);
     this._onStart?.(this.state, 0);
 
-    Timelines.push(this);
+    Timelines.push(this as unknown as Timeline<never>);
     if (!rafID) Runtime();
     return this;
   }
@@ -96,7 +96,7 @@ export class Timeline<T extends TweenProps> {
     this._pauseTime = 0;
     this._lastTime = (this._lastTime || time) + dif;
     this._onResume?.(this.state, this.progress);
-    Timelines.push(this);
+    Timelines.push(this as unknown as Timeline<never>);
     if (!rafID) Runtime();
     return this;
   }
@@ -106,7 +106,7 @@ export class Timeline<T extends TweenProps> {
     this._isPlaying = false;
     this._time = 0;
     this._pauseTime = 0;
-    Timelines.splice(Timelines.indexOf(this), 1);
+    Timelines.splice(Timelines.indexOf(this as unknown as Timeline<never>), 1);
     this._resetState();
     this._updateEntries(0);
     if (this._onStop) this._onStop(this.state, this.progress);
@@ -183,7 +183,10 @@ export class Timeline<T extends TweenProps> {
       if (this._repeat === 0) {
         this._isPlaying = false;
         this._repeat = this._initialRepeat;
-        Timelines.splice(Timelines.indexOf(this), 1);
+        Timelines.splice(
+          Timelines.indexOf(this as unknown as Timeline<never>),
+          1,
+        );
         this._onComplete?.(this.state, 1);
       } else {
         if (this._repeat !== Infinity) this._repeat--;

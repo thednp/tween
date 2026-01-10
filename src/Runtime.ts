@@ -3,10 +3,8 @@ import { type Tween } from "./Tween.ts";
 import { type Timeline } from "./Timeline.ts";
 import { now } from "./Now.ts";
 
-// @ts-expect-error - it's generic
-export const Tweens: Tween[] = [];
-// @ts-expect-error - it's generic
-export const Timelines: Timeline[] = [];
+export const Tweens: Tween<never>[] = [];
+export const Timelines: Timeline<never>[] = [];
 export let rafID = 0;
 
 export function Runtime(t = now()) {

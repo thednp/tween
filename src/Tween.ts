@@ -9,7 +9,7 @@ import type {
 import { rafID, Runtime, Tweens } from "./Runtime.ts";
 import { now } from "./Now.ts";
 
-export class Tween<T extends TweenProps> {
+export class Tween<T extends TweenProps = never> {
   static Interpolators = new Map<
     string,
     <T extends never>(start: T, end: T, value: number) => T
@@ -52,7 +52,7 @@ export class Tween<T extends TweenProps> {
     }
     this._isPlaying = true;
     this._onStart?.(this._object);
-    Tweens.push(this);
+    Tweens.push(this as unknown as Tween<never>);
     this._startTime = time;
     this._startTime += this._delay;
     if (!rafID) Runtime();
@@ -63,7 +63,7 @@ export class Tween<T extends TweenProps> {
   }
   stop() {
     if (!this._isPlaying) return this;
-    Tweens.splice(Tweens.indexOf(this), 1);
+    Tweens.splice(Tweens.indexOf(this as unknown as Tween<never>), 1);
     this._isPlaying = false;
     if (this._onStop) this._onStop(this._object);
     return this;
