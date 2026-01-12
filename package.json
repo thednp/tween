@@ -52,7 +52,8 @@
     "build": "tsdown && vite build",
     "prepublishOnly": "pnpm update --latest && pnpm format && pnpm lint && pnpm build && pnpm badges",
     "clean": "rm -rf node_modules playground/**/node_modules playground/**/package-lock.json playground/**/pnpm-lock.yaml playground/**/bun.lockb playground/**/deno.lock",
-    "update-deps": "pnpm clean && pnpm update -r --latest"
+    "update-r": "pnpm clean && pnpm update -r --latest",
+    "update-deps": "pnpm clean && pnpm update --latest"
   },
   "repository": {
     "type": "git",
