@@ -46,6 +46,7 @@ function createMiniState<T extends TweenProps>(
 
 export function deepMerge<T extends TweenProps>(target: T, source: T) {
   for (const key in source) {
+    // istanbul ignore if @preserve
     if (
       !Object.prototype.hasOwnProperty.call(source, key) ||
       key === "__proto__" ||
