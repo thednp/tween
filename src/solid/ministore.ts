@@ -73,28 +73,6 @@ export function deepMerge<T extends TweenProps>(target: T, source: T) {
       target[key] = value;
     }
   }
-
-  // for (const key in source) {
-  //   // istanbul ignore if @preserve
-  //   if (
-  //     !Object.prototype.hasOwnProperty.call(source, key) ||
-  //     key === "__proto__" ||
-  //     key === "constructor" ||
-  //     key === "prototype"
-  //   ) {
-  //     continue;
-  //   }
-  //   if (
-  //     source[key] && typeof source[key] === "object" &&
-  //     !Array.isArray(source[key])
-  //   ) {
-  //     // istanbul ignore next @preserve
-  //     if (!target[key]) target[key] = {} as never;
-  //     deepMerge(target[key] as never, source[key] as never);
-  //   } else {
-  //     target[key] = source[key];
-  //   }
-  // }
 }
 
 export function miniStore<T extends TweenProps>(init: T) {
