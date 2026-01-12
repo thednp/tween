@@ -11,6 +11,8 @@ A Typescript sourced `Tween` engine forked from the excellent [@tweenjs/tweenjs]
 * Another major addition to this package is a simple to use `Timeline` class which enables an advanced control over the update loop, most importantly a **per-property** control for duration and easing.
 * There are also a series of custom hooks/promitives for popular frameworks like React/SolidJS (more to come), with proper documentation and detailed user guides.
 
+A quick [React demo](https://stackblitz.com/fork/github/thednp/tween/tree/master/playground/react) or [Solid demo](https://stackblitz.com/fork/github/thednp/tween/tree/master/playground/solid).
+
 
 ### Features
 - Built in custom hooks/primitives for popular frameworks like React/SolidJS 

@@ -49,9 +49,10 @@
     "lint:ts": "deno lint src",
     "lint:types": "tsc --noEmit",
     "fix:ts": "deno lint src --fix",
-    "build_": "vite build",
     "build": "tsdown && vite build",
-    "prepublishOnly": "pnpm update --latest && pnpm format && pnpm lint && pnpm build && pnpm badges"
+    "prepublishOnly": "pnpm update --latest && pnpm format && pnpm lint && pnpm build && pnpm badges",
+    "clean": "rm -rf node_modules playground/**/node_modules playground/**/package-lock.json playground/**/pnpm-lock.yaml playground/**/bun.lockb playground/**/deno.lock",
+    "update-deps": "pnpm clean && pnpm update -r --latest"
   },
   "repository": {
     "type": "git",
