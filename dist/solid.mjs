@@ -29,12 +29,17 @@ function createMiniState(obj, parentReceiver) {
 	return parentReceiver;
 }
 function deepMerge(target, source) {
-	for (const key in source) {
+	const sourceEntries = Object.entries(source);
+	const len = sourceEntries.length;
+	let i = 0;
+	while (i < len) {
+		const [key, value] = sourceEntries[i];
+		i++;
 		if (!Object.prototype.hasOwnProperty.call(source, key) || key === "__proto__" || key === "constructor" || key === "prototype") continue;
-		if (source[key] && typeof source[key] === "object" && !Array.isArray(source[key])) {
+		if (value && typeof value === "object" && !Array.isArray(value)) {
 			if (!target[key]) target[key] = {};
-			deepMerge(target[key], source[key]);
-		} else target[key] = source[key];
+			deepMerge(target[key], value);
+		} else target[key] = value;
 	}
 }
 function miniStore(init) {

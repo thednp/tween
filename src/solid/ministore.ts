@@ -45,7 +45,14 @@ function createMiniState<T extends TweenProps>(
 }
 
 export function deepMerge<T extends TweenProps>(target: T, source: T) {
-  for (const key in source) {
+  const sourceEntries = Object.entries(source);
+  const len = sourceEntries.length;
+  let i = 0;
+
+  while (i < len) {
+    const [key, value] = sourceEntries[i] as [keyof T, T[keyof T]];
+    i++;
+
     // istanbul ignore if @preserve
     if (
       !Object.prototype.hasOwnProperty.call(source, key) ||
@@ -56,16 +63,38 @@ export function deepMerge<T extends TweenProps>(target: T, source: T) {
       continue;
     }
     if (
-      source[key] && typeof source[key] === "object" &&
-      !Array.isArray(source[key])
+      value && typeof value === "object" &&
+      !Array.isArray(value)
     ) {
       // istanbul ignore next @preserve
       if (!target[key]) target[key] = {} as never;
-      deepMerge(target[key] as never, source[key] as never);
+      deepMerge(target[key] as never, value);
     } else {
-      target[key] = source[key];
+      target[key] = value;
     }
   }
+
+  // for (const key in source) {
+  //   // istanbul ignore if @preserve
+  //   if (
+  //     !Object.prototype.hasOwnProperty.call(source, key) ||
+  //     key === "__proto__" ||
+  //     key === "constructor" ||
+  //     key === "prototype"
+  //   ) {
+  //     continue;
+  //   }
+  //   if (
+  //     source[key] && typeof source[key] === "object" &&
+  //     !Array.isArray(source[key])
+  //   ) {
+  //     // istanbul ignore next @preserve
+  //     if (!target[key]) target[key] = {} as never;
+  //     deepMerge(target[key] as never, source[key] as never);
+  //   } else {
+  //     target[key] = source[key];
+  //   }
+  // }
 }
 
 export function miniStore<T extends TweenProps>(init: T) {
