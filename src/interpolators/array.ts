@@ -1,12 +1,15 @@
 // interpolators/array.ts
+import { InterpolatorFunction } from "../types.ts";
 
-export function interpolateArray<T extends number[]>(
+export const interpolateArray: InterpolatorFunction<number[]> = <
+  T extends number[],
+>(
   start: T,
   end: T,
   value: number,
-): T {
+) => {
   if (value === 0 && start.length !== end.length) {
-    console.warn("Array length mismatch.");
+    console.warn("Array length mismatch. Returning first array.");
     return start;
   }
   const result = [] as unknown as T;
@@ -18,4 +21,4 @@ export function interpolateArray<T extends number[]>(
     i += 1;
   }
   return result;
-}
+};

@@ -3,20 +3,28 @@ let _nowFunc = () => performance.now();
 const now = () => {
 	return _nowFunc();
 };
+function setNow(nowFunction) {
+	_nowFunc = nowFunction;
+}
 
 //#endregion
 //#region src/Runtime.ts
-const Tweens = [];
-const Timelines = [];
+const Queue = [];
+function addToQueue(newItem) {
+	const item = newItem;
+	if (Queue.includes(item)) return;
+	Queue.push(item);
+	if (!rafID) Runtime();
+}
+function removeFromQueue(removedItem) {
+	Queue.splice(Queue.indexOf(removedItem), 1);
+}
 let rafID = 0;
 function Runtime(t = now()) {
-	let j = 0;
-	while (j < Timelines.length) if (Timelines[j].update(t)) j += 1;
-	else Timelines.splice(j, 1);
 	let i = 0;
-	while (i < Tweens.length) if (Tweens[i].update(t)) i += 1;
-	else Tweens.splice(i, 1);
-	if (!Tweens.length && !Timelines.length) {
+	while (i < Queue.length) if (Queue[i].update(t)) i += 1;
+	else Queue.splice(i, 1);
+	if (Queue.length === 0) {
 		cancelAnimationFrame(rafID);
 		rafID = 0;
 	} else rafID = requestAnimationFrame(Runtime);
@@ -24,9 +32,9 @@ function Runtime(t = now()) {
 
 //#endregion
 //#region src/Tween.ts
-var Tween = class Tween {
-	static Interpolators = /* @__PURE__ */ new Map();
-	_object;
+var Tween = class {
+	_interpolators = /* @__PURE__ */ new Map();
+	_state;
 	_startIsSet = false;
 	_startFired = false;
 	_propsStart = {};
@@ -41,7 +49,7 @@ var Tween = class Tween {
 	_onStart;
 	_onStop;
 	constructor(initialValues) {
-		this._object = initialValues;
+		this._state = initialValues;
 		return this;
 	}
 	get isPlaying() {
@@ -51,14 +59,12 @@ var Tween = class Tween {
 		if (this._isPlaying) return this;
 		if (!this._startIsSet || overrideStart) {
 			this._startIsSet = true;
-			this._setupProperties(this._object, this._propsStart, this._propsEnd, overrideStart);
+			this._setProps(this._state, this._propsStart, this._propsEnd, overrideStart);
 		}
 		this._isPlaying = true;
-		this._onStart?.(this._object);
-		Tweens.push(this);
 		this._startTime = time;
 		this._startTime += this._delay;
-		if (!rafID) Runtime();
+		addToQueue(this);
 		return this;
 	}
 	startFromLast(time = now()) {
@@ -66,9 +72,9 @@ var Tween = class Tween {
 	}
 	stop() {
 		if (!this._isPlaying) return this;
-		Tweens.splice(Tweens.indexOf(this), 1);
+		removeFromQueue(this);
 		this._isPlaying = false;
-		if (this._onStop) this._onStop(this._object);
+		this._onStop?.(this._state);
 		return this;
 	}
 	from(startValues) {
@@ -101,20 +107,24 @@ var Tween = class Tween {
 		else return false;
 		if (time < this._startTime) return true;
 		if (!this._startFired && this._onStart) {
-			this._onStart(this._object);
+			this._onStart(this._state);
 			this._startFired = true;
 		}
 		let elapsed = (time - this._startTime) / this._duration;
 		elapsed = this._duration === 0 || elapsed > 1 ? 1 : elapsed;
 		const progress = this._easing(elapsed);
-		this._updateProperties(this._object, this._propsStart, this._propsEnd, progress);
-		if (this._onUpdate) this._onUpdate(this._object, elapsed, progress);
+		this._setState(this._state, this._propsStart, this._propsEnd, progress);
+		this._onUpdate?.(this._state, elapsed, progress);
 		if (elapsed === 1) {
-			if (this._onComplete) this._onComplete(this._object);
+			this._onComplete?.(this._state);
 			this._isPlaying = false;
 			return false;
 		}
 		return true;
+	}
+	onStart(callback) {
+		this._onStart = callback;
+		return this;
 	}
 	onUpdate(callback) {
 		this._onUpdate = callback;
@@ -128,38 +138,37 @@ var Tween = class Tween {
 		this._onStop = callback;
 		return this;
 	}
-	onStart(callback) {
-		this._onStart = callback;
-		return this;
-	}
-	_updateProperties(object, valuesStart, valuesEnd, value) {
-		for (const property in valuesEnd) {
+	_setState(object, valuesStart, valuesEnd, value) {
+		const endEntries = Object.entries(valuesEnd);
+		const len = endEntries.length;
+		let i = 0;
+		while (i < len) {
+			const [property, end] = endEntries[i];
+			i++;
 			if (valuesStart[property] === void 0) continue;
 			const start = valuesStart[property];
-			const end = valuesEnd[property];
-			if (start.constructor !== end.constructor) continue;
-			if (typeof end === "number") {
-				const startNum = start;
-				object[property] = startNum + (end - startNum) * value;
-			} else if (Tween.Interpolators.has(property)) object[property] = Tween.Interpolators.get(property)(start, end, value);
-			else if (typeof end === "object") this._updateProperties(object[property], start, end, value);
+			if (start.constructor !== end?.constructor) continue;
+			if (this._interpolators.has(property)) object[property] = this._interpolators.get(property)(start, end, value);
+			else if (typeof end === "number") object[property] = start + (end - start) * value;
+			else if (typeof end === "object") this._setState(object[property], start, end, value);
 		}
 	}
-	_setupProperties(obj, propsStart, propsEnd, overrideStartingValues) {
-		for (const property in propsEnd) {
+	_setProps(obj, propsStart, propsEnd, overrideStartingValues) {
+		const endKeys = Object.keys(propsEnd);
+		for (const property of endKeys) {
 			const startValue = obj[property];
 			if (typeof propsStart[property] === "undefined" || overrideStartingValues) propsStart[property] = startValue;
 		}
 	}
-	static use(property, interpolateFn) {
-		if (!Tween.Interpolators.has(property)) Tween.Interpolators.set(property, interpolateFn);
+	use(property, interpolateFn) {
+		if (!this._interpolators.has(property)) this._interpolators.set(property, interpolateFn);
+		return this;
 	}
 };
 
 //#endregion
 //#region src/Timeline.ts
-var Timeline = class Timeline {
-	static Interpolators = /* @__PURE__ */ new Map();
+var Timeline = class {
 	state;
 	_state;
 	_entries = [];
@@ -172,6 +181,7 @@ var Timeline = class Timeline {
 	_isPlaying = false;
 	_repeat = 0;
 	_initialRepeat = 0;
+	_interpolators = /* @__PURE__ */ new Map();
 	_onStart;
 	_onStop;
 	_onPause;
@@ -206,8 +216,7 @@ var Timeline = class Timeline {
 		this._resetState();
 		this._updateEntries(0);
 		this._onStart?.(this.state, 0);
-		Timelines.push(this);
-		if (!rafID) Runtime();
+		addToQueue(this);
 		return this;
 	}
 	pause() {
@@ -224,8 +233,7 @@ var Timeline = class Timeline {
 		this._pauseTime = 0;
 		this._lastTime = (this._lastTime || time) + dif;
 		this._onResume?.(this.state, this.progress);
-		Timelines.push(this);
-		if (!rafID) Runtime();
+		addToQueue(this);
 		return this;
 	}
 	stop() {
@@ -233,10 +241,10 @@ var Timeline = class Timeline {
 		this._isPlaying = false;
 		this._time = 0;
 		this._pauseTime = 0;
-		Timelines.splice(Timelines.indexOf(this), 1);
+		removeFromQueue(this);
 		this._resetState();
 		this._updateEntries(0);
-		if (this._onStop) this._onStop(this.state, this.progress);
+		this._onStop?.(this.state, this._progress);
 		return this;
 	}
 	repeat(count = 0) {
@@ -251,7 +259,7 @@ var Timeline = class Timeline {
 		this._updateEntries(this._time);
 		return this;
 	}
-	label(name, position = this._duration) {
+	label(name, position) {
 		this._labels.set(name, this._resolvePosition(position));
 		return this;
 	}
@@ -285,6 +293,12 @@ var Timeline = class Timeline {
 	get duration() {
 		return this._duration;
 	}
+	get isPlaying() {
+		return this._isPlaying;
+	}
+	get isPaused() {
+		return !this._isPlaying && this._pauseTime > 0;
+	}
 	update(time = now()) {
 		if (!this._isPlaying) return false;
 		if (this._lastTime === void 0) this._lastTime = time;
@@ -295,7 +309,6 @@ var Timeline = class Timeline {
 		if (this._progress === 1) if (this._repeat === 0) {
 			this._isPlaying = false;
 			this._repeat = this._initialRepeat;
-			Timelines.splice(Timelines.indexOf(this), 1);
 			this._onComplete?.(this.state, 1);
 		} else {
 			if (this._repeat !== Infinity) this._repeat--;
@@ -338,15 +351,17 @@ var Timeline = class Timeline {
 		return this._duration;
 	}
 	_setState(object, valuesStart, valuesEnd, value) {
-		for (const property in valuesEnd) {
+		const endEntries = Object.entries(valuesEnd);
+		const len = endEntries.length;
+		let i = 0;
+		while (i < len) {
+			const [property, end] = endEntries[i];
+			i++;
 			if (valuesStart[property] === void 0) continue;
 			const start = valuesStart[property];
-			const end = valuesEnd[property];
 			if (start.constructor !== end?.constructor) continue;
-			if (typeof end === "number") {
-				const startNum = start;
-				object[property] = startNum + (end - startNum) * value;
-			} else if (Timeline.Interpolators.has(property)) object[property] = Timeline.Interpolators.get(property)(start, end, value);
+			if (this._interpolators.has(property)) object[property] = this._interpolators.get(property)(start, end, value);
+			else if (typeof end === "number") object[property] = start + (end - start) * value;
 			else if (typeof end === "object") this._setState(object[property], start, end, value);
 		}
 	}
@@ -361,8 +376,20 @@ var Timeline = class Timeline {
 			i += 1;
 		}
 	}
-	static use(property, interpolateFn) {
-		if (!Timeline.Interpolators.has(property)) Timeline.Interpolators.set(property, interpolateFn);
+	clear() {
+		this._entries.length = 0;
+		this._duration = 0;
+		this._labels.clear();
+		this._time = 0;
+		this._progress = 0;
+		this._pauseTime = 0;
+		this._lastTime = void 0;
+		this._repeat = this._initialRepeat;
+		return this;
+	}
+	use(property, interpolateFn) {
+		if (!this._interpolators.has(property)) this._interpolators.set(property, interpolateFn);
+		return this;
 	}
 };
 
@@ -537,9 +564,9 @@ const Easing = Object.freeze({
 
 //#endregion
 //#region src/interpolators/array.ts
-function interpolateArray(start, end, value) {
+const interpolateArray = (start, end, value) => {
 	if (value === 0 && start.length !== end.length) {
-		console.warn("Array length mismatch.");
+		console.warn("Array length mismatch. Returning first array.");
 		return start;
 	}
 	const result = [];
@@ -550,11 +577,11 @@ function interpolateArray(start, end, value) {
 		i += 1;
 	}
 	return result;
-}
+};
 
 //#endregion
 //#region src/interpolators/path.ts
-function interpolatePath(start, end, t) {
+const interpolatePath = (start, end, t) => {
 	if (t === 0 && start.length !== end.length) {
 		console.warn("Path length mismatch. Returning start path.");
 		return start;
@@ -576,8 +603,8 @@ function interpolatePath(start, end, t) {
 		}
 	}
 	return result;
-}
+};
 
 //#endregion
-export { Easing, Runtime, Timeline, Timelines, Tween, Tweens, interpolateArray, interpolatePath, rafID };
+export { Easing, Queue, Runtime, Timeline, Tween, addToQueue, interpolateArray, interpolatePath, now, removeFromQueue, setNow };
 //# sourceMappingURL=index.mjs.map

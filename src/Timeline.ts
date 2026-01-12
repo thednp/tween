@@ -1,22 +1,20 @@
 // Timeline.ts
 import type {
   BaseTweenProps,
+  DeepPartial,
+  InterpolatorFunction,
   Position,
   TimelineCallback,
   TimelineEntry,
   TimelineEntryConfig,
   TweenProps,
 } from "./types.ts";
-import { rafID, Runtime, Timelines } from "./Runtime.ts";
+import { addToQueue, removeFromQueue } from "./Runtime.ts";
 import { now } from "./Now.ts";
 
 export class Timeline<T extends TweenProps = never> {
-  static Interpolators = new Map<
-    string,
-    <T extends never>(start: T, end: T, value: number) => T
-  >();
   public state: T;
-  public _state: T;
+  private _state: T;
   private _entries: TimelineEntry<T>[] = [];
   private _labels = new Map<string, number>();
   private _progress = 0;
@@ -27,6 +25,7 @@ export class Timeline<T extends TweenProps = never> {
   private _isPlaying = false;
   private _repeat = 0;
   private _initialRepeat = 0;
+  private _interpolators = new Map<string, InterpolatorFunction>();
   private _onStart?: TimelineCallback<T>;
   private _onStop?: TimelineCallback<T>;
   private _onPause?: TimelineCallback<T>;
@@ -44,11 +43,11 @@ export class Timeline<T extends TweenProps = never> {
       duration = 1,
       easing = (t) => t,
       ...values
-    }: Partial<T> & TimelineEntryConfig,
+    }: DeepPartial<T> & TimelineEntryConfig,
     position: Position = "+=0",
   ): this {
     const startTime = this._resolvePosition(position);
-    const to = values as Partial<T>;
+    const to = values as TweenProps & DeepPartial<T>;
     const entryDuration = duration * 1000;
 
     this._entries.push({
@@ -76,8 +75,7 @@ export class Timeline<T extends TweenProps = never> {
     this._updateEntries(0);
     this._onStart?.(this.state, 0);
 
-    Timelines.push(this as unknown as Timeline<never>);
-    if (!rafID) Runtime();
+    addToQueue(this);
     return this;
   }
 
@@ -96,8 +94,8 @@ export class Timeline<T extends TweenProps = never> {
     this._pauseTime = 0;
     this._lastTime = (this._lastTime || time) + dif;
     this._onResume?.(this.state, this.progress);
-    Timelines.push(this as unknown as Timeline<never>);
-    if (!rafID) Runtime();
+
+    addToQueue(this);
     return this;
   }
 
@@ -106,10 +104,10 @@ export class Timeline<T extends TweenProps = never> {
     this._isPlaying = false;
     this._time = 0;
     this._pauseTime = 0;
-    Timelines.splice(Timelines.indexOf(this as unknown as Timeline<never>), 1);
+    removeFromQueue(this);
     this._resetState();
     this._updateEntries(0);
-    if (this._onStop) this._onStop(this.state, this.progress);
+    this._onStop?.(this.state, this._progress);
     return this;
   }
 
@@ -127,7 +125,7 @@ export class Timeline<T extends TweenProps = never> {
     return this;
   }
 
-  label(name: string, position: Position = this._duration): this {
+  label(name: string, position?: Position): this {
     this._labels.set(name, this._resolvePosition(position));
     return this;
   }
@@ -170,6 +168,14 @@ export class Timeline<T extends TweenProps = never> {
     return this._duration;
   }
 
+  get isPlaying(): boolean {
+    return this._isPlaying;
+  }
+
+  get isPaused(): boolean {
+    return !this._isPlaying && this._pauseTime > 0;
+  }
+
   update(time = now()) {
     if (!this._isPlaying) return false;
     if (this._lastTime === undefined) this._lastTime = time;
@@ -179,16 +185,16 @@ export class Timeline<T extends TweenProps = never> {
 
     this._updateEntries(this._time);
 
+    // istanbul ignore else
     if (this._progress === 1) {
+      // istanbul ignore else
       if (this._repeat === 0) {
         this._isPlaying = false;
         this._repeat = this._initialRepeat;
-        Timelines.splice(
-          Timelines.indexOf(this as unknown as Timeline<never>),
-          1,
-        );
+
         this._onComplete?.(this.state, 1);
       } else {
+        // istanbul ignore else @preserve
         if (this._repeat !== Infinity) this._repeat--;
         this._time = 0;
         this._resetState();
@@ -221,8 +227,8 @@ export class Timeline<T extends TweenProps = never> {
       if (entry.hasStarted) {
         this._setState(
           this.state,
-          entry.startValues as TweenProps,
-          entry.to,
+          entry.startValues as TweenProps & DeepPartial<T>,
+          entry.to as TweenProps & DeepPartial<T>,
           entry.easing(tweenElapsed),
         );
       }
@@ -232,15 +238,17 @@ export class Timeline<T extends TweenProps = never> {
     this._onUpdate?.(this.state, this._progress);
   }
 
-  private _resolvePosition(pos: Position): number {
+  private _resolvePosition(pos?: Position): number {
     if (typeof pos === "number") return pos * 1000;
 
+    // istanbul ignore else @preserve
     if (typeof pos === "string") {
       // First try label
       const labelTime = this._labels.get(pos);
       if (labelTime !== undefined) return labelTime;
 
       // Then relative
+      // istanbul ignore else @preserve
       if (pos.startsWith("+=") || pos.startsWith("-=")) {
         let offset = parseFloat(pos.slice(2));
         if (isNaN(offset)) offset = 0;
@@ -251,29 +259,36 @@ export class Timeline<T extends TweenProps = never> {
       }
     }
 
+    // fallback to current duration
     return this._duration;
   }
 
   private _setState(
-    object: TweenProps,
-    valuesStart: TweenProps,
-    valuesEnd: Partial<T> | TweenProps,
+    object: TweenProps | BaseTweenProps,
+    valuesStart: TweenProps | BaseTweenProps,
+    valuesEnd: Partial<T> | TweenProps | BaseTweenProps,
     value: number,
   ): void {
-    for (const property in valuesEnd) {
+    const endEntries = Object.entries(valuesEnd);
+    const len = endEntries.length;
+    let i = 0;
+
+    while (i < len) {
+      const [property, end] = endEntries[i];
+      i++;
       if (valuesStart[property] === undefined) continue;
 
       const start = valuesStart[property];
-      const end = valuesEnd[property];
 
       if (start.constructor !== end?.constructor) continue;
 
-      if (typeof end === "number") {
-        const startNum = start as number;
-        object[property] = startNum + (end - startNum) * value;
-      } else if (Timeline.Interpolators.has(property)) {
-        const interpolator = Timeline.Interpolators.get(property)!;
+      // istanbul ignore else @preserve
+      if (this._interpolators.has(property)) {
+        const interpolator = this._interpolators.get(property)!;
         object[property] = interpolator(start as never, end as never, value);
+      } else if (typeof end === "number") {
+        object[property] = (start as number) +
+          (end - (start as number)) * value;
       } else if (typeof end === "object") {
         this._setState(
           object[property] as BaseTweenProps,
@@ -297,12 +312,26 @@ export class Timeline<T extends TweenProps = never> {
     }
   }
 
-  static use(
+  clear() {
+    this._entries.length = 0;
+    this._duration = 0;
+    this._labels.clear();
+    this._time = 0;
+    this._progress = 0;
+    this._pauseTime = 0;
+    this._lastTime = undefined;
+    // Optionally reset repeat if you want fresh repeats on remount
+    this._repeat = this._initialRepeat;
+    return this;
+  }
+
+  use(
     property: string,
-    interpolateFn: <T extends never>(start: T, end: T, t: number) => T,
-  ): void {
-    if (!Timeline.Interpolators.has(property)) {
-      Timeline.Interpolators.set(property, interpolateFn);
+    interpolateFn: InterpolatorFunction,
+  ): this {
+    if (!this._interpolators.has(property)) {
+      this._interpolators.set(property, interpolateFn);
     }
+    return this;
   }
 }

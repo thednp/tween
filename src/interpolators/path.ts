@@ -1,6 +1,7 @@
 // interpolators/path.ts
 import type {
   CubeValues,
+  InterpolatorFunction,
   LineValues,
   MorphPathArray,
   MorphPathSegment,
@@ -16,11 +17,14 @@ import type {
  * @param t - The progress
  * @returns The interpolated PathArray value
  */
-export function interpolatePath<T extends MorphPathArray>(
+
+export const interpolatePath: InterpolatorFunction<MorphPathArray> = <
+  T extends MorphPathArray,
+>(
   start: T,
   end: T,
   t: number,
-): T {
+): T => {
   if (t === 0 && start.length !== end.length) {
     console.warn("Path length mismatch. Returning start path.");
     return start;
@@ -61,4 +65,4 @@ export function interpolatePath<T extends MorphPathArray>(
   }
 
   return result;
-}
+};

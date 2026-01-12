@@ -39,10 +39,10 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # - name: ViTest
-      #   run: pnpm test
+      - name: ViTest
+        run: pnpm test
 
-      # - name: Upload coverage report to coveralls.io...
-      #   uses: coverallsapp/github-action@master
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload coverage report to coveralls.io...
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

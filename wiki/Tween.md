@@ -1,7 +1,7 @@
 ## Tween
 
-A tiny, ultra-fast single-object tween engine. Simple, pure and flexible from/to animation with proper start value capture, chaining and support for nested objects. It's the core building block for more complex animations and a lightweight alternative to heavier tween libraries.
-Perfect for reactive stores (SolidJS, Svelte, etc), SVG/Canvas animations, games, or anything needing a single precise tween without overhead.
+A tiny, ultra-fast single-object tween engine. Simple, pure and flexible from/to animation with proper DX, chaining methods and support for nested objects. It's the core building block for more complex animations and a lightweight alternative to heavier tween libraries.
+Perfect for reactive stores (SolidJS, Svelte, React, etc), SVG/Canvas animations, or anything needing a single precise tween without overhead.
 
 ### Features
 * Chainable methods for best DX

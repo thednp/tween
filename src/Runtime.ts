@@ -2,31 +2,43 @@
 import { type Tween } from "./Tween.ts";
 import { type Timeline } from "./Timeline.ts";
 import { now } from "./Now.ts";
+import { TweenProps } from "./types.ts";
 
-export const Tweens: Tween<never>[] = [];
-export const Timelines: Timeline<never>[] = [];
-export let rafID = 0;
+type AnimationItem<T extends TweenProps = never> = Tween<T> | Timeline<T>;
+
+export const Queue: AnimationItem[] = [];
+
+export function addToQueue<T extends TweenProps>(
+  newItem: AnimationItem<T>,
+): void {
+  const item = newItem as unknown as AnimationItem<never>;
+  if (Queue.includes(item)) return;
+  Queue.push(item);
+  if (!rafID) Runtime();
+}
+
+export function removeFromQueue<T extends TweenProps>(
+  removedItem: AnimationItem<T>,
+): void {
+  Queue.splice(
+    Queue.indexOf(removedItem as unknown as AnimationItem<never>),
+    1,
+  );
+}
+
+let rafID = 0;
 
 export function Runtime(t = now()) {
-  let j = 0;
-  while (j < Timelines.length) {
-    if (Timelines[j].update(t)) {
-      j += 1;
-    } else {
-      Timelines.splice(j, 1);
-    }
-  }
-
   let i = 0;
-  while (i < Tweens.length) {
-    if (Tweens[i].update(t)) {
+  while (i < Queue.length) {
+    if (Queue[i].update(t)) {
       i += 1;
     } else {
-      Tweens.splice(i, 1);
+      Queue.splice(i, 1);
     }
   }
 
-  if (!Tweens.length && !Timelines.length) {
+  if (Queue.length === 0) {
     cancelAnimationFrame(rafID);
     rafID = 0;
   } else rafID = requestAnimationFrame(Runtime);

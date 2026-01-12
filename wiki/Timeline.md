@@ -1,8 +1,9 @@
 ## Timeline
 
-A tiny, ultra-fast `Timeline` scheduler. A simple, just pure flexible chaining similar to Tween and stripped to essentials: sequential/overlapping updates, labels, repeat, seek, play/pause/stop/resume. It's a great addition that goes beyond what Tween does and for more complex animations and with far more flexibility and control.
+A tiny, ultra-fast `Timeline` tween scheduler. This is simple, just pure flexible chaining similar to `Tween` and stripped to essentials: sequential/overlapping updates, labels, repeat, seek, play/pause/stop/resume. It's a great addition that goes beyond what Tween does and for more complex animations and with far more flexibility and control.
 
-Perfect for reactive stores (SolidJS, Svelte, etc), SVG/Canvas animations, games, or anything needing precise control without the overhead.
+Perfect for reactive stores (SolidJS, Svelte, React, etc), SVG/Canvas animations, or anything needing precise control without the overhead.
+
 
 ### Features
 - Chainable methods with for best DX;
@@ -11,11 +12,12 @@ Perfect for reactive stores (SolidJS, Svelte, etc), SVG/Canvas animations, games
 - Labels for jumping/seeking;
 - Repeats (including Infinity);
 - Seek anytime (playing or paused, with instant state update);
-- Callbacks: `onStart`, `onUpdate`, `onComplete`, `onStop`, `onPause` (all receive `state`, `progress`);
+- Multiple callbacks: `onStart`, `onUpdate`, `onComplete`, `onStop`, `onPause`, `onResume` (all receive `state`, `progress`);
 - Custom interpolators via `Timeline.use()`;
 - Nested/objects, arrays, custom types supported out-of-box;
 - ~200 lines, blazing fast (while loops for entries);
 * `requestAnimationFrame` loop handled automatically when `.play()` called.
+
 
 ### Usage
 
@@ -37,9 +39,9 @@ const tl = new Timeline(obj)
 
 // Add entries
 tl
-.to({ x: 100, easing: Easing.Elastic.Out }, '+=1')    // 1s to x:100
-.to({ y: 200, rotate: 360, duration: 1.5 }, '-=0.5')  // Overlap last 0.5s, rotate full turn in 1.5 sec
-.to({ x: 0, y: 0 }, '+=1');                           // Back to original position after 1 sec delay
+  .to({ x: 100, easing: Easing.Elastic.Out }, '+=1')    // 1s to x:100
+  .to({ y: 200, rotate: 360, duration: 1.5 }, '-=0.5')  // Overlap last 0.5s, rotate full turn in 1.5 sec
+  .to({ x: 0, y: 0 }, '+=1');                           // Back to original position after 1 sec delay
 
 // Start update loop
 tl.play();
@@ -51,10 +53,10 @@ tl.stop();
 tl.pause();
 
 // Resume update loop
-tl.resume(); // OR tl.start();
+tl.resume();                // OR tl.start();
 
 // Seek
-tl.seek('loopStart');                   // Jump to label
+tl.seek('loopStart');       // Jump to label
 ```
 
 ### API
@@ -67,7 +69,7 @@ Creates a new **Timeline** instance targeting the provided object, which means t
 Adds a new entry in the Timeline instance.
 
 **Parameters**
-* `props & config` allows you to set new values for the props we want to change as well as `duration` (in seconds) and `easing` function;
+* `props & config` allows you to set new prop values we want to change as well as `duration` (in seconds) and `easing` function;
 * `position` allows you to specify a fixed start time (in seconds), a label or a positive (delay) `"+=1"` or negative `"-=1"` offset;
 
 #### `.play() / .pause() / .resume() / .stop()`
@@ -103,11 +105,12 @@ timeline.onUpdate((obj, progress) => {
 })
 ```
 
-#### `state`, `progress`, `duration`
-A series of getters that reflect the state of the update:
-* the `state` object with all values
-* the [0-1] value `progress` which indicates how much of the Timeline update is complete
-* the total `duration` of all the Timeline entries.
+#### `state`, `progress`, `duration`, `isPlaying`, `isPaused`
+A series of getters and properties that reflect the state of the update:
+* the `state` object with all values (not a getter)
+* the [0-1] value `progress` which indicates how much of the `Timeline` update is complete
+* the total `duration` of all the `Timeline` entries 
+* `isPlaying` and `isPaused` are *boolean* getters and their returned values reflect the current `Timeline` state.
 
 
 ### Custom Interpolators

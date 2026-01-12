@@ -1,4 +1,5 @@
 //#region src/types.d.ts
+type DeepPartial<T> = T extends Record<string, T[keyof T]> ? Partial<T> | { [P in keyof T]?: DeepPartial<T[P]> } : T;
 type BaseTweenProps = Record<string, number>;
 type TweenProps = Record<string, number | number[] | BaseTweenProps | MorphPathArray>;
 type TimelineCallback<T extends TweenProps> = (state: T, progress: number) => void;
@@ -11,47 +12,48 @@ type EasingFunctionGroup = {
   InOut: EasingFunction;
 };
 type Position = number | string;
+type InterpolatorFunction<I extends number[] | MorphPathArray = never> = <T extends I>(start: T, end: T, t: number) => T;
 interface TimelineEntryConfig {
   duration?: number;
   easing?: EasingFunction;
 }
 interface TimelineEntry<T extends TweenProps> {
-  to: Partial<T>;
+  to: TweenProps | DeepPartial<T>;
   startTime: number;
   duration: number;
   easing: EasingFunction;
-  startValues?: Partial<T>;
+  startValues?: TweenProps | DeepPartial<T>;
   hasStarted?: boolean;
 }
 type LineValues = [number, number];
 type CubeValues = [number, number, number, number, number, number];
-type MorphPathSegment = ["M" | "L", ...LineValues] | ["C", ...CubeValues] | ["Z"];
+type MorphPathSegment = ["M" | "L", number, number] | ["C", number, number, number, number, number, number] | ["Z"];
 type MorphPathArray = Array<MorphPathSegment>;
 //#endregion
 //#region src/Tween.d.ts
 declare class Tween<T extends TweenProps = never> {
-  static Interpolators: Map<string, <T_1 extends never>(start: T_1, end: T_1, value: number) => T_1>;
-  protected _object: T;
-  protected _startIsSet: boolean;
-  protected _startFired: boolean;
-  protected _propsStart: TweenProps;
-  protected _propsEnd: TweenProps;
-  protected _isPlaying: boolean;
-  protected _duration: number;
-  protected _delay: number;
-  protected _easing: EasingFunction;
-  protected _startTime: number;
-  protected _onUpdate?: TweenUpdateCallback<T>;
-  protected _onComplete?: TweenCallback<T>;
-  protected _onStart?: TweenCallback<T>;
-  protected _onStop?: TweenCallback<T>;
+  private _interpolators;
+  private _state;
+  private _startIsSet;
+  private _startFired;
+  private _propsStart;
+  private _propsEnd;
+  private _isPlaying;
+  private _duration;
+  private _delay;
+  private _easing;
+  private _startTime;
+  private _onUpdate?;
+  private _onComplete?;
+  private _onStart?;
+  private _onStop?;
   constructor(initialValues: T);
   get isPlaying(): boolean;
   start(time?: number, overrideStart?: boolean): this;
   startFromLast(time?: number): this;
   stop(): this;
   from(startValues: Partial<T>): this;
-  to(endValues: Partial<T>): this;
+  to(endValues: DeepPartial<T>): this;
   duration(seconds?: number): this;
   delay(seconds?: number): this;
   easing(easing?: EasingFunction): this;
@@ -67,20 +69,19 @@ declare class Tween<T extends TweenProps = never> {
    * it is still playing, just paused).
    */
   update(time?: number, autoStart?: boolean): boolean;
+  onStart(callback: TweenCallback<T>): this;
   onUpdate(callback?: TweenUpdateCallback<T>): this;
   onComplete(callback: TweenCallback<T>): this;
   onStop(callback: TweenCallback<T>): this;
-  onStart(callback: TweenCallback<T>): this;
-  private _updateProperties;
-  protected _setupProperties(obj: T, propsStart: TweenProps, propsEnd: TweenProps, overrideStartingValues: boolean): void;
-  static use(property: string, interpolateFn: <T extends never>(start: T, end: T, t: number) => T): void;
+  private _setState;
+  private _setProps;
+  use(property: string, interpolateFn: InterpolatorFunction): this;
 }
 //#endregion
 //#region src/Timeline.d.ts
 declare class Timeline<T extends TweenProps = never> {
-  static Interpolators: Map<string, <T_1 extends never>(start: T_1, end: T_1, value: number) => T_1>;
   state: T;
-  _state: T;
+  private _state;
   private _entries;
   private _labels;
   private _progress;
@@ -91,6 +92,7 @@ declare class Timeline<T extends TweenProps = never> {
   private _isPlaying;
   private _repeat;
   private _initialRepeat;
+  private _interpolators;
   private _onStart?;
   private _onStop?;
   private _onPause?;
@@ -102,7 +104,7 @@ declare class Timeline<T extends TweenProps = never> {
     duration,
     easing,
     ...values
-  }: Partial<T> & TimelineEntryConfig, position?: Position): this;
+  }: DeepPartial<T> & TimelineEntryConfig, position?: Position): this;
   play(): this;
   pause(): this;
   resume(time?: number): this;
@@ -118,12 +120,15 @@ declare class Timeline<T extends TweenProps = never> {
   onComplete(cb: TimelineCallback<T>): this;
   get progress(): number;
   get duration(): number;
+  get isPlaying(): boolean;
+  get isPaused(): boolean;
   update(time?: number): boolean;
   private _updateEntries;
   private _resolvePosition;
   private _setState;
   private _resetState;
-  static use(property: string, interpolateFn: <T extends never>(start: T, end: T, t: number) => T): void;
+  clear(): this;
+  use(property: string, interpolateFn: InterpolatorFunction): this;
 }
 //#endregion
 //#region src/Easing.d.ts
@@ -148,13 +153,19 @@ declare const Easing: Readonly<{
 }>;
 //#endregion
 //#region src/Runtime.d.ts
-declare const Tweens: Tween<never>[];
-declare const Timelines: Timeline<never>[];
-declare let rafID: number;
+type AnimationItem<T extends TweenProps = never> = Tween<T> | Timeline<T>;
+declare const Queue: AnimationItem[];
+declare function addToQueue<T extends TweenProps>(newItem: AnimationItem<T>): void;
+declare function removeFromQueue<T extends TweenProps>(removedItem: AnimationItem<T>): void;
 declare function Runtime(t?: number): void;
 //#endregion
+//#region src/Now.d.ts
+declare let _nowFunc: () => number;
+declare const now: () => number;
+declare function setNow(nowFunction: typeof _nowFunc): void;
+//#endregion
 //#region src/interpolators/array.d.ts
-declare function interpolateArray<T extends number[]>(start: T, end: T, value: number): T;
+declare const interpolateArray: InterpolatorFunction<number[]>;
 //#endregion
 //#region src/interpolators/path.d.ts
 /**
@@ -167,7 +178,7 @@ declare function interpolateArray<T extends number[]>(start: T, end: T, value: n
  * @param t - The progress
  * @returns The interpolated PathArray value
  */
-declare function interpolatePath<T extends MorphPathArray>(start: T, end: T, t: number): T;
+declare const interpolatePath: InterpolatorFunction<MorphPathArray>;
 //#endregion
-export { BaseTweenProps, CubeValues, Easing, EasingFunction, EasingFunctionGroup, LineValues, MorphPathArray, MorphPathSegment, Position, Runtime, Timeline, TimelineCallback, TimelineEntry, TimelineEntryConfig, Timelines, Tween, TweenCallback, TweenProps, TweenUpdateCallback, Tweens, interpolateArray, interpolatePath, rafID };
+export { BaseTweenProps, CubeValues, DeepPartial, Easing, EasingFunction, EasingFunctionGroup, InterpolatorFunction, LineValues, MorphPathArray, MorphPathSegment, Position, Queue, Runtime, Timeline, TimelineCallback, TimelineEntry, TimelineEntryConfig, Tween, TweenCallback, TweenProps, TweenUpdateCallback, addToQueue, interpolateArray, interpolatePath, now, removeFromQueue, setNow };
 //# sourceMappingURL=index.d.cts.map

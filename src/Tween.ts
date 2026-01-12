@@ -1,36 +1,35 @@
 // Tween.ts
 import type {
   BaseTweenProps,
+  DeepPartial,
   EasingFunction,
+  InterpolatorFunction,
   TweenCallback,
   TweenProps,
   TweenUpdateCallback,
 } from "./types.ts";
-import { rafID, Runtime, Tweens } from "./Runtime.ts";
+import { addToQueue, removeFromQueue } from "./Runtime.ts";
 import { now } from "./Now.ts";
 
 export class Tween<T extends TweenProps = never> {
-  static Interpolators = new Map<
-    string,
-    <T extends never>(start: T, end: T, value: number) => T
-  >();
-  protected _object: T;
-  protected _startIsSet = false;
-  protected _startFired = false;
-  protected _propsStart: TweenProps = {};
-  protected _propsEnd: TweenProps = {};
-  protected _isPlaying = false;
-  protected _duration = 1000;
-  protected _delay = 0;
-  protected _easing: EasingFunction = (t) => t;
-  protected _startTime: number = 0;
-  protected _onUpdate?: TweenUpdateCallback<T>;
-  protected _onComplete?: TweenCallback<T>;
-  protected _onStart?: TweenCallback<T>;
-  protected _onStop?: TweenCallback<T>;
+  private _interpolators = new Map<string, InterpolatorFunction>();
+  private _state: T;
+  private _startIsSet = false;
+  private _startFired = false;
+  private _propsStart: TweenProps = {};
+  private _propsEnd: TweenProps = {};
+  private _isPlaying = false;
+  private _duration = 1000;
+  private _delay = 0;
+  private _easing: EasingFunction = (t) => t;
+  private _startTime: number = 0;
+  private _onUpdate?: TweenUpdateCallback<T>;
+  private _onComplete?: TweenCallback<T>;
+  private _onStart?: TweenCallback<T>;
+  private _onStop?: TweenCallback<T>;
 
   constructor(initialValues: T) {
-    this._object = initialValues;
+    this._state = initialValues;
     return this;
   }
 
@@ -40,22 +39,21 @@ export class Tween<T extends TweenProps = never> {
 
   start(time = now(), overrideStart = false) {
     if (this._isPlaying) return this;
-    if (!this._startIsSet || overrideStart) {
+    // istanbul ignore else @preserve
+    if (!this._startIsSet || /* istanbul ignore next */ overrideStart) {
       this._startIsSet = true;
 
-      this._setupProperties(
-        this._object,
+      this._setProps(
+        this._state,
         this._propsStart,
         this._propsEnd,
         overrideStart,
       );
     }
     this._isPlaying = true;
-    this._onStart?.(this._object);
-    Tweens.push(this as unknown as Tween<never>);
     this._startTime = time;
     this._startTime += this._delay;
-    if (!rafID) Runtime();
+    addToQueue(this);
     return this;
   }
   startFromLast(time = now()) {
@@ -63,9 +61,9 @@ export class Tween<T extends TweenProps = never> {
   }
   stop() {
     if (!this._isPlaying) return this;
-    Tweens.splice(Tweens.indexOf(this as unknown as Tween<never>), 1);
+    removeFromQueue(this);
     this._isPlaying = false;
-    if (this._onStop) this._onStop(this._object);
+    this._onStop?.(this._state);
     return this;
   }
   from(startValues: Partial<T>) {
@@ -75,8 +73,8 @@ export class Tween<T extends TweenProps = never> {
 
     return this;
   }
-  to(endValues: Partial<T>) {
-    this._propsEnd = endValues as T;
+  to(endValues: DeepPartial<T>) {
+    this._propsEnd = endValues as TweenProps;
     this._startIsSet = false;
 
     return this;
@@ -89,7 +87,8 @@ export class Tween<T extends TweenProps = never> {
     this._delay = seconds * 1000;
     return this;
   }
-  easing(easing: EasingFunction = (t) => t) {
+
+  easing(easing: EasingFunction = (t: number) => t) {
     this._easing = easing;
     return this;
   }
@@ -107,17 +106,19 @@ export class Tween<T extends TweenProps = never> {
    * it is still playing, just paused).
    */
   update(time = now(), autoStart?: boolean) {
+    // istanbul ignore else
     if (!this._isPlaying) {
+      // istanbul ignore else
       if (autoStart) this.start(time, true);
       else return false;
     }
 
-    if (time < this._startTime) {
-      return true;
-    }
+    // istanbul ignore else
+    if (time < this._startTime) return true;
 
+    // istanbul ignore else
     if (!this._startFired && this._onStart) {
-      this._onStart(this._object);
+      this._onStart(this._state);
       this._startFired = true;
     }
 
@@ -125,21 +126,18 @@ export class Tween<T extends TweenProps = never> {
     elapsed = this._duration === 0 || elapsed > 1 ? 1 : elapsed;
     const progress = this._easing(elapsed);
 
-    this._updateProperties(
-      this._object,
+    this._setState(
+      this._state,
       this._propsStart,
       this._propsEnd,
       progress,
     );
 
-    if (this._onUpdate) {
-      this._onUpdate(this._object, elapsed, progress);
-    }
+    this._onUpdate?.(this._state, elapsed, progress);
 
+    // istanbul ignore else
     if (elapsed === 1) {
-      if (this._onComplete) {
-        this._onComplete(this._object);
-      }
+      this._onComplete?.(this._state);
       this._isPlaying = false;
 
       return false;
@@ -147,6 +145,10 @@ export class Tween<T extends TweenProps = never> {
     return true;
   }
 
+  onStart(callback: TweenCallback<T>) {
+    this._onStart = callback;
+    return this;
+  }
   onUpdate(callback?: TweenUpdateCallback<T>) {
     this._onUpdate = callback;
     return this;
@@ -159,35 +161,40 @@ export class Tween<T extends TweenProps = never> {
     this._onStop = callback;
     return this;
   }
-  onStart(callback: TweenCallback<T>) {
-    this._onStart = callback;
-    return this;
-  }
-  private _updateProperties(
-    object: TweenProps,
-    valuesStart: TweenProps,
-    valuesEnd: TweenProps,
+
+  private _setState(
+    object: TweenProps | BaseTweenProps,
+    valuesStart: TweenProps | BaseTweenProps,
+    valuesEnd: Partial<T> | TweenProps | BaseTweenProps,
     value: number,
   ): void {
-    for (const property in valuesEnd) {
+    const endEntries = Object.entries(valuesEnd);
+    const len = endEntries.length;
+
+    let i = 0;
+    while (i < len) {
+      const [property, end] = endEntries[i];
+      i++;
       // Don't update properties that do not exist in the source object
+      // istanbul ignore else
       if (valuesStart[property] === undefined) continue;
 
       const start = valuesStart[property];
-      const end = valuesEnd[property];
 
       // Protect against non matching properties.
-      if (start.constructor !== end.constructor) continue;
+      // istanbul ignore else @preserve
+      if (start.constructor !== end?.constructor) continue;
 
       // Protect against non numeric properties.
-      if (typeof end === "number") {
-        const startNum = start as number;
-        object[property] = startNum + (end - startNum) * value;
-      } else if (Tween.Interpolators.has(property)) {
-        const interpolator = Tween.Interpolators.get(property)!;
+      // istanbul ignore else @preserve
+      if (this._interpolators.has(property)) {
+        const interpolator = this._interpolators.get(property)!;
         object[property] = interpolator(start as never, end as never, value);
+      } else if (typeof end === "number") {
+        object[property] = (start as number) +
+          (end - (start as number)) * value;
       } else if (typeof end === "object") {
-        this._updateProperties(
+        this._setState(
           object[property] as BaseTweenProps,
           start as BaseTweenProps,
           end as BaseTweenProps,
@@ -196,16 +203,19 @@ export class Tween<T extends TweenProps = never> {
       }
     }
   }
-  protected _setupProperties(
+  private _setProps(
     obj: T,
     propsStart: TweenProps,
     propsEnd: TweenProps,
     overrideStartingValues: boolean,
   ): void {
-    for (const property in propsEnd) {
+    const endKeys = Object.keys(propsEnd);
+
+    for (const property of endKeys) {
       const startValue = obj[property];
 
       // Save the starting value, but only once unless override is requested.
+      // istanbul ignore else
       if (
         typeof propsStart[property] === "undefined" ||
         overrideStartingValues
@@ -214,12 +224,14 @@ export class Tween<T extends TweenProps = never> {
       }
     }
   }
-  static use(
+  use(
     property: string,
-    interpolateFn: <T extends never>(start: T, end: T, t: number) => T,
-  ): void {
-    if (!Tween.Interpolators.has(property)) {
-      Tween.Interpolators.set(property, interpolateFn);
+    interpolateFn: InterpolatorFunction,
+  ): this {
+    // istanbul ignore else
+    if (!this._interpolators.has(property)) {
+      this._interpolators.set(property, interpolateFn);
     }
+    return this;
   }
 }

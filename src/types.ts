@@ -1,8 +1,14 @@
 // types.ts;
 
+export type DeepPartial<T> = T extends Record<string, T[keyof T]> ?
+    | Partial<T>
+    | {
+      [P in keyof T]?: DeepPartial<T[P]>;
+    }
+  : T;
+
 export type BaseTweenProps = Record<string, number>;
 export type TweenProps = Record<
-  // string | symbol,
   string,
   number | number[] | BaseTweenProps | MorphPathArray
 >;
@@ -29,26 +35,29 @@ export type EasingFunctionGroup = {
 
 export type Position = number | string;
 
+export type InterpolatorFunction<I extends number[] | MorphPathArray = never> =
+  <T extends I>(start: T, end: T, t: number) => T;
+
 export interface TimelineEntryConfig {
   duration?: number; // milliseconds (to match your Tween)
   easing?: EasingFunction;
-  // delay?: number; // milliseconds
 }
 
 export interface TimelineEntry<T extends TweenProps> {
-  to: Partial<T>;
+  to: TweenProps | DeepPartial<T>;
   startTime: number; // absolute time in milliseconds
   duration: number; // absolute time in milliseconds
   easing: EasingFunction;
-  startValues?: Partial<T>;
+  startValues?: TweenProps | DeepPartial<T>;
   hasStarted?: boolean;
 }
 
 export type LineValues = [number, number];
 export type CubeValues = [number, number, number, number, number, number];
+
 export type MorphPathSegment =
-  | ["M" | "L", ...LineValues]
-  | ["C", ...CubeValues]
+  | ["M" | "L", number, number]
+  | ["C", number, number, number, number, number, number]
   | ["Z"];
 
 export type MorphPathArray = Array<MorphPathSegment>;
