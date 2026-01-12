@@ -47,6 +47,14 @@ function createMiniState<T extends TweenProps>(
 export function deepMerge<T extends TweenProps>(target: T, source: T) {
   for (const key in source) {
     if (
+      !Object.prototype.hasOwnProperty.call(source, key) ||
+      key === "__proto__" ||
+      key === "constructor" ||
+      key === "prototype"
+    ) {
+      continue;
+    }
+    if (
       source[key] && typeof source[key] === "object" &&
       !Array.isArray(source[key])
     ) {
