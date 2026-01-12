@@ -20,14 +20,13 @@ Perfect for reactive stores (SolidJS, Svelte, React, etc), SVG/Canvas animations
 ```ts
 import { Tween, Easing, interpolateArray } from '@thednp/tween';
 
-// Optional: register interpolators (arrays work great for colors, vectors)
-Tween.use('rgb', interpolateArray);
-
 // initial state
 const obj = { x: 0, y: 0, rotate: 0, rgb: [255,0,0], opacity: 1 };
 
 // Create tween
 const tween1 = new Tween(obj)
+  // Optional: register interpolators (arrays work great for colors, vectors)
+  .use('rgb', interpolateArray)
   .to({ x: 100, y: 200, rotate: 360, rgb: [0,255,0], opacity: 0.5 })
   .duration(2)                  // 2 seconds
   .delay(0.5)                   // 0.5s delay
@@ -145,9 +144,14 @@ A callback which receives (`object`) parameter when finished. Executed when a tw
 #### `.onStop(callback)`
 A callback which receives (`object`) parameter and is fired when calling `stop()`, but not when it is completed normally.
 
+#### Custom Interpolators
+The `.use(propName: string, interpolationFunction: InterpolatorFunction)` allows you to add custom interpolator functions for your instance.
+
+
 ### Tween State
 #### `.isPlaying`
 Getter: `boolean` whether currently running.
+
 
 ### Custom Interpolators
 
@@ -158,9 +162,8 @@ Same as [Timeline](Timeline.md) - use the provided `interpolateArray` and `inter
 ```ts
 import { Tween, interpolateArray } from "@thednp/tween";
 
-Tween.use('rgb', interpolateArray);
-
 new Tween({ rgb: [255,0,0] })
+  .use('rgb', interpolateArray)
   .to({ rgb: [0,255,0] })
   .onUpdate((state) => {
     // update App state
@@ -179,10 +182,6 @@ The `interpolatePath` interpolator adds SVG morph capability and assumes compati
 
 ```ts
 import { Tween, interpolatePath } from "@thednp/tween";
-
-Tween.use('path', interpolatePath);
-// you can use any property name you want,
-// `d` might be a good choice as well
 
 // Use a fast `PathArray` to string
 // For faster performance use `pathToString` from svg-path-commander
@@ -212,6 +211,9 @@ const triangle = [
 ];
 
 const tween = new Tween({ path: square })
+  // you can use any property name you want
+  .use('path', interpolatePath)
+  // `d` might be a good choice as well
   .to({ path: triangle })
   .onUpdate(state => {
     // update App state

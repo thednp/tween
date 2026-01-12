@@ -89,6 +89,9 @@ Allows you to register a new label for a given string name and a label or INT nu
 #### Callbacks
 The `.onStart(cb)` / `onUpdate(cb)` / `onComplete(cb)` / `onStop(cb)` / `onPause(cb)` / `onResume(cb)` are a series of public methods that allow you to configure a callback for each invokation: start, stop, update, complete or pause.
 
+#### Custom Interpolators
+The `.use(propName: string, interpolationFunction: InterpolatorFunction)` allows you to add custom interpolator functions for your instance.
+
 ```ts
 const timeline = new Timeline({ x: 0 });
 
@@ -125,11 +128,10 @@ This allows you to interpolate arrays for translate/rotate/scape, RGB/RGBA, HSL/
 ```ts
 import { Timeline, interpolateArray } from "@thednp/tween";
 
-// the `rgb` property will now use the custom interpolation
-Timeline.use('rgb', interpolateArray);
-
 const target = document.getElementById("my-target");
 const tl = new Timeline({ rgb: [255,0,0] }) // start from red
+  // the `rgb` property will now use the custom interpolation
+  .use('rgb', interpolateArray);
   // set an update function
   .onUpdate((state) => {
     // update App state or update DOM elements directly
@@ -151,9 +153,6 @@ This adds SVG morph capability and assumes compatible paths (same segment count/
 
 ```ts
 import { Timeline, interpolatePath } from "@thednp/tween";
-Timeline.use('path', interpolatePath);
-// you can use any property name you want,
-// `d` might be a good choice as well
 
 // Use a fast `PathArray` to string
 // For faster performance use `pathToString` from svg-path-commander
@@ -185,6 +184,9 @@ const triangle = [
 ];
 
 const tl = new Timeline({ path: square })
+  .use('path', interpolatePath);
+  // you can use any property name you want,
+  // `d` might be a good choice as well
   // set an update function
   .onUpdate((state) => {
     // update App state
