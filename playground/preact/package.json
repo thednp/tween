@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@preact/signals": "^2.8.1",
-    "@thednp/tween": "workspace:^",
+    "@thednp/tween": "^0.0.2",
     "preact": "^10.28.3"
   },
   "devDependencies": {

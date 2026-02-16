@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@thednp/tween": "workspace:^",
+    "@thednp/tween": "^0.0.2",
     "solid-js": "^1.9.11"
   },
   "devDependencies": {

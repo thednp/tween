@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@thednp/tween": "workspace:^",
+    "@thednp/tween": "^0.0.2",
     "vue": "^3.5.28"
   },
   "devDependencies": {
