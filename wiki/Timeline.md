@@ -1,22 +1,14 @@
 ## Timeline
 
-A tiny, ultra-fast `Timeline` tween scheduler. This is simple, just pure flexible chaining similar to `Tween` and stripped to essentials: sequential/overlapping updates, labels, repeat, seek, play/pause/stop/resume. It's a great addition that goes beyond what Tween does and for more complex animations and with far more flexibility and control.
-
-Perfect for reactive stores (SolidJS, Svelte, React, etc), SVG/Canvas animations, or anything needing precise control without the overhead.
-
-
-### Features
-- Chainable methods with for best DX;
-* Relative positions (`"+=0"`, `"-=1.5"` offsets, labels);
-- Proper chaining (later entries start from current state);
-- Labels for jumping/seeking;
-- Repeats (including Infinity);
-- Seek anytime (playing or paused, with instant state update);
-- Multiple callbacks: `onStart`, `onUpdate`, `onComplete`, `onStop`, `onPause`, `onResume` (all receive `state`, `progress`);
-- Custom interpolators via `Timeline.use()`;
-- Nested/objects, arrays, custom types supported out-of-box;
-- ~200 lines, blazing fast (while loops for entries);
-* `requestAnimationFrame` loop handled automatically when `.play()` called.
+### Prerequisites
+* [Tween.md](Tween.md) - our official `Tween` guide
+* [Extend.md](Extend.md) - a complete guide on extending beyond original prototype
+* [Easing.md](Easing.md) - an extensive guide on easing functions.
+* Don't forget to install.
+  ```
+  npm install @thednp/tween
+  # or pnpm/yarn/bun/deno
+  ```
 
 
 ### Usage
@@ -29,10 +21,9 @@ const obj = { x: 0, y: 0, rotate: 0 };
 
 // Define Timeline object
 const tl = new Timeline(obj)
-  .onUpdate((state, progress) => {
-    setState(state) // React/Svelte/store/etc.
-    // OR manipulate DOM elements directly
-    // make use of [0-1] progress value to update other state
+  .onUpdate((state, elapsed) => {
+    // elapsed: raw [0-1] progress
+    // manipulate DOM / canvas elements directly
   })   
   .label('loopStart', 0)                // Back to start (manual "reverse")
   .repeat(Infinity);                    // OR an INT number
@@ -43,26 +34,32 @@ tl
   .to({ y: 200, rotate: 360, duration: 1.5 }, '-=0.5')  // Overlap last 0.5s, rotate full turn in 1.5 sec
   .to({ x: 0, y: 0 }, '+=1');                           // Back to original position after 1 sec delay
 
-// Start update loop
+// Start tweening
 tl.play();
 
-// Stop update loop
+// Stop tweening
 tl.stop();
 
-// Pause update loop
+// Pause tweening
 tl.pause();
 
-// Resume update loop
+// Resume tweening
 tl.resume();                // OR tl.start();
+
+// Reverse tweening
+tl.reverse();               // timeline must be running to work;
 
 // Seek
 tl.seek('loopStart');       // Jump to label
+
+// Seek
+tl.seek(1.5);               // Jump to 1.5 seconds time marker
 ```
 
 ### API
 
 #### `new Timeline(initialValues)`
-Creates a new **Timeline** instance targeting the provided object, which means this object is updated during the update runtime.
+Creates a new **Timeline** instance targeting the provided object, which means this object is mutated during the update runtime.
 
 #### `.to(props & config, position?)`
 
@@ -75,8 +72,8 @@ Adds a new entry in the Timeline instance.
 #### `.play() / .pause() / .resume() / .stop()`
 Public methods that allow you to start/stop/pause/resume the update. When paused `start()` will also resume.
 
-#### `.seek(time | label | relative)`
-A public methods that allows you to jump to a certain point in the update:
+#### `.seek(time | label)`
+A public methods that allows you to jump to a certain point in the time of the update:
 * at a specified *label*,
 * at fixed number of seconds (a number smalled than of the total duration).
 
@@ -87,11 +84,34 @@ Allows you to set how many times the update should repeat. You can also use `Inf
 Allows you to register a new label for a given string name and a label or INT number value (less than the total duration).
 
 #### Callbacks
-The `.onStart(cb)` / `onUpdate(cb)` / `onComplete(cb)` / `onStop(cb)` / `onPause(cb)` / `onResume(cb)` are a series of public methods that allow you to configure a callback for each invokation: start, stop, update, complete or pause.
 
-#### Custom Interpolators
-The `.use(propName: string, interpolationFunction: InterpolatorFunction)` allows you to add custom interpolator functions for your instance.
+Callbacks give you the abillity to run your own functions at specific times in each timeline's life cycle. This might be needed when changing tween entries is not enough.
 
+##### `.onStart(callback)`
+Callback receives (`object`) parameter and is fired when calling `play()`, regardless of its entries delay settings. Useful for synchronising to other events or triggering actions you want to happen when the timeline starts.
+
+##### `.onUpdate(callback)`
+Add a callback which receives (`object`, `elapsed`[0-1 raw]) parameters. 
+
+Executed each time the timeline is updated, **after** the values have been actually mutated.
+
+##### `.onComplete(callback)`
+A callback which receives (`object`) parameter when finished. Executed when the timeline is finished normally (i.e. not stopped).
+
+##### `.onStop(callback)`
+A callback which receives (`object`) parameter and is fired when calling `stop()`, but not when it is completed normally.
+
+##### `.onPause(callback)`
+A callback which receives (`object`) parameter and is fired when calling `pause()`.
+
+##### `.onResume(callback)`
+A callback which receives (`object`) parameter and is fired when calling `resume()`.
+
+##### `.onRepeat(callback)`
+A callback which receives (`object`) parameter and is fired when a repeat iteration is complete, usually when elapsed reaches the value of 1. If the instance isn't configured with repeat, the callback never gets called.
+
+
+#### Example with Callbacks
 ```ts
 const timeline = new Timeline({ x: 0 });
 
@@ -102,23 +122,42 @@ timeline.onStart(obj, progress) => {
 
 // An update callback has an additional parameter `value`
 timeline.onUpdate((obj, progress) => {
-  // update the App state or manipulate the DOM directly
+  // manipulate the DOM directly
   // progress is a [0-1] value, where 0 is the start and 1 is the end
   console.log("At " + Math.round(progress * 100) + "%, state is", obj);
 })
 ```
 
-#### `state`, `progress`, `duration`, `isPlaying`, `isPaused`
-A series of getters and properties that reflect the state of the update:
-* the `state` object with all values (not a getter)
-* the [0-1] value `progress` which indicates how much of the `Timeline` update is complete
-* the total `duration` of all the `Timeline` entries 
-* `isPlaying` and `isPaused` are *boolean* getters and their returned values reflect the current `Timeline` state.
+#### Timeline State
+
+##### `.state`
+Property: `object` is the current state of the properties validated for interpolation. Why is it called "state"? Because our hooks for React/SolidJS etc, they all provide a mini-store to the Tween class, and this is to remove the assignment of one object and its properties from the hot update. This means `Timeline` will directly and internally update your App state without using `onUpdate`.
+
+##### `.getErrors()`
+Method: returns the errors map with all validation results.
+
+##### `.progress`
+Getter: `number` is the [0-1] value which indicates how much of the `Timeline` update is complete.
+
+##### `.isPlaying`
+Getter: `boolean` whether currently running.
+
+##### `.isPaused`
+Getter: `boolean` whether currently paused.
+
+##### `.isValidState`
+Getter: `boolean` whether initial values are validated.
+
+##### `.isValid`
+Getter: `boolean` whether no issues found, which means all initial values and entries values are valid.
+
+##### `.totalDuration`
+Getter: `number` the total duration in seconds, which is a sum of all entries duration (including their delay) multiplied by repeat value and repeat delay multiplied by repeat value.
 
 
-### Custom Interpolators
 
-For interpolation of various other object types, `Timeline` allows you to add custom interpolation functions.
+#### Extensions
+The `.use(propName: string, extensionConfig)` method allows you to set custom validation and interpolation functions for a property in your timeline instance.
 
 The package already comes with 2 built in interpolation functions:
 

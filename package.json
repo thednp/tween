@@ -1,34 +1,27 @@
 {
   "name": "@thednp/tween",
-  "version": "0.0.1",
-  "description": "✨ A Typescript sourced tweening engine with Tween and Timeline",
+  "version": "0.0.2",
+  "description": "🌸 A Typescript sourced tweening engine with Tween and Timeline",
   "homepage": "https://github.com/thednp/tween",
   "author": "thednp",
   "license": "MIT",
   "type": "module",
-  "browser": "./dist/index.iife.js",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
+  "sideEffects": false,
+  "browser": "./dist/tween.min.js",
+  "types": "./dist/tween/index.d.mts",
   "files": [
-    "wiki",
     "dist",
     "package.json",
     "README.md",
     "LICENSE"
   ],
   "exports": {
-    ".": {
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs"
-    },
-    "./react": {
-      "require": "./dist/react.cjs",
-      "import": "./dist/react.mjs"
-    },
-    "./solid": {
-      "require": "./dist/solid.cjs",
-      "import": "./dist/solid.mjs"
-    },
+    ".": "./dist/tween/index.mjs",
+    "./preact": "./dist/preact/preact.mjs",
+    "./react": "./dist/react/react.mjs",
+    "./solid": "./dist/solid/solid.mjs",
+    "./svelte": "./dist/svelte/tween.svelte.js",
+    "./vue": "./dist/vue/vue.mjs",
     "./package.json": "./package.json"
   },
   "bugs": {
@@ -41,17 +34,19 @@
   "scripts": {
     "pre-test": "pnpm clean-coverage",
     "clean-coverage": "rm -rf coverage .nyc_output",
-    "test": "pnpm pre-test && vitest",
-    "test-ui": "pnpm pre-test && vitest --ui",
-    "badges": "npx -p dependency-version-badge update-badge typescript vitest vite",
+    "test": "vitest",
+    "test-ui": "vitest --ui",
     "format": "deno fmt src",
-    "lint": "pnpm lint:ts && pnpm lint:types",
+    "lint": "pnpm lint:ts",
     "lint:ts": "deno lint src",
     "lint:types": "tsc --noEmit",
     "fix:ts": "deno lint src --fix",
-    "build": "tsdown && vite build",
-    "prepublishOnly": "pnpm update --latest && pnpm format && pnpm lint && pnpm build && pnpm badges",
-    "clean": "rm -rf node_modules playground/**/node_modules playground/**/package-lock.json playground/**/pnpm-lock.yaml playground/**/bun.lockb playground/**/deno.lock",
+    "build_": "tsdown && vite build",
+    "build": "tsdown",
+    "prepublishOnly": "pnpm update --latest && pnpm update -r && pnpm format && pnpm lint && pnpm build && pnpm badges",
+    "clean:playground": "rm -rf playground/**/node_modules playground/**/package-lock.json playground/**/pnpm-lock.yaml playground/**/bun.lockb playground/**/deno.lock",
+    "clean:test": "rm -rf test/node_modules test/package-lock.json test/pnpm-lock.yaml test/bun.lockb test/deno.lock",
+    "clean": "rm -rf node_modules && pnpm clean:playground && pnpm clean:test",
     "update-r": "pnpm clean && pnpm update -r --latest",
     "update-deps": "pnpm clean && pnpm update --latest"
   },
@@ -62,6 +57,10 @@
   "keywords": [
     "tween",
     "timeline",
+    "react",
+    "solid-js",
+    "svelte",
+    "preact",
     "cubic-bezier",
     "cubic-tween",
     "easing",
@@ -72,28 +71,43 @@
     "animations",
     "typescript"
   ],
-  "devDependencies": {
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/react": "^16.3.1",
-    "@types/node": "^25.0.6",
-    "@vitest/coverage-istanbul": "^4.0.17",
-    "@vitest/ui": "^4.0.17",
-    "happy-dom": "^20.1.0",
-    "tsdown": "0.20.0-beta.1",
+  "devDependencies_": {
+    "@types/node": "^25.1.0",
+    "tsdown": "0.20.1",
     "typescript": "^5.9.3",
-    "vite": "^7.3.1",
-    "vite-plugin-strip-comments": "^0.0.6",
-    "vitest": "^4.0.17"
+    "vite-plugin-strip-comments": "^0.0.9",
+    "vitest": "^4.0.18"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^6.2.4",
+    "@types/node": "^25.2.3",
+    "@types/react": "^19.2.14",
+    "@vitest/coverage-istanbul": "^4.0.18",
+    "@vitest/ui": "^4.0.18",
+    "happy-dom": "^20.6.1",
+    "react-dom": "^19.2.4",
+    "rollup-plugin-svelte": "^7.2.3",
+    "svelte-preprocess": "^6.0.3",
+    "tsdown": "^0.20.3",
+    "typescript": "^5.9.3",
+    "vite-plugin-strip-comments": "^0.0.9",
+    "vitest": "^4.0.18"
+  },
+  "dependencies": {
+    "@preact/signals": "^2.7.1",
+    "@thednp/dommatrix": "^3.0.2",
+    "@thednp/tween": "link:..",
+    "@types/react-dom": "^19.2.3",
+    "preact": "^10.28.3",
+    "react": "^19.2.4",
+    "solid-js": "^1.9.11",
+    "svelte": "^5.50.2",
+    "vitest": "^4.0.18",
+    "vue": "^3.5.28"
   },
   "packageManager": "pnpm@8.6.12",
   "engines": {
     "node": ">=20",
     "pnpm": ">=8.6.0"
-  },
-  "dependencies": {
-    "@types/react": "^19.2.8",
-    "react": "^19.2.3",
-    "solid-js": "^1.9.10"
-  },
-  "types": "./dist/index.d.cts"
+  }
 }

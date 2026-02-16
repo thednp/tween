@@ -1,69 +1,93 @@
-// import * as React from "react";
-import { useEffect, useRef, useState } from "react";
-import { Timeline, Tween, type TweenProps } from "@thednp/tween";
+import { useRef, useEffect } from "react";
+import { Timeline, Tween, dummyInstance, isServer, type TweenProps } from "@thednp/tween";
+import { useMiniStore } from "./miniStore.ts";
 
-export * from "@thednp/tween";
+export { Tween, Timeline, useMiniStore };
 
-export function useTween<T extends TweenProps>(initialValues: T) {
-  const [state, setState] = useState<T>({ ...initialValues });
+/**
+ * Hook for updating values with Tween.
+ * 
+ * **NOTE**: - configuration must be wrapped in `useEffect` or `eventListener`.
+ * This has two important aspects: never configure or start update loop in SSR
+ * and only configure or start the loop when component is mounted in the client.
+ * 
+ * @param initialValues - Initial tween values
+ * @returns [store, tween] Tuple of reactive store and Tween instance
+ * @example
+ * const App = () => {
+ *    const [state, tween] = useTween({ x: 0, y: 0 })
+ * 
+ *    useEffect(() => {
+ *      tween.to({ x: 100, y: 100 }).start()
+ *    }, [])
+ * 
+ *    return (
+ *      <div style={{ translate: `${state.x}px ${state.y}px` }} />
+ *    );
+ * }
+ */
+export const useTween = <T extends TweenProps>(initialValues: T) => {
+  if (isServer) {
+    return [initialValues, dummyInstance as unknown as Tween<T>] as const;
+  }
   const tweenRef = useRef<Tween<T> | null>(null);
-  const configureRef = useRef<((tween: Tween<T>) => void) | null>(null);
+  const state = useMiniStore(initialValues);
 
+  // istanbul ignore else @preserve
   if (!tweenRef.current) {
-    tweenRef.current = new Tween(initialValues).onUpdate((newState) => {
-      setState({ ...newState });
-    });
+    tweenRef.current = new Tween(state);
   }
 
   useEffect(() => {
-    // istanbul ignore next @preserve
-    if (tweenRef.current && configureRef.current) {
-      configureRef.current(tweenRef.current);
-    }
     return () => {
       tweenRef.current?.stop();
+      tweenRef.current?.clear();
     };
   }, []);
 
-  const setup = (configure: (tween: Tween<T>) => void) => {
-    configureRef.current = configure;
-  };
+  return [state, tweenRef.current] as [T, Tween<T>];
+};
 
-  return [state, tweenRef.current, setup] as [T, Tween<T>, typeof setup];
-}
-
-export function useTimeline<T extends TweenProps>(
-  initialValues: T,
-) {
-  const [state, setState] = useState<T>({ ...initialValues });
+/**
+ * Hook for sequencing values update with Timeline.
+ * 
+ * **NOTE**: - configuration must be wrapped in `useEffect` or `eventListener`.
+ * This has two important aspects: never configure or start update loop in SSR
+ * and only configure or start the loop when component is mounted in the client.
+ * 
+ * @param initialValues - Initial tween values
+ * @returns [store, timeline] Tuple of reactive store and Timeline instance
+ * @example
+ * const App = () => {
+ *    const [state, timeline] = useTimeline({ x: 0, y: 0 })
+ * 
+ *    useEffect(() => {
+ *      timeline.to({ x: 100, y: 100 }).start()
+ *    }, [])
+ * 
+ *    return (
+ *      <div style={{ translate: `${state.x}px ${state.y}px` }} />
+ *    );
+ * }
+ */
+export function useTimeline<T extends TweenProps>(initialValues: T) {
+  if (isServer) {
+    return [initialValues, dummyInstance as unknown as Timeline<T>] as const;
+  }
   const timelineRef = useRef<Timeline<T> | null>(null);
-  const configureRef = useRef<((timeline: Timeline<T>) => void) | null>(null);
+  const state = useMiniStore(initialValues);
 
+  // istanbul ignore else @preserve
   if (!timelineRef.current) {
-    timelineRef.current = new Timeline(initialValues).onUpdate((newState) =>
-      setState({ ...newState })
-    );
+    timelineRef.current = new Timeline(state);
   }
 
   useEffect(() => {
-    // istanbul ignore else @preserve
-    if (timelineRef.current) {
-      timelineRef.current.clear(); // always reset before possible re-config
-
-      // istanbul ignore else @preserve
-      if (configureRef.current) {
-        configureRef.current(timelineRef.current);
-      }
-    }
-
     return () => {
+      timelineRef.current?.clear();
       timelineRef.current?.stop();
     };
   }, []);
 
-  const setup = (configure: (timeline: Timeline<T>) => void) => {
-    configureRef.current = configure;
-  };
-
-  return [state, timelineRef.current, setup] as [T, Timeline<T>, typeof setup];
+  return [state, timelineRef.current] as [T, Timeline<T>];
 }

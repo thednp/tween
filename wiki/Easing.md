@@ -1,4 +1,4 @@
-## Easing
+## Easing in @thednp/tween
 
 ### Available `Easing` functions
 
@@ -27,7 +27,7 @@ _Credit where credit is due:_ these functions are derived from the original set 
 
 
 
-### Using a custom easing function
+### Using a Custom Easing Function
 
 Not only can you use any of the existing functions, but you can also provide your own, as long as it follows a couple of conventions:
 
@@ -56,3 +56,5 @@ tween.easing(tenStepEasing)
 ### External Easing Library
 
 Other easing functions can be created and used, see [BezierEasing](https://github.com/thednp/bezier-easing).
+
+😊 Happy tweening!

@@ -3,3 +3,8 @@ node_modules
 experiments
 coverage
 
+**/node_modules
+**/package-lock.json
+**/pnpm-lock.yaml
+**/bun.lockb
+**/deno.lock

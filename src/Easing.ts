@@ -1,5 +1,5 @@
 // Easing.ts
-import type { EasingFunction, EasingFunctionGroup } from "./types.ts";
+import type { EasingFunction, EasingFunctionGroup } from "./types.d.ts";
 
 /**
  * The Ease class provides a collection of easing functions for use with tween.js.

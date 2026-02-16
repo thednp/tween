@@ -32,8 +32,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: Build (if needed)
-        run: pnpm build # Optional
+      # - name: Build (not needed, it's included in prepublishOnly)
+      #   run: pnpm build # Optional
 
       - name: Test (optional but recommended)
         run: pnpm test

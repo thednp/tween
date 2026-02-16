@@ -1,45 +1,65 @@
 // Runtime.ts
-import { type Tween } from "./Tween.ts";
-import { type Timeline } from "./Timeline.ts";
+import type { TweenProps, AnimationItem } from "./types.d.ts";
 import { now } from "./Now.ts";
-import { TweenProps } from "./types.ts";
 
-type AnimationItem<T extends TweenProps = never> = Tween<T> | Timeline<T>;
+/**
+ * The runtime queue
+ */
+export const Queue: (AnimationItem | null)[] = new Array(10000).fill(null);
 
-export const Queue: AnimationItem[] = [];
+let rafID = 0;
+let queueLength = 0;
 
+/**
+ * The hot update loop updates all items in the queue,
+ * and stops automatically when there are no items left.
+ * @param t execution time (performance.now)
+ */
+export function Runtime(t = now()) {
+  let i = 0;
+  let writeIdx = 0;
+  
+  while (i < queueLength) {
+    const item = Queue[i++];
+    if (item && item.update(t)) {
+      Queue[writeIdx++] = item;
+    }
+  }
+
+  queueLength = writeIdx;
+
+  if (queueLength === 0) {
+    cancelAnimationFrame(rafID);
+    rafID = 0;
+  } else {
+    rafID = requestAnimationFrame(Runtime);
+  }
+}
+
+/**
+ * Add a new item to the update loop.
+ * If it's the first item, it will also start the update loop.
+ * @param newItem Tween / Timeline
+ */
 export function addToQueue<T extends TweenProps>(
   newItem: AnimationItem<T>,
 ): void {
   const item = newItem as unknown as AnimationItem<never>;
-  if (Queue.includes(item)) return;
-  Queue.push(item);
+  Queue[queueLength++] = item;
+
   if (!rafID) Runtime();
 }
 
+/**
+ * Remove item from the update loop.
+ * @param newItem Tween / Timeline
+ */
 export function removeFromQueue<T extends TweenProps>(
   removedItem: AnimationItem<T>,
 ): void {
-  Queue.splice(
-    Queue.indexOf(removedItem as unknown as AnimationItem<never>),
-    1,
-  );
-}
-
-let rafID = 0;
-
-export function Runtime(t = now()) {
-  let i = 0;
-  while (i < Queue.length) {
-    if (Queue[i].update(t)) {
-      i += 1;
-    } else {
-      Queue.splice(i, 1);
-    }
+  const idx = Queue.indexOf(removedItem as unknown as AnimationItem<never>);
+  // istanbul ignore else @preserve
+  if (idx !== -1) {
+    Queue[idx] = null;
   }
-
-  if (Queue.length === 0) {
-    cancelAnimationFrame(rafID);
-    rafID = 0;
-  } else rafID = requestAnimationFrame(Runtime);
 }

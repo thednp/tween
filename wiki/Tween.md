@@ -1,55 +1,43 @@
 ## Tween
 
-A tiny, ultra-fast single-object tween engine. Simple, pure and flexible from/to animation with proper DX, chaining methods and support for nested objects. It's the core building block for more complex animations and a lightweight alternative to heavier tween libraries.
-Perfect for reactive stores (SolidJS, Svelte, React, etc), SVG/Canvas animations, or anything needing a single precise tween without overhead.
+A simple class constructor that creates tween objects. These objects store values, validates them and prepare them for interpolation. By default only number values are supported, but you can extend anytime.
 
-### Features
-* Chainable methods for best DX
-* Proper relative-to-current start values (captured at `.start()` unless `.from()` used)
-* Nested objects supported out-of-box
-* Custom interpolators via `Tween.use()`
-* Arrays, tuples, colors, paths via included interpolators
-* Callbacks: `onUpdate` (with `elapsed` and eased `progress`), `onComplete`, `onStop`
-* Manual `.update()` for custom timing loops
-* ~150 lines, blazing fast
-* `requestAnimationFrame` loop handled automatically when `.start()` called.
-
+### Prerequisites
+* [Timeline.md](Timeline.md) - our official `Timeline` guide
+* [Extend.md](Extend.md) - a complete guide on extending beyond original prototype
+* [Easing.md](Easing.md) - an extensive guide on easing functions.
+* Don't forget to install.
+  ```
+  npm install @thednp/tween
+  # or pnpm/yarn/bun/deno
+  ```
 
 ### Usage
 
 ```ts
-import { Tween, Easing, interpolateArray } from '@thednp/tween';
+import { Tween, Easing } from '@thednp/tween';
 
 // initial state
-const obj = { x: 0, y: 0, rotate: 0, rgb: [255,0,0], opacity: 1 };
+const obj = { x: 0 };
 
 // Create tween
 const tween1 = new Tween(obj)
-  // Optional: register interpolators (arrays work great for colors, vectors)
-  .use('rgb', interpolateArray)
-  .to({ x: 100, y: 200, rotate: 360, rgb: [0,255,0], opacity: 0.5 })
+  .to({ x: 100 })
   .duration(2)                  // 2 seconds
   .delay(0.5)                   // 0.5s delay
   .easing(Easing.Elastic.Out)
-  .onUpdate((state, elapsed, eased) => {
+  .onUpdate((state, elapsed) => {
     // elapsed: raw [0-1] progress
-    // eased: progress after easing function
-    // update DOM / store / canvas directly
-    console.log('Progress:', eased, state);
+    // update DOM / canvas directly
+    console.log('Progress:', elapsed, state);
+  })
+  .onStart((state) => {
+    console.log('Started tweening!', state);
   })
   .onComplete((state) => {
     console.log('Done!', state);
   })
-  .start();     // begins animation right away
-
-// Or chain from current values later
-const tween2 = new Tween(obj)
-  .duration(1)
-  .easing(Easing.Back.InOut);
-
-tween2.to({ x: 300 }).start();
-// later:
-tween2.to({ y: 400 }).startFromLast(); // continues from current values
+  .start();     // begins tweening right away
 ```
 
 ### API
@@ -58,38 +46,28 @@ tween2.to({ y: 400 }).startFromLast(); // continues from current values
 Creates a new **Tween** instance targeting the provided object, which means this object is updated during the update runtime.
 
 #### `.to(endValues)`
-Sets the target **end** values. Can be called multiple times; latest wins.
+Sets the **end** values. Can be called multiple times; latest wins.
 
 #### `.from(startValues)`
 Explicitly sets **start** values (overrides auto-capture at start).
 
 #### `.duration(seconds = 1)`
-Sets animation duration in seconds (converted internally to ms).
+Sets tween duration in seconds (converted internally to milliseconds).
 
 #### `.delay(seconds = 0)`
 Sets start delay in seconds. More complex arrangements might require delaying a tween before it actually starts running.
 
-You can do that using the `delay` method:
-
-```ts
-tween.delay(1.5)
-```
-
-This tween will start updating 1.5 seconds after the `start()` method has been called.
-
+#### `.repeatDelay(seconds = 0)`
+Sets repeat delay in seconds (converted internally to milliseconds). The effect is that **every** repeat iteration will start after a set number of seconds.
 
 #### `.easing(function = linear)`
-Sets the easing function (from Easing object, custom or external). `Tween` will perform the interpolation between values (i.e. the easing) in a linear manner by default, so the change will be directly proportional to the elapsed time. This is predictable but also quite uninteresting visually wise.
+Sets the easing function (from Easing object, custom or external). `Tween` will perform the interpolation between values (i.e. the easing) in a linear manner by default.
 
-This behaviour can be easily changed using the `easing()` method. For example:
+#### `.repeat(times = 0)`
+Sets how many times to repeat the tween, default is zero.
 
-```ts
-import { Tween, Easing } from '@thednp/tween'
-// ...
-tween.easing(Easing.Quadratic.In)
-```
-
-This will result in the tween slowly starting to change towards the final value, accelerating towards the middle, and then quickly reaching its final value. In contrast, `Easing.Quadratic.Out` would start changing quickly towards the value, but then slow down as it approaches the final value.
+#### `.yoyo(yoyo = false)`
+Makes every un-even iteration run in reverse. The resulted elapsed value from easing function is also reversed, which means we don't need to use a `reverseEasing`. 
 
 #### `.start(time?, overrideStart?)`
 Starts the update loop and fires the `onStart` callback.
@@ -104,6 +82,9 @@ Convenience: starts and forces re-capture of current values (for sequential twee
 
 #### `.stop()`
 Stops animation and fires `onStop` callback. Stopping a tween that was never started or that has already been stopped has no effect. No errors are thrown either.
+
+#### `.reverse()`
+While tween is running, calling `reverse()` will switch starting values with end values and invert the eased progress value (no need to use `reverseEasing`). If the instance must repeat a number of times, the repeat value is also updated to mirror the state in which `reverse()` was called.
 
 #### `.update(time?, autoStart?)`
 Updates the state and fires the `onUpdate` callback. Returns true if still active.
@@ -121,72 +102,99 @@ tween.start()
 ```
 When no active `Tween` objects remain, the global update loop stops automatically.
 
-### Callbacks
 
-Another powerful feature is to be able to run your own functions at specific times in each tween's life cycle. This is usually required when changing properties is not enough.
+#### Callbacks
 
-For example, suppose you're trying to animate some object whose properties can't be accessed directly but require you to call a setter instead. You can use an `update` callback to read the new updated values and then manually call the setters. All callbacks are passed the tweened `object` as the first parameter, and the second parameter as the [0-1] elapsed (or progress).
+Callbacks give you the abillity to run your own functions at specific times in each tween's life cycle. This might be needed when changing properties is not enough.
 
-#### `.onStart(callback)`
+##### `.onStart(callback)`
 Callback receives (`object`) parameter and is fired right before the tween starts animating, after any delay time specified by the `delay()` method.
 
 It's great for synchronising to other events or triggering actions you want to happen when a tween starts.
 
+##### `.onUpdate(callback)`
+Add a callback which receives (`object`, `elapsed`[0-1 raw]) parameters. 
 
-#### `.onUpdate(callback)`
-Add a callback which receives (`object`, `elapsed`[0-1 raw], `value`[0-1 after easing]) parameters. 
+Executed each time the tween is updated, **after** the values have been actually mutated.
 
-Executed each time the tween is updated, after the values have been actually updated.
+##### `.onComplete(callback)`
+A callback which receives (`object`) parameter when finished. Executed when the tween is finished normally (i.e. not stopped).
 
-#### `.onComplete(callback)`
-A callback which receives (`object`) parameter when finished. Executed when a tween is finished normally (i.e. not stopped).
-
-#### `.onStop(callback)`
+##### `.onStop(callback)`
 A callback which receives (`object`) parameter and is fired when calling `stop()`, but not when it is completed normally.
 
-#### Custom Interpolators
-The `.use(propName: string, interpolationFunction: InterpolatorFunction)` allows you to add custom interpolator functions for your instance.
+##### `.onPause(callback)`
+A callback which receives (`object`) parameter and is fired when calling `pause()`.
+
+##### `.onResume(callback)`
+A callback which receives (`object`) parameter and is fired when calling `resume()`.
+
+##### `.onRepeat(callback)`
+A callback which receives (`object`) parameter and is fired when a repeat iteration is complete, usually when elapsed reaches the value of 1. If the instance isn't configured with repeat, the callback never gets called.
 
 
-### Tween State
-#### `.isPlaying`
+#### Tween State
+
+##### `.state`
+Property: `object` is the current state of the properties validated for interpolation. Why is it called "state"? Because our hooks for React/SolidJS etc, they all provide a mini-store to the Tween class, and this is to remove the assignment of one object and its properties from the hot update. Which means `Tween` will directly and internally update your App state without using `onUpdate`.
+
+##### `.getErrors()`
+Method: returns the errors map with all validation results.
+
+##### `.isPlaying`
 Getter: `boolean` whether currently running.
 
+##### `.isPaused`
+Getter: `boolean` whether currently paused.
 
-### Custom Interpolators
+##### `.isValidState`
+Getter: `boolean` whether initial values are validated.
 
-Same as [Timeline](Timeline.md) - use the provided `interpolateArray` and `interpolatePath`.
+##### `.isValid`
+Getter: `boolean` whether no issues found, which all initial values and end values are valid.
+
+##### `.totalDuration`
+Getter: `number` the total duration in seconds. It's calculated as a sum of the delay, duration multiplied by repeat value and repeat delay multiplied by repeat value.
+
+
+### Extensions
+The `.use(propName: string, extendConfig)` method allows you to add custom validation and interpolation functions for properties of your `Tween` instance.
+
+#### Built In Extensions
 
 **Example for colors**:
 
 ```ts
-import { Tween, interpolateArray } from "@thednp/tween";
+import { Tween, arrayConfig } from "@thednp/tween";
 
-new Tween({ rgb: [255,0,0] })
-  .use('rgb', interpolateArray)
+const target = document.getElementById('my-target');
+
+const tween = new Tween({ rgb: [255,0,0] })
+  .use('rgb', arrayConfig)
   .to({ rgb: [0,255,0] })
   .onUpdate((state) => {
-    // update App state
-    // OR update DOM elements directly
+    // update DOM elements directly
     Object.assign(
       target.style,
-      { "background-color": "rgb(" + state.rgb.join(",") + ")" }),
+      { "background-color": "rgb(" + state.rgb + ")" }),
   });
-  .duration(1.5)
-  .start();
+  .duration(1.5);
+
+// start whenever needed
+tween.start();
 ```
 
 **Example for SVG path**
 
-The `interpolatePath` interpolator adds SVG morph capability and assumes compatible paths (same segment count/types and coordinate counts — use [svg-path-commander](https://github.com/thednp/svg-path-commander) to process if needed).
+The `pathConfig` extension adds SVG morph capability and assumes compatible paths (same segment count/types and coordinate counts — use [svg-path-commander](https://github.com/thednp/svg-path-commander) to process if needed).
 
 ```ts
-import { Tween, interpolatePath } from "@thednp/tween";
+import { Tween, pathConfig } from "@thednp/tween";
 
 // Use a fast `PathArray` to string
 // For faster performance use `pathToString` from svg-path-commander
 function pathToString(path: ["M" | "C" | "L", ...number[]][]) {
-  return p.map(([c, ...args]) => c + args.join(",")).join(" ");
+  return p.map(([c, ...args]) => c + args).join("");
 }
 
 const path = document.getElementById("my-path");
@@ -212,7 +220,7 @@ const triangle = [
 
 const tween = new Tween({ path: square })
   // you can use any property name you want
-  .use('path', interpolatePath)
+  .use('path', pathConfig)
   // `d` might be a good choice as well
   .to({ path: triangle })
   .onUpdate(state => {
@@ -228,3 +236,8 @@ const tween = new Tween({ path: square })
 * The example provides ready-made `PathArray` objects, they usually require prior preparation manually or using some script to [equalize segments](https://minus-ze.ro/posts/morphing-arbitrary-paths-in-svg/);
 * Continuous `path` updates between multiple shapes requires that **all** path values are compatible, which means they all have same amount of segments and all segments are of the same type (ideal are `[[M, x, y], ...[L, x, y]], ` OR `[[M, x, y], ...[C, cx1, cy1, cx2, cy2, x, y]], `);
 * Our [svg-path-commander](https://github.com/thednp/svg-path-commander/) provides all the tools necessary to process path strings, optimize and even equalize segments (work in progress).
+
+
+If your use case requires a special kind of interpolation, consider creating a [custom extension](#extensions).
+
+😊 Happy tweening!
