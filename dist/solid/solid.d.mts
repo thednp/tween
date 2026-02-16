@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween primitives for SolidJS v0.0.2 (https://github.com/thednp/tween)
+* @thednp/tween primitives for SolidJS v0.0.3 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */

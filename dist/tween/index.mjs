@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween  v0.0.2 (https://github.com/thednp/tween)
+* @thednp/tween  v0.0.3 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -1922,7 +1922,7 @@ var Timeline = class {
 
 //#endregion
 //#region package.json
-var version = "0.0.2";
+var version = "0.0.3";
 
 //#endregion
 export { Easing, Queue, Runtime, Timeline, Tween, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, roundTo, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };

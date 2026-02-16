@@ -1,5 +1,5 @@
 {
-  "name": "tweenjs-preact",
+  "name": "tween-preact",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,8 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@preact/signals": "^2.8.1",
-    "@thednp/tween": "^0.0.2",
+    "@thednp/tween": "^0.0.3",
     "preact": "^10.28.3"
   },
   "devDependencies": {

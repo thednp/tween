@@ -1,8 +1,8 @@
+import { useEffect } from "preact/hooks";
 import { useTween, useTimeline } from "@thednp/tween/preact";
 import { arrayConfig, objectConfig, transformConfig, Easing, type TransformStep } from "@thednp/tween";
 import preactLogo from "./assets/preact.svg";
 import viteLogo from "/vite.svg";
-import { useEffect } from "preact/hooks";
 import "./app.css";
 
 export function App() {

@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { Easing } from "@thednp/tween";
   import { useTween, useTimeline } from "@thednp/tween/vue";
-  // import { useTween, useTimeline } from "../../../src/vue/index";
 
   const [twState, tween] = useTween({ x: 0 });
   const [tlState, timeline] = useTimeline({ x: 0, y: 0 });
