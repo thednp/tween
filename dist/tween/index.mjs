@@ -247,7 +247,7 @@ function deepAssign(target, source) {
 	const len = keys.length;
 	while (i < len) {
 		const key = keys[i++];
-		if (!objectHasProp(source, key)) continue;
+		if (key === "__proto__" || key === "constructor" || !objectHasProp(source, key)) continue;
 		const targetVal = target[key];
 		const sourceVal = source[key];
 		if (isArray(sourceVal)) {
