@@ -15,27 +15,13 @@
     .to({ x: 0, y: 0, duration: 1, easing: Easing.Back.InOut }, "+=1");
 
   console.log(tween, timeline);
-
-  const startTween = () => {
-    tween
-      .to({
-        x: twState.x === 150 ? 0 : 150,
-      })
-      .startFromLast();
-  };
-  const stopTween = () => {
-    tween.stop();
-  };
-  const startTimeline = () => {
-    timeline.play();
-  };
-  const pauseTimeline = () => {
-    timeline.pause();
-  };
 </script>
 
 <main>
-  <div style:translate={`${tlState.x}px ${tlState.y}px`}>
+  <div
+    style:translate={`${tlState.x}px ${tlState.y}px`}
+    style:display="inline-block"
+  >
     <img
       src={viteLogo}
       class="logo"
@@ -52,15 +38,30 @@
   <h1>Svelte + Tween</h1>
 
   <div class="card">
-    <button onclick={startTween}>Start</button>
-    <button onclick={stopTween}>Stop</button>
-    <button onclick={startTimeline}>Play</button>
-    <button onclick={pauseTimeline}>Pause</button>
+    <h2>Tween</h2>
+    <button
+      onclick={() =>
+        !tween.isPlaying &&
+        (twState.x !== 150
+          ? tween.to({ x: 150 }).startFromLast()
+          : tween.to({ x: 0 }).startFromLast())
+      }
+    >
+      Start
+    </button>
+    <button onclick={() => tween.pause()}>Pause</button>
+    <button onclick={() => tween.reverse()}>Reverse</button>
+    <button onclick={() => tween.stop()}>Stop</button>
   </div>
-
-  <p>
-    Edit <code>src/App.tsx</code> and save to test HMR
-  </p>
+  <div class="card">
+    <h2>Timeline</h2>
+    <button onclick={() => timeline.play()}>Play</button>
+    <button onclick={() => timeline.pause()}>Pause</button>
+    <button onclick={() => timeline.reverse()}>Reverse</button>
+    <button onclick={() => timeline.seek(0)}>Seek Start</button>
+    <button onclick={() => timeline.seek(2)}>Seek 2s</button>
+    <button onclick={() => timeline.stop()}>Stop</button>
+  </div>
 </main>
 
 <style>

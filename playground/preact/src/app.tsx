@@ -1,30 +1,17 @@
 import { useEffect } from "preact/hooks";
 import { useTween, useTimeline } from "@thednp/tween/preact";
-import { arrayConfig, objectConfig, transformConfig, Easing, type TransformStep } from "@thednp/tween";
+import { Easing } from "@thednp/tween";
 import preactLogo from "./assets/preact.svg";
 import viteLogo from "/vite.svg";
 import "./app.css";
 
 export function App() {
-  const [twState, tween] = useTween({
-    x: 0,
-    deep: {r: 220, g: 0, b: 0},
-    rgb: [0,0,255],
-    transform: [["rotate", 15, 45], ["translate", 15, 20]] as TransformStep[]
-  });
+  const [twState, tween] = useTween({ x: 0 });
   const [tlState, timeline] = useTimeline({ x: 0, y: 0 });
 
   useEffect(() => {
     tween
-    .use("rgb", arrayConfig)
-    .use("deep", objectConfig)
-    .use("transform", transformConfig)
-    .to({
-      x: 150,
-      deep: {r: 0, g: 200, b: 0},
-      rgb: [255,0,0],
-      transform: [["rotate", 0, 0], ["translate", 0, 0]]
-    })
+    .to({ x: 150 })
     .easing(Easing.Quadratic.InOut).duration(1.5);
 
     timeline
@@ -38,7 +25,7 @@ export function App() {
 
   return (
     <>
-      <div style={`translate: ${tlState.x}px ${tlState.y}px`}>
+      <div style={`translate: ${tlState.x}px ${tlState.y}px; display: inline-block`}>
         <img
           src={viteLogo}
           className="logo"
@@ -53,20 +40,30 @@ export function App() {
         />
       </div>
       <h1>Preact + Tween</h1>
-      <div className="card">
+      <div class="card">
+        <h2>Tween</h2>
         <button
           onClick={() =>
-            tween.to({ x: twState.x === 150 ? 0 : 150 }).startFromLast()
+            !tween.isPlaying &&
+            (twState.x !== 150
+              ? tween.to({ x: 150 }).startFromLast()
+              : tween.to({ x: 0 }).startFromLast())
           }
         >
           Start
         </button>
+        <button onClick={() => tween.pause()}>Pause</button>
+        <button onClick={() => tween.reverse()}>Reverse</button>
         <button onClick={() => tween.stop()}>Stop</button>
+      </div>
+      <div class="card">
+        <h2>Timeline</h2>
         <button onClick={() => timeline.play()}>Play</button>
         <button onClick={() => timeline.pause()}>Pause</button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+        <button onClick={() => timeline.reverse()}>Reverse</button>
+        <button onClick={() => timeline.seek(0)}>Seek Start</button>
+        <button onClick={() => timeline.seek(2)}>Seek 2s</button>
+        <button onClick={() => timeline.stop()}>Stop</button>
       </div>
     </>
   );

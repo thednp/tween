@@ -1,75 +1,48 @@
 <script setup lang="ts">
-  import { Easing } from "@thednp/tween";
-  import { useTween, useTimeline } from "@thednp/tween/vue";
+import { Easing } from "@thednp/tween";
+import { useTween, useTimeline } from "@thednp/tween/vue";
 
-  const [twState, tween] = useTween({ x: 0 });
-  const [tlState, timeline] = useTimeline({ x: 0, y: 0 });
+const [twState, tween] = useTween({ x: 0 });
+const [tlState, timeline] = useTimeline({ x: 0, y: 0 });
 
-  tween.to({ x: 150 }).easing(Easing.Circular.InOut).duration(1.5);
+tween.to({ x: 150 }).easing(Easing.Circular.InOut).duration(1.5);
 
-  timeline
-    .repeat(1)
-    .repeatDelay(2)
-    .onRepeat((obj) => console.log("onRepeat", obj))
-    .to({ x: 250, duration: 2, easing: Easing.Quadratic.Out })
-    .to({ y: 250, duration: 2, easing: Easing.Bounce.Out }, "-=1")
-    .to({ x: 0, y: 0, duration: 1, easing: Easing.Back.InOut }, "+=1");
+timeline
+  .to({ x: 250, duration: 2, easing: Easing.Quadratic.Out })
+  .to({ y: 250, duration: 2, easing: Easing.Bounce.Out }, "-=1")
+  .to({ x: 0, y: 0, duration: 1, easing: Easing.Back.InOut }, "+=1");
 
-  console.log(tween, timeline);
-
-  const startTween = () => {
-    tween
-      .to({
-        x: twState.x === 150 ? 0 : 150,
-      })
-      .startFromLast();
-  };
-  const stopTween = () => {
-    tween.stop();
-  };
-  const pauseTween = () => {
-    tween.pause();
-  };
-
-  const startTimeline = () => {
-    timeline.play();
-  };
-  const pauseTimeline = () => {
-    timeline.pause();
-  };
-  const stopTimeline = () => {
-    timeline.stop();
-  };
-
+console.log(tween, timeline);
 </script>
 
 <template>
-  <div :style="{ translate: `${tlState.x}px ${tlState.y}px` }">
-    <img
-      src="/vite.svg" class="logo" alt="Vite logo"
-      :style="{ translate: `${twState.x}px` }"
-    />
-    <img
-      src="./assets/vue.svg" class="logo vue" alt="Vue logo"
-      :style="{ translate: `${-twState.x}px` }"
-    />
+  <div :style="{ translate: `${tlState.x}px ${tlState.y}px`, display: 'inline-block' }">
+    <img src="/vite.svg" class="logo" alt="Vite logo" :style="{ translate: `${twState.x}px` }" />
+    <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" :style="{ translate: `${-twState.x}px` }" />
   </div>
   <h1>Tween + Vue</h1>
 
   <div class="card">
     <h2>Tween</h2>
 
-    <button type="button" @click="startTween">Start</button>
-    <button type="button" @click="pauseTween">Pause</button>
-    <button type="button" @click="stopTween">Stop</button>
+    <button type="button" @click="() => {
+      tween
+        .to({ x: twState.x === 150 ? 0 : 150 })
+        .startFromLast();
+    }">Start</button>
+    <button type="button" @click="() => tween.pause()">Pause</button>
+    <button type="button" @click="() => tween.reverse()">Reverse</button>
+    <button type="button" @click="() => tween.stop()">Stop</button>
   </div>
 
   <div class="card">
     <h2>Timeline</h2>
 
-    <button type="button" @click="startTimeline">Start</button>
-    <button type="button" @click="pauseTimeline">Pause</button>
-    <button type="button" @click="stopTimeline">Stop</button>
+    <button type="button" @click="() => timeline.play()">Play</button>
+    <button type="button" @click="() => timeline.pause()">Pause</button>
+    <button type="button" @click="() => timeline.seek(0)">Seek</button>
+    <button type="button" @click="() => timeline.reverse()">Reverse</button>
+    <button type="button" @click="() => timeline.stop()">Stop</button>
   </div>
 
   <div class="card">
@@ -87,7 +60,9 @@
   transition: filter 300ms;
 }
 
-button + button { margin-left: 1rem }
+button+button {
+  margin-left: 1rem
+}
 
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
