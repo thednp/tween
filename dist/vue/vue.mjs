@@ -36,7 +36,7 @@ function defineArrayProxy(index, value, target, sourceLen, notifyListeners) {
 		target[index] = subArray;
 	} else {
 		let currentValue = value;
-		let getter = () => currentValue;
+		const getter = () => currentValue;
 		const setter = (newVal) => {
 			currentValue = newVal;
 			if (itemIsLast) notifyListeners();
@@ -90,14 +90,14 @@ function miniStore(init) {
 //#region src/vue/index.ts
 /**
 * Vue composable for updating values with Tween.
-* 
+*
 * @param initialValues - Initial tween values
 * @returns [store, tween] Tuple of reactive store and Tween instance
-* 
+*
 * @example
 * <script setup lang="ts">
 *    const [state, tween] = useTween({ x: 0, y: 0 })
-* 
+*
 *    // configuration is free-form, no re-render ever happens
 *    tween.to({ x: 100, y: 100 })
 *
@@ -121,14 +121,14 @@ function useTween(initialValues) {
 }
 /**
 * Vue composable for sequencing values update with Timeline.
-* 
+*
 * @param initialValues - Initial tween values
 * @returns [store, timeline] Tuple of reactive store and Timeline instance
-* 
+*
 * @example
 * <script setup lang="ts">
 *    const [state, timeline] = useTimeline({ x: 0, y: 0 })
-* 
+*
 *    // configuration is free-form
 *    timeline.to({ x: 100, y: 100 })
 *
@@ -136,7 +136,7 @@ function useTween(initialValues) {
 *      timeline.start()
 *    })
 * <\/script>
-* 
+*
 * <template>
 *  <div :style="{ translate: `${state.x}px ${state.y}px` }" />
 * </template>

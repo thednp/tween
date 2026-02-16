@@ -46,7 +46,7 @@ export const interpolateObject: InterpolatorFunction<BaseTweenProps> = <
  * @param propName The property name to which this object belongs to
  * @param target The target object itself
  * @param ref A reference object to compare our target to
- * @returns A [boolean, string?] tuple which represents [validity, "reason why not valid"]  
+ * @returns A [boolean, string?] tuple which represents [validity, "reason why not valid"]
  */
 export const validateObject = (
   propName: string,
@@ -65,7 +65,7 @@ export const validateObject = (
     const key = keys[i++];
     const value = target[key];
 
-    if (value === null || value === undefined){
+    if (value === null || value === undefined) {
       return [
         false,
         `Property "${key}" from "${propName}" is null/undefined.`,
@@ -78,10 +78,12 @@ export const validateObject = (
     if (!isNumber(value)) {
       return [
         false,
-        (`Property "${key}" from "${propName}" must be a number.` +
-        `${isPlainObject(value)
-          ? " Deeper nested objects are not supported."
-          : ` Unsupported value: "${typeof value}".`}`),
+        `Property "${key}" from "${propName}" must be a number.` +
+        `${
+          isPlainObject(value)
+            ? " Deeper nested objects are not supported."
+            : ` Unsupported value: "${typeof value}".`
+        }`,
       ];
     }
 

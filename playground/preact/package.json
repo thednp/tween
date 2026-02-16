@@ -9,13 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@preact/signals": "^2.7.0",
-    "@thednp/tween": "^0.0.2",
+    "@preact/signals": "^2.8.1",
+    "@thednp/tween": "workspace:^",
     "preact": "^10.28.3"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.10.3",
-    "@types/node": "^25.2.1",
+    "@types/node": "^25.2.3",
     "typescript": "~5.9.3",
     "vite": "^7.3.1"
   }

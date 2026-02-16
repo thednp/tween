@@ -1,5 +1,5 @@
 // Runtime.ts
-import type { TweenProps, AnimationItem } from "./types.d.ts";
+import type { AnimationItem, TweenProps } from "./types.d.ts";
 import { now } from "./Now.ts";
 
 /**
@@ -18,7 +18,7 @@ let queueLength = 0;
 export function Runtime(t = now()) {
   let i = 0;
   let writeIdx = 0;
-  
+
   while (i < queueLength) {
     const item = Queue[i++];
     if (item && item.update(t)) {

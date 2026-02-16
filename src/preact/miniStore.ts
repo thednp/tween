@@ -49,7 +49,7 @@ function defineArrayProxy<T extends ArrayVal>(
     target[index] = subArray;
   } else {
     let currentValue = value;
-    let getter = () => currentValue;
+    const getter = () => currentValue;
     const setter = (newVal: typeof value) => {
       currentValue = newVal;
       if (itemIsLast) {
@@ -75,7 +75,7 @@ function defineStateProxy<T extends Omit<TweenProps, "_proxy">>(
   const valueIsArray = isArray(value);
   let currentValue = value as ArrayVal | ArrayVal[];
 
-  let getter = () => currentValue;
+  const getter = () => currentValue;
   let setter;
 
   if (valueIsArray) {
@@ -162,9 +162,7 @@ export function useMiniStore<T extends TweenProps>(initialValue: T) {
 
   useEffect(
     () =>
-      storeRef.current!.subscribe(() =>
-        setVersion((v) => v === 2 ? 0 : v + 1)
-      ),
+      storeRef.current!.subscribe(() => setVersion((v) => v === 2 ? 0 : v + 1)),
     [],
   );
 

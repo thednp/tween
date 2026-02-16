@@ -28,7 +28,7 @@ export const isPlainObject = (
 export const isDeepObject = (value: unknown): value is DeepObject =>
   isPlainObject(value) && Object.values(value).some(isPlainObject);
 
-export const isServer = typeof window === 'undefined';
+export const isServer = typeof window === "undefined";
 
 const instanceMethods = [
   "play",
@@ -87,7 +87,7 @@ export const roundTo = (n: number, round: number) => {
 /**
  * A small utility to deep assign up to one level deep nested objects.
  * This is to prevent breaking reactivity of miniStore.
- * 
+ *
  * **NOTE** - This doesn't perform ANY check and expects objects to
  * be validated beforehand.
  * @param target The target to assign values to
@@ -146,7 +146,7 @@ export function deepAssign<T extends TweenProps>(
 /**
  * Creates a clone of a target object / array without its
  * proxy elements / properties, only their values.
- * 
+ *
  * **NOTE** - The utility is useful to create deep clones as well.
  * @param value An object / array with proxy elements
  * @returns the object / array value without proxy elements
@@ -161,14 +161,14 @@ export const deproxy = <T>(value: T): T => {
     for (const key in value) {
       // istanbul ignore else @preserve
       if (Object.prototype.hasOwnProperty.call(value, key)) {
-        result[key] = deproxy((value)[key]);
+        result[key] = deproxy(value[key]);
       }
     }
     return result as T;
   }
 
   return value;
-}
+};
 
 /**
  * Test values validity or their compatibility with the validated ones
@@ -247,7 +247,9 @@ export function validateValues<T extends TweenProps>(
     // Any value here is either not valid or not supported yet
     errors.set(
       key,
-      `Property "${key}" of type "${isArray(value) ? "array" : typeof value}" is not supported yet.`,
+      `Property "${key}" of type "${
+        isArray(value) ? "array" : typeof value
+      }" is not supported yet.`,
     );
   }
   errors.delete("init");

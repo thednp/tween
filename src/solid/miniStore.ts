@@ -1,5 +1,10 @@
 import { createSignal } from "solid-js";
-import { isArray, isPlainObject, type TweenProps, type ArrayVal } from "@thednp/tween";
+import {
+  type ArrayVal,
+  isArray,
+  isPlainObject,
+  type TweenProps,
+} from "@thednp/tween";
 
 const STATE_PROXY = "_proxy";
 const proxyProps = {
@@ -42,7 +47,7 @@ function defineArrayProxy<T extends ArrayVal>(
     target[index] = subArray;
   } else {
     let currentValue = value;
-    let getter = () => currentValue;
+    const getter = () => currentValue;
     const setter = (newVal: typeof value) => {
       currentValue = newVal;
       if (itemIsLast) {

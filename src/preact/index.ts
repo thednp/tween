@@ -1,26 +1,32 @@
 import { useEffect, useRef } from "preact/hooks";
-import { Timeline, Tween, isServer, dummyInstance, type TweenProps } from "@thednp/tween";
+import {
+  dummyInstance,
+  isServer,
+  Timeline,
+  Tween,
+  type TweenProps,
+} from "@thednp/tween";
 import { useMiniStore } from "./miniStore.ts";
 
-export { Tween, Timeline, useMiniStore };
+export { Timeline, Tween, useMiniStore };
 
 /**
  * Hook for updating values with Tween.
- * 
+ *
  * **NOTE**: - configuration must be wrapped in `useEffect` or `eventListener`.
  * This has two important aspects: never configure or start update loop in SSR
  * and only configure or start the loop when component is mounted in the client.
- * 
+ *
  * @param initialValues - Initial tween values
  * @returns [store, tween] Tuple of reactive store and Tween instance
  * @example
  * const App = () => {
  *    const [state, tween] = useTween({ x: 0, y: 0 })
- * 
+ *
  *    useEffect(() => {
  *      tween.to({ x: 100, y: 100 }, 1000).start()
  *    }, [])
- * 
+ *
  *    return (
  *      <div style={{ translate: `${state.x}px ${state.y}px` }} />
  *    );
@@ -49,21 +55,21 @@ export function useTween<T extends TweenProps>(initialValues: T) {
 
 /**
  * Hook for sequencing values update with Timeline.
- * 
+ *
  * **NOTE**: - configuration must be wrapped in `useEffect` or `eventListener`.
  * This has two important aspects: never configure or start update loop in SSR
  * and only configure or start the loop when component is mounted in the client.
- * 
+ *
  * @param initialValues - Initial tween values
  * @returns [store, timeline] Tuple of reactive store and Timeline instance
  * @example
  * const App = () => {
  *    const [state, timeline] = useTimeline({ x: 0, y: 0 })
- * 
+ *
  *    useEffect(() => {
  *      timeline.to({ x: 100, y: 100 }).start()
  *    }, [])
- * 
+ *
  *    return (
  *      <div style={{ translate: `${state.x}px ${state.y}px` }} />
  *    );

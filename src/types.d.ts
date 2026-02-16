@@ -1,9 +1,10 @@
 // types.ts;
-import type { Tween } from "./Tween";
-import type { Timeline } from "./Timeline";
+import type { Tween } from "./Tween.ts";
+import type { Timeline } from "./Timeline.ts";
 
-export type AnimationItem<T extends TweenProps = never> = Tween<T> | Timeline<T>;
-
+export type AnimationItem<T extends TweenProps = never> =
+  | Tween<T>
+  | Timeline<T>;
 
 export type TimelineCallback<T extends TweenProps> = (
   state: T,
@@ -67,7 +68,7 @@ export interface TimelineEntry<T extends TweenProps> {
   runtime: [
     propValue: T[keyof T],
     property: string | keyof T,
-    interpolator: InterpolatorFunction /*| null*/,
+    interpolator: InterpolatorFunction, /*| null*/
     startVal: T[keyof T],
     endVal: T[keyof T],
   ][];
@@ -76,10 +77,10 @@ export interface TimelineEntry<T extends TweenProps> {
 export type TweenRuntime<T extends TweenProps> = [
   targetObject: T[keyof T],
   property: string | keyof T,
-  interpolator: InterpolatorFunction /*| null*/,
+  interpolator: InterpolatorFunction, /*| null*/
   startVal: T[keyof T],
   endVal: T[keyof T],
-]
+];
 
 /**
  * Nested Objects

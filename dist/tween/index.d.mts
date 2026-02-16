@@ -227,7 +227,6 @@ declare class Tween<T extends TweenProps = TweenProps> {
    *
    * This is different from `onComplete`, which only fires once at the
    * very end of the entire tween (after all repeats are finished).
-   *
    */
   onRepeat(cb?: TweenCallback<T>): this;
   /**
@@ -576,9 +575,9 @@ interface TimelineEntry<T extends TweenProps> {
   duration: number; // absolute time in milliseconds
   easing: EasingFunction;
   isActive?: boolean;
-  runtime: [propValue: T[keyof T], property: string | keyof T, interpolator: InterpolatorFunction /*| null*/, startVal: T[keyof T], endVal: T[keyof T]][];
+  runtime: [propValue: T[keyof T], property: string | keyof T, interpolator: InterpolatorFunction, /*| null*/startVal: T[keyof T], endVal: T[keyof T]][];
 }
-type TweenRuntime<T extends TweenProps> = [targetObject: T[keyof T], property: string | keyof T, interpolator: InterpolatorFunction /*| null*/, startVal: T[keyof T], endVal: T[keyof T]];
+type TweenRuntime<T extends TweenProps> = [targetObject: T[keyof T], property: string | keyof T, interpolator: InterpolatorFunction, /*| null*/startVal: T[keyof T], endVal: T[keyof T]];
 /**
  * Nested Objects
  */

@@ -36,7 +36,7 @@ function defineArrayProxy(index, value, target, sourceLen, notifyListeners) {
 		target[index] = subArray;
 	} else {
 		let currentValue = value;
-		let getter = () => currentValue;
+		const getter = () => currentValue;
 		const setter = (newVal) => {
 			currentValue = newVal;
 			if (itemIsLast) notifyListeners();
@@ -51,7 +51,7 @@ function defineArrayProxy(index, value, target, sourceLen, notifyListeners) {
 function defineStateProxy(key, value, target, notifyListeners) {
 	const valueIsArray = isArray(value);
 	let currentValue = value;
-	let getter = () => currentValue;
+	const getter = () => currentValue;
 	let setter;
 	if (valueIsArray) {
 		const arrayProxy = [];
@@ -109,21 +109,21 @@ function useMiniStore(initialValue) {
 //#region src/react/index.ts
 /**
 * Hook for updating values with Tween.
-* 
+*
 * **NOTE**: - configuration must be wrapped in `useEffect` or `eventListener`.
 * This has two important aspects: never configure or start update loop in SSR
 * and only configure or start the loop when component is mounted in the client.
-* 
+*
 * @param initialValues - Initial tween values
 * @returns [store, tween] Tuple of reactive store and Tween instance
 * @example
 * const App = () => {
 *    const [state, tween] = useTween({ x: 0, y: 0 })
-* 
+*
 *    useEffect(() => {
 *      tween.to({ x: 100, y: 100 }).start()
 *    }, [])
-* 
+*
 *    return (
 *      <div style={{ translate: `${state.x}px ${state.y}px` }} />
 *    );
@@ -144,21 +144,21 @@ const useTween = (initialValues) => {
 };
 /**
 * Hook for sequencing values update with Timeline.
-* 
+*
 * **NOTE**: - configuration must be wrapped in `useEffect` or `eventListener`.
 * This has two important aspects: never configure or start update loop in SSR
 * and only configure or start the loop when component is mounted in the client.
-* 
+*
 * @param initialValues - Initial tween values
 * @returns [store, timeline] Tuple of reactive store and Timeline instance
 * @example
 * const App = () => {
 *    const [state, timeline] = useTimeline({ x: 0, y: 0 })
-* 
+*
 *    useEffect(() => {
 *      timeline.to({ x: 100, y: 100 }).start()
 *    }, [])
-* 
+*
 *    return (
 *      <div style={{ translate: `${state.x}px ${state.y}px` }} />
 *    );

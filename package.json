@@ -43,7 +43,7 @@
     "fix:ts": "deno lint src --fix",
     "build_": "tsdown && vite build",
     "build": "tsdown",
-    "prepublishOnly": "pnpm update --latest && pnpm update -r && pnpm format && pnpm lint && pnpm build && pnpm badges",
+    "prepublishOnly": "pnpm update --latest && pnpm update -r && pnpm format && pnpm lint && pnpm build",
     "clean:playground": "rm -rf playground/**/node_modules playground/**/package-lock.json playground/**/pnpm-lock.yaml playground/**/bun.lockb playground/**/deno.lock",
     "clean:test": "rm -rf test/node_modules test/package-lock.json test/pnpm-lock.yaml test/bun.lockb test/deno.lock",
     "clean": "rm -rf node_modules && pnpm clean:playground && pnpm clean:test",
@@ -94,14 +94,14 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
-    "@preact/signals": "^2.7.1",
+    "@preact/signals": "^2.8.1",
     "@thednp/dommatrix": "^3.0.2",
     "@thednp/tween": "link:..",
     "@types/react-dom": "^19.2.3",
     "preact": "^10.28.3",
     "react": "^19.2.4",
     "solid-js": "^1.9.11",
-    "svelte": "^5.50.2",
+    "svelte": "^5.51.2",
     "vitest": "^4.0.18",
     "vue": "^3.5.28"
   },

@@ -233,7 +233,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
    * @returns this
    */
   seek(pointer: number | string): this {
-    let elapsed = this._resolvePosition(pointer);
+    const elapsed = this._resolvePosition(pointer);
 
     this._time = elapsed;
     return this;

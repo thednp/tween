@@ -234,7 +234,7 @@ const roundTo = (n, round) => {
 /**
 * A small utility to deep assign up to one level deep nested objects.
 * This is to prevent breaking reactivity of miniStore.
-* 
+*
 * **NOTE** - This doesn't perform ANY check and expects objects to
 * be validated beforehand.
 * @param target The target to assign values to
@@ -272,7 +272,7 @@ function deepAssign(target, source) {
 /**
 * Creates a clone of a target object / array without its
 * proxy elements / properties, only their values.
-* 
+*
 * **NOTE** - The utility is useful to create deep clones as well.
 * @param value An object / array with proxy elements
 * @returns the object / array value without proxy elements
@@ -337,7 +337,7 @@ function validateValues(target, reference) {
 //#region src/extend/array.ts
 /**
 * Interpolates two `Array<number>` values.
-* 
+*
 * **NOTE**: Values my be validated first!
 * @param target The target `Array<number>` value
 * @param start The start `Array<number>` value
@@ -551,7 +551,7 @@ const interpolateObject = (target, start, end, t) => {
 * @param propName The property name to which this object belongs to
 * @param target The target object itself
 * @param ref A reference object to compare our target to
-* @returns A [boolean, string?] tuple which represents [validity, "reason why not valid"]  
+* @returns A [boolean, string?] tuple which represents [validity, "reason why not valid"]
 */
 const validateObject = (propName, target, ref) => {
 	if (!isPlainObject(target)) return [false, `Property "${propName}" must be a plain object.`];
@@ -1240,7 +1240,6 @@ var Tween = class {
 	*
 	* This is different from `onComplete`, which only fires once at the
 	* very end of the entire tween (after all repeats are finished).
-	* 
 	*/
 	onRepeat(cb) {
 		this._onRepeat = cb;
@@ -1267,7 +1266,7 @@ var Tween = class {
 		if (progress > 1) progress = 1;
 		let eased = this._easing(reversed ? 1 - progress : progress);
 		eased = reversed ? 1 - eased : eased;
-		let len = runtime.length;
+		const len = runtime.length;
 		let i = 0;
 		while (i < len) {
 			const prop = runtime[i++];

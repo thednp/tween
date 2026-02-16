@@ -345,7 +345,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    */
   repeatDelay(amount = 0) {
     this._repeatDelay = amount * 1000;
-    return this
+    return this;
   }
 
   /**
@@ -435,7 +435,6 @@ export class Tween<T extends TweenProps = TweenProps> {
    *
    * This is different from `onComplete`, which only fires once at the
    * very end of the entire tween (after all repeats are finished).
-   * 
    */
   onRepeat(cb?: TweenCallback<T>) {
     this._onRepeat = cb;
@@ -474,7 +473,7 @@ export class Tween<T extends TweenProps = TweenProps> {
     let eased = this._easing(reversed ? 1 - progress : progress);
     eased = reversed ? 1 - eased : eased;
 
-    let len = runtime.length;
+    const len = runtime.length;
     let i = 0;
     while (i < len) {
       const prop = runtime[i++];
@@ -487,7 +486,7 @@ export class Tween<T extends TweenProps = TweenProps> {
       if (typeof endVal === "number") {
         state[property as keyof T] =
           ((startVal as number) + (endVal - (startVal as number)) * eased) as T[
-          keyof T
+            keyof T
           ];
       } else {
         interpolator(

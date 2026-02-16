@@ -120,7 +120,6 @@ export const transformToString = (steps: TransformStep[], toMatrix = false) => {
     }
   }
 
-
   return stringOutput.slice(1);
 };
 
@@ -142,7 +141,7 @@ export const eulerToAxisAngle = (
 
   // Then convert quaternion to axis-angle
   return quaternionToAxisAngle(quat);
-}
+};
 
 /**
  * Convert euler rotation tuple to quaternion.
@@ -170,7 +169,7 @@ const eulerToQuaternion = (
     cx * sy * cz + sx * cy * sz,
     cx * cy * sz - sx * sy * cz,
   ];
-}
+};
 
 /**
  * Convert euler rotation tuple to axis angle.
@@ -194,8 +193,7 @@ const quaternionToAxisAngle = (
   const angle = 2 * Math.acos(Math.max(-1, Math.min(1, w)));
 
   return [x / len, y / len, z / len, angle];
-}
-
+};
 
 /**
  * Interpolator: takes start/end arrays of `TransformStep`s → returns interpolated `TransformStep`s.

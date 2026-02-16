@@ -4,7 +4,7 @@ import { InterpolatorFunction, ValidationResultEntry } from "../types.ts";
 
 /**
  * Interpolates two `Array<number>` values.
- * 
+ *
  * **NOTE**: Values my be validated first!
  * @param target The target `Array<number>` value
  * @param start The start `Array<number>` value
@@ -52,12 +52,24 @@ export const validateArray = <T extends number[]>(
   ref?: T,
 ): ValidationResultEntry => {
   // istanbul ignore if @preserve
-  if (!isArray(target)) return [false, `Property "${String(propName)}" is not Array.`];
+  if (!isArray(target)) {
+    return [false, `Property "${String(propName)}" is not Array.`];
+  }
   // istanbul ignore if @preserve
-  if (!isValidArray(target)) return [false, `Property "${String(propName)}" is not a valid Array<number>.`];
+  if (!isValidArray(target)) {
+    return [
+      false,
+      `Property "${String(propName)}" is not a valid Array<number>.`,
+    ];
+  }
 
   if (ref && ref.length !== target.length) {
-    return [false, `Property "${String(propName)}" is expecting an array of ${ref.length} numbers.`];
+    return [
+      false,
+      `Property "${
+        String(propName)
+      }" is expecting an array of ${ref.length} numbers.`,
+    ];
   }
 
   return [true];
@@ -69,4 +81,4 @@ export const validateArray = <T extends number[]>(
 export const arrayConfig = {
   interpolate: interpolateArray,
   validate: validateArray,
-}
+};
