@@ -5,7 +5,7 @@
 */
 "use strict";
 
-import { Timeline, Tween, dummyInstance, isArray, isPlainObject, isServer } from "@thednp/tween";
+import { Timeline, Tween, dummyInstance, isArray, isPlainObject, isServer, objectHasProp } from "@thednp/tween";
 import { createSignal, onCleanup } from "solid-js";
 
 //#region src/solid/miniStore.ts
@@ -78,7 +78,7 @@ function defineStateProxy(key, value, target) {
 	});
 }
 function createMiniState(obj, parentReceiver) {
-	if (Object.prototype.hasOwnProperty.call(obj, STATE_PROXY)) return obj;
+	if (objectHasProp(obj, STATE_PROXY)) return obj;
 	for (const [key, value] of Object.entries(obj)) if (isPlainObject(value)) parentReceiver[key] = createMiniState(value, {});
 	else defineStateProxy(key, value, parentReceiver);
 	return parentReceiver;

@@ -84,6 +84,9 @@ export const roundTo = (n: number, round: number) => {
   return round > 0 ? Math.round(n * pow) / pow : Math.round(n);
 };
 
+export const objectHasProp = <T extends object>(obj: T, prop: keyof T) =>
+  Object.prototype.hasOwnProperty.call(obj, prop);
+
 /**
  * A small utility to deep assign up to one level deep nested objects.
  * This is to prevent breaking reactivity of miniStore.
@@ -103,6 +106,8 @@ export function deepAssign<T extends TweenProps>(
 
   while (i < len) {
     const key = keys[i++];
+    // istanbul ignore next @preserve
+    if (!objectHasProp(source, key)) continue;
     const targetVal = target[key];
     const sourceVal = source[key];
 
@@ -133,7 +138,7 @@ export function deepAssign<T extends TweenProps>(
         }
         j++;
       }
-    } else if (isObject(sourceVal)) {
+    } else if (objectHasProp(target, key) && isObject(sourceVal)) {
       // Handle nested objects (BaseTweenProps)
       deepAssign(targetVal as never, sourceVal as never);
     } else {

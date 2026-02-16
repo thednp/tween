@@ -231,6 +231,7 @@ const roundTo = (n, round) => {
 	const pow = round >= 1 ? 10 ** round : 1;
 	return round > 0 ? Math.round(n * pow) / pow : Math.round(n);
 };
+const objectHasProp = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop);
 /**
 * A small utility to deep assign up to one level deep nested objects.
 * This is to prevent breaking reactivity of miniStore.
@@ -246,6 +247,7 @@ function deepAssign(target, source) {
 	const len = keys.length;
 	while (i < len) {
 		const key = keys[i++];
+		if (!objectHasProp(source, key)) continue;
 		const targetVal = target[key];
 		const sourceVal = source[key];
 		if (isArray(sourceVal)) {
@@ -265,7 +267,7 @@ function deepAssign(target, source) {
 				} else targetArr[j] = sourceItem;
 				j++;
 			}
-		} else if (isObject(sourceVal)) deepAssign(targetVal, sourceVal);
+		} else if (objectHasProp(target, key) && isObject(sourceVal)) deepAssign(targetVal, sourceVal);
 		else target[key] = sourceVal;
 	}
 }
@@ -1923,5 +1925,5 @@ var Timeline = class {
 var version = "0.0.2";
 
 //#endregion
-export { Easing, Queue, Runtime, Timeline, Tween, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, pathArrayConfig, pathToString, removeFromQueue, roundTo, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
+export { Easing, Queue, Runtime, Timeline, Tween, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, roundTo, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
 //# sourceMappingURL=index.mjs.map

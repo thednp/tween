@@ -660,6 +660,7 @@ declare const dummyMethod: () => Record<string, () => Record<string, /*elided*/a
  * @returns The rounded number
  */
 declare const roundTo: (n: number, round: number) => number;
+declare const objectHasProp: <T extends object>(obj: T, prop: keyof T) => boolean;
 /**
  * A small utility to deep assign up to one level deep nested objects.
  * This is to prevent breaking reactivity of miniStore.
@@ -934,5 +935,5 @@ declare function removeFromQueue<T extends TweenProps>(removedItem: AnimationIte
 //#region package.json.d.ts
 declare let version: string;
 //#endregion
-export { AnimationItem, ArrayVal, BaseTweenProps, CubicValues, DeepObject, DeepPartial, Easing, EasingFunction, EasingFunctionGroup, InterpolatorFunction, LineValues, MorphPathArray, MorphPathSegment, PathLike, Position, PropConfig, QuadValues, Queue, Rotate, RotateAxisAngle, RotateZ, Runtime, Scale, Timeline, TimelineCallback, TimelineEntry, TimelineEntryConfig, TransformArray, TransformLike, TransformStep, TransformStepInternal, Translate, Tween, TweenCallback, TweenProps, TweenRuntime, TweenUpdateCallback, ValidationFunction, ValidationResultEntry, Vec3, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, pathArrayConfig, pathToString, removeFromQueue, roundTo, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
+export { AnimationItem, ArrayVal, BaseTweenProps, CubicValues, DeepObject, DeepPartial, Easing, EasingFunction, EasingFunctionGroup, InterpolatorFunction, LineValues, MorphPathArray, MorphPathSegment, PathLike, Position, PropConfig, QuadValues, Queue, Rotate, RotateAxisAngle, RotateZ, Runtime, Scale, Timeline, TimelineCallback, TimelineEntry, TimelineEntryConfig, TransformArray, TransformLike, TransformStep, TransformStepInternal, Translate, Tween, TweenCallback, TweenProps, TweenRuntime, TweenUpdateCallback, ValidationFunction, ValidationResultEntry, Vec3, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, roundTo, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
 //# sourceMappingURL=index.d.mts.map

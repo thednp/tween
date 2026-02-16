@@ -3,6 +3,7 @@ import {
   type ArrayVal,
   isArray,
   isPlainObject,
+  objectHasProp,
   type TweenProps,
 } from "@thednp/tween";
 
@@ -117,7 +118,7 @@ function createMiniState<T extends TweenProps>(
   parentReceiver: TweenProps,
   notifyListeners: () => void,
 ) {
-  if (Object.prototype.hasOwnProperty.call(obj, STATE_PROXY)) return obj;
+  if (objectHasProp(obj, STATE_PROXY)) return obj;
 
   for (const [key, value] of Object.entries(obj)) {
     if (isPlainObject(value)) {

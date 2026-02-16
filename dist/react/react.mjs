@@ -6,7 +6,7 @@
 "use strict";
 
 import { useEffect, useRef, useState } from "react";
-import { Timeline, Tween, dummyInstance, isArray, isPlainObject, isServer } from "@thednp/tween";
+import { Timeline, Tween, dummyInstance, isArray, isPlainObject, isServer, objectHasProp } from "@thednp/tween";
 
 //#region src/react/miniStore.ts
 const STATE_PROXY = "_proxy";
@@ -74,7 +74,7 @@ function defineStateProxy(key, value, target, notifyListeners) {
 	});
 }
 function createMiniState(obj, parentReceiver, notifyListeners) {
-	if (Object.prototype.hasOwnProperty.call(obj, STATE_PROXY)) return obj;
+	if (objectHasProp(obj, STATE_PROXY)) return obj;
 	for (const [key, value] of Object.entries(obj)) if (isPlainObject(value)) parentReceiver[key] = createMiniState(value, {}, notifyListeners);
 	else defineStateProxy(key, value, parentReceiver, notifyListeners);
 	return parentReceiver;
