@@ -106,8 +106,15 @@ export function deepAssign<T extends TweenProps>(
 
   while (i < len) {
     const key = keys[i++];
+    // prevent prototype pollution
     // istanbul ignore next @preserve
-    if (!objectHasProp(source, key)) continue;
+    if (
+      (key as string) === "__proto__" ||
+      (key as string) === "constructor" ||
+      !objectHasProp(source, key)
+    ) {
+      continue;
+    }
     const targetVal = target[key];
     const sourceVal = source[key];
 
