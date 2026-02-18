@@ -87,6 +87,9 @@ export const roundTo = (n: number, round: number) => {
 export const objectHasProp = <T extends object>(obj: T, prop: keyof T) =>
   Object.prototype.hasOwnProperty.call(obj, prop);
 
+const isUnsafeKey = (key: string): boolean =>
+  key === "__proto__" || key === "constructor" || key === "prototype";
+
 /**
  * A small utility to deep assign up to one level deep nested objects.
  * This is to prevent breaking reactivity of miniStore.
@@ -108,11 +111,7 @@ export function deepAssign<T extends TweenProps>(
     const key = keys[i++];
     // prevent prototype pollution
     // istanbul ignore next @preserve
-    if (
-      (key as string) === "__proto__" ||
-      (key as string) === "constructor" ||
-      !objectHasProp(source, key)
-    ) {
+    if (isUnsafeKey(key as string) || !objectHasProp(source, key)) {
       continue;
     }
     const targetVal = target[key];
