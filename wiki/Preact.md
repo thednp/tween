@@ -123,3 +123,5 @@ function AnimatedSequence() {
 - **Never chain `.to()`, `.duration()`, etc. directly in the component body** without safeguards.
 
 In this respect the Preact hooks are supposed to be treated just like the React hooks.
+
+😊 Happy tweening!

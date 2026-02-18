@@ -122,23 +122,35 @@ For properties like quaternions `[x,y,z,t]`, RGB `[r,g,b]`, vectors `[x,y,z]`, e
 
 > **NOTE**: not to be confused with [Array Interpolation](https://tweenjs.github.io/tween.js/examples/06_array_interpolation.html) from the original Tween.js.
 
+The **arrayConfig** extension consists of:
+- *interpolate*: linear interpolation (lerp) per array element
+- *validate*: checks all values are numbers and array length matches reference
+
 #### Example
 ```ts
 import { Tween, arrayConfig } from "@thednp/tween";
 
+// initialize and configure Tween
 const tween = new Tween({ rgb: [255, 0, 0] }) // initial values aren't validated yet
     .use("rgb", arrayConfig)                  // now initial values are valid
     .to({ rgb: [255, 128, 0] });              // to()/from() are compared to the initial values reference
-```
 
-**arrayConfig** consists of:
-- *interpolate*: linear interpolation (lerp) per array element
-- *validate*: checks all values are numbers and array length matches reference
+// consume the rgb value
+tween.onUpdate(obj => {
+  targetElement.style.setProperty("background-color", `rgb(${obj.rgb})`)
+})
+```
 
 
 ### SVG Paths
 
 This extension is for morphing SVG paths and comes with an additional utility to convert `PathArray` values to string.
+
+The **pathArrayConfig** extension consists of:
+* *interpolate*: lerps segment coordinates (if not "Z" segment)
+* *validate*: checks valid commands, parameter counts, structure match for interpolation compatibility
+
+The included **pathToString** utility converts the `PathArray` value to a valid HTML `description` (d) attribute string.
 
 #### What is PathArray
 
@@ -164,6 +176,7 @@ export type MorphPathSegment =
 
 export type MorphPathArray = MorphPathSegment[];
 ```
+
 
 #### Example
 ```ts
@@ -197,11 +210,14 @@ tween.onUpdate(obj =>
 )
 ```
 
-**pathArrayConfig** consists of:
-* *interpolate*: lerps segment coordinates (if not "Z" segment)
-* *validate*: checks valid commands, parameter counts, structure match for interpolation compatibility
+
 
 > **NOTE**: Both paths must have identical structure (same number/order of segments and commands). Complex morphs may need preprocessing (e.g. Flubber).
+
+**Notes**
+* The example provides ready-made `PathArray` objects, they usually require prior preparation manually or using some script to [equalize segments](https://minus-ze.ro/posts/morphing-arbitrary-paths-in-svg/);
+* Continuous `path` updates between multiple shapes requires that **all** path values are compatible, which means they all have same amount of segments and all segments are of the same type (ideal are `[[M, x, y], ...[L, x, y]], ` OR `[[M, x, y], ...[C, cx1, cy1, cx2, cy2, x, y]], `);
+* Our [svg-path-commander](https://github.com/thednp/svg-path-commander/) provides all the tools necessary to process path strings, optimize and even equalize segments (work in progress).
 
 Future versions will provide an easy to use `equalizeSegments` and `equalizePaths` utilities you can use to quickly process and prepare various path shapes for interpolation.
 
@@ -255,6 +271,7 @@ Interpolator returns same `TransformArray` structure — convert to string with 
 > **NOTE** - the `transformToString(array, true)` (returning a `matrix()` or `matrix3d()` string) is a little more expensive than a regular transform string as it uses the native `DOMMatrix` instance that multiplies with a new matrix for every transform step. The performance caracteristics are different in many ways (regular transform string involves dynamic string concatenation, DOMMatrix does all computation and string concatenation internally), however the impact is negligible for a small number of tweens.
 
 
+
 ### Single-Level Nested Objects
 
 For simple nested properties like transforms (Eg. `{ translate: { x: 0, y: 0 } }`). We don't recommend using objects but if it's a must for your project, you can do that too. Example:
@@ -262,13 +279,21 @@ For simple nested properties like transforms (Eg. `{ translate: { x: 0, y: 0 } }
 ```ts
 import { Tween, objectConfig } from "@thednp/tween";
 
-const tween = new Tween({ translate: { x: 0, y: 0 }, scale: { x: 0, y: 0 } });
+const tween = new Tween({
+  transform: {
+    rotateX: 0,
+    rotateY: 0,
+    translateX: 0,
+    translateY: 0,
+  });
 
 tween.use("transform", objectConfig);
 tween.to({
   transform: {
-    scale: { x: 2, y: 1.5 },
-    translate: { x: 300, y: 100 }
+    rotateX: 15,
+    rotateY: 25,
+    translateX: 100,
+    translateY: 100,
   }
 });
 ```
@@ -281,20 +306,19 @@ tween.to({
 
 If initial validation fails, the validation function should provide feedback on how to solve the issues, for instance:
 
-On intialization, if extension is not registered via `use()`
-```
-[Tween] failed validation:
-- Property "translate" of type "object" is not supported yet.
-```
+* On intialization, if extension is not registered via `use()`
+  ```
+  [Tween] failed validation:
+  - Property "translate" of type "object" is not supported yet.
+  ```
 
-If initial values are valid calling `to()` / `from()` with invalid values you should get this:
-
-```
-[Tween] failed validation:
-- Property "x" from "translate" is not a number.
-- Property "z" from "translate" does not exist in the reference object.
-- Property "y" from "translate" is null/undefined.
-```
+* If initial values are valid calling `to()` / `from()` with invalid values you should get this:
+  ```
+  [Tween] failed validation:
+  - Property "x" from "translate" is not a number.
+  - Property "z" from "translate" does not exist in the reference object.
+  - Property "y" from "translate" is null/undefined.
+  ```
 
 
 #### Nested Objects & Flattening

@@ -79,7 +79,8 @@ function AnimatedBox() {
 Same pattern for `Timeline` sequencing.
 
 ```tsx
-import { createTimeline, Easing } from "@thednp/tween/solid";
+import { Easing } from "@thednp/tween";
+import { createTimeline } from "@thednp/tween/solid";
 
 function AnimatedSequence() {
   const [pos, timeline] = createTimeline({ x: 0, y: 0 });
@@ -102,7 +103,7 @@ function AnimatedSequence() {
   return (
     <>
       <div style={{ translate: `${pos.x}px ${pos.y}px` }}>
-        Click to sequence
+        Sample div
       </div>
       <button onClick={playAnim}>Click to play</button>
     </>
@@ -110,3 +111,5 @@ function AnimatedSequence() {
 }
 ```
 Same behavior applies to `Timeline` in terms of cleanup and mutations.
+
+😊 Happy tweening!

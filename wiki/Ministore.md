@@ -116,3 +116,5 @@ transform: [
 * Our `miniStore` for Svelte makes use of `$state.raw` (a single piece of reactive state, without nesting), this is to make sure we eliminate GC presure and effects execution overload.
 * In the same fashion, our `miniStore` for SolidJS uses `createSignal()` instead of `createStore()`.
 * In the case of Vue, we make use of its signal based `ref()` which is equivalent to `signal()` from `@preact/signals`.
+
+😊 Happy tweening!

@@ -200,3 +200,5 @@ Any pattern works, it all comes down to your preference, here's why:
 - **Never chain `.to()`, `.duration()`, etc. directly in the component body** without safeguards.
 
 This is the most common cause of duplicate/infinite animations in development. Always use one of the supported patterns above. This is an important note we have to go over because React re-renders everything on every state change, which is why configuring your `Tween` or `Timeline` objects has to be done within either event listeners or within `useEffect()` callback.
+
+😊 Happy tweening!

@@ -339,12 +339,12 @@ export class Tween<T extends TweenProps = TweenProps> {
   /**
    * Sets a number of seconds to delay the animation
    * after each repeat.
-   * @param amount - How many seconds to delay
+   * @param seconds - How many seconds to delay
    * @default 0 seconds
    * @returns this
    */
-  repeatDelay(amount = 0) {
-    this._repeatDelay = amount * 1000;
+  repeatDelay(seconds = 0) {
+    this._repeatDelay = seconds * 1000;
     return this;
   }
 

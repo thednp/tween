@@ -66,8 +66,11 @@ Sets the easing function (from Easing object, custom or external). `Tween` will 
 #### `.repeat(times = 0)`
 Sets how many times to repeat the tween, default is zero.
 
+#### `.repeatDelay(delay = 0)`
+Sets a number of seconds to delay the animation after each repeat iteration.
+
 #### `.yoyo(yoyo = false)`
-Makes every un-even iteration run in reverse. The resulted elapsed value from easing function is also reversed, which means we don't need to use a `reverseEasing`. 
+Makes every un-even repeat iteration run in reverse. The resulted elapsed value from easing function is also reversed, which means we don't need to use a `reverseEasing`. 
 
 #### `.start(time?, overrideStart?)`
 Starts the update loop and fires the `onStart` callback.
@@ -136,108 +139,66 @@ A callback which receives (`object`) parameter and is fired when a repeat iterat
 #### Tween State
 
 ##### `.state`
-Property: `object` is the current state of the properties validated for interpolation. Why is it called "state"? Because our hooks for React/SolidJS etc, they all provide a mini-store to the Tween class, and this is to remove the assignment of one object and its properties from the hot update. Which means `Tween` will directly and internally update your App state without using `onUpdate`.
+*Property*: `object` is the current state of the properties validated for interpolation. Why is it called "state"? Because our hooks for React/SolidJS etc, they all provide a [miniStore](Ministore.md) to the `Tween` class, and this is to remove the assignment of one object and its properties from the hot update runtime. This means `Tween` will directly and internally update your app state without using `onUpdate`.
 
 ##### `.getErrors()`
-Method: returns the errors map with all validation results.
+*Method*: returns the errors `Map` instance with all validation results.
+
+##### `.progress`
+*Getter*: `number` is the [0-1] value which indicates how much of the timeline update is complete.
 
 ##### `.isPlaying`
-Getter: `boolean` whether currently running.
+*Getter*: `boolean` that indicates whether timeline is currently **playing**.
 
 ##### `.isPaused`
-Getter: `boolean` whether currently paused.
+*Getter*: `boolean` that indicates whether timeline is currently **paused**.
 
 ##### `.isValidState`
-Getter: `boolean` whether initial values are validated.
+*Getter*: `boolean` that indicates whether initial values are valid.
 
 ##### `.isValid`
-Getter: `boolean` whether no issues found, which all initial values and end values are valid.
+*Getter*: `boolean` whether no issues found, which means all initial values and entries values are valid.
 
 ##### `.totalDuration`
-Getter: `number` the total duration in seconds. It's calculated as a sum of the delay, duration multiplied by repeat value and repeat delay multiplied by repeat value.
+*Getter*: `number` representing the total duration in seconds. It's calculated as a sum of the delay, duration multiplied by repeat value and repeat delay multiplied by repeat value.
 
 
-### Extensions
-The `.use(propName: string, extendConfig)` method allows you to add custom validation and interpolation functions for properties of your `Tween` instance.
+#### Extensions
 
-#### Built In Extensions
+The `.use(propName: string, extensionConfig)` method allows you to set a custom validation and interpolation function for a property in your timeline instance.
 
-**Example for colors**:
+The package already comes with 4 built in extensions:
 
+#### Built-in Extensions
+* **arrayConfig** - this allows you to validate and interpolate arrays for any amount of `number` values like quaternions, vectors, translate/rotate/scale, RGB/RGBA, HSL/HSLA, etc.
+* **objectConfig** - this allows you to validate and interpolate single-level nesting objects.
+* **pathArrayConfig** - this allows you to validate and interpolate `PathArray` values.
+* **transformConfig** - this allows you to validate and interpolate `TransformArray` values.
+
+
+#### Example Using Extensions
 ```ts
 import { Tween, arrayConfig } from "@thednp/tween";
 
-const target = document.getElementById('my-target');
-
-const tween = new Tween({ rgb: [255,0,0] })
-  .use('rgb', arrayConfig)
-  .to({ rgb: [0,255,0] })
+const target = document.getElementById("my-target");
+const tween = new Tween({ rgb: [255,0,0] }) // start from red
+  // the `rgb` property will now use the custom interpolation
+  .use('rgb', arrayConfig);
+  // set an update function
   .onUpdate((state) => {
-    // update DOM elements directly
+    // update App state or update DOM elements directly
     Object.assign(
       target.style,
       { "background-color": "rgb(" + state.rgb + ")" }),
   });
-  .duration(1.5);
 
-// start whenever needed
+// set new value
+tween.to({ rgb: [0,255,0], duration: 1.5 }); // fade to green
+
+// start animation
 tween.start();
 ```
 
-**Example for SVG path**
-
-The `pathConfig` extension adds SVG morph capability and assumes compatible paths (same segment count/types and coordinate counts — use [svg-path-commander](https://github.com/thednp/svg-path-commander) to process if needed).
-
-```ts
-import { Tween, pathConfig } from "@thednp/tween";
-
-// Use a fast `PathArray` to string
-// For faster performance use `pathToString` from svg-path-commander
-function pathToString(path: ["M" | "C" | "L", ...number[]][]) {
-  return p.map(([c, ...args]) => c + args).join("");
-}
-
-const path = document.getElementById("my-path");
-// "M0,0 L600,0 L600,300 L600,600 L0,600 Z"
-const square = [
-  ["M", 0, 0],
-  ["L", 600, 0],
-  ["L", 600, 300], // mid
-  ["L", 600, 600],
-  ["L", 0, 600],
-  ["Z"],
-];
-
-// "M0,0 L300,150 L600,300 L300,450 L0,600 Z"
-const triangle = [
-  ["M", 150, 0],
-  ["L", 300, 150], // mid
-  ["L", 450, 300],
-  ["L", 300, 450], // mid
-  ["L", 150, 600],
-  ["Z"],
-];
-
-const tween = new Tween({ path: square })
-  // you can use any property name you want
-  .use('path', pathConfig)
-  // `d` might be a good choice as well
-  .to({ path: triangle })
-  .onUpdate(state => {
-    // update App state
-    // OR update DOM elements directly
-    path.setAttribute('d', pathToString(state.path));
-  })
-  .duration(2)
-  .start();
-```
-
-**Notes**
-* The example provides ready-made `PathArray` objects, they usually require prior preparation manually or using some script to [equalize segments](https://minus-ze.ro/posts/morphing-arbitrary-paths-in-svg/);
-* Continuous `path` updates between multiple shapes requires that **all** path values are compatible, which means they all have same amount of segments and all segments are of the same type (ideal are `[[M, x, y], ...[L, x, y]], ` OR `[[M, x, y], ...[C, cx1, cy1, cx2, cy2, x, y]], `);
-* Our [svg-path-commander](https://github.com/thednp/svg-path-commander/) provides all the tools necessary to process path strings, optimize and even equalize segments (work in progress).
-
-
-If your use case requires a special kind of interpolation, consider creating a [custom extension](#extensions).
+For more guide and examples on using extensions, check out the [Extensions Guide](Extend.md).
 
 😊 Happy tweening!

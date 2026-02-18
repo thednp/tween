@@ -23,3 +23,5 @@ This is due to one of the main factors:
 4) You never called `start()` / `play()`?
 
 On a general note, refer to the [README](../README.md) for other tricks and quirks.
+
+😊 Happy tweening!

@@ -113,3 +113,5 @@ Creates a [`state`, `timeline`] tuple that consists of:
 </div>
 ```
 Same cleanup and mutation behavior applies to `Timeline`.
+
+😊 Happy tweening!
