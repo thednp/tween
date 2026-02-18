@@ -232,6 +232,7 @@ const roundTo = (n, round) => {
 	return round > 0 ? Math.round(n * pow) / pow : Math.round(n);
 };
 const objectHasProp = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop);
+const isUnsafeKey = (key) => key === "__proto__" || key === "constructor" || key === "prototype";
 /**
 * A small utility to deep assign up to one level deep nested objects.
 * This is to prevent breaking reactivity of miniStore.
@@ -247,7 +248,7 @@ function deepAssign(target, source) {
 	const len = keys.length;
 	while (i < len) {
 		const key = keys[i++];
-		if (key === "__proto__" || key === "constructor" || !objectHasProp(source, key)) continue;
+		if (isUnsafeKey(key) || !objectHasProp(source, key)) continue;
 		const targetVal = target[key];
 		const sourceVal = source[key];
 		if (isArray(sourceVal)) {
