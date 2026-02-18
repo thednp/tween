@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween  v0.0.4 (https://github.com/thednp/tween)
+* @thednp/tween  v0.0.5 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */

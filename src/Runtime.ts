@@ -58,5 +58,8 @@ export function removeFromQueue<T extends TweenProps>(
 ): void {
   const idx = Queue.indexOf(removedItem as AnimationItem<never>);
   // istanbul ignore else @preserve
-  if (idx > -1) Queue.splice(idx, 1);
+  if (idx > -1) {
+    Queue.splice(idx, 1);
+    queueLength--;
+  }
 }

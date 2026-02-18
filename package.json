@@ -1,6 +1,6 @@
 {
   "name": "@thednp/tween",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "🌸 A Typescript sourced tweening engine with Tween and Timeline",
   "homepage": "https://github.com/thednp/tween",
   "author": "thednp",
