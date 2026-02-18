@@ -65,7 +65,10 @@ const instanceMethods = [
  */
 const dummyInstance: Record<string, typeof dummyMethod> = {};
 // istanbul ignore next @preserve
-const dummyMethod = () => dummyInstance;
+// const dummyMethod = () => dummyInstance;
+function dummyMethod(this: typeof dummyInstance) {
+  return this;
+}
 
 for (let i = 0; i < instanceMethods.length; i++) {
   dummyInstance[instanceMethods[i]] = dummyMethod;

@@ -219,7 +219,9 @@ const instanceMethods = [
 * - allow free-form configuration for signal based frameworks
 */
 const dummyInstance = {};
-const dummyMethod = () => dummyInstance;
+function dummyMethod() {
+	return this;
+}
 for (let i = 0; i < instanceMethods.length; i++) dummyInstance[instanceMethods[i]] = dummyMethod;
 /**
 * Utility to round numbers to a specified number of decimals.

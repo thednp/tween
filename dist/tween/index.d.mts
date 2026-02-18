@@ -652,7 +652,7 @@ declare const isServer: boolean;
  * - allow free-form configuration for signal based frameworks
  */
 declare const dummyInstance: Record<string, typeof dummyMethod>;
-declare const dummyMethod: () => Record<string, () => Record<string, /*elided*/any>>;
+declare function dummyMethod(this: typeof dummyInstance): Record<string, typeof dummyMethod>;
 /**
  * Utility to round numbers to a specified number of decimals.
  * @param n Input number value
