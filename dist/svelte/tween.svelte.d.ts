@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween utils for Svelte v0.0.3 (https://github.com/thednp/tween)
+* @thednp/tween utils for Svelte v0.0.4 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -46,7 +46,7 @@ declare function createTween<T extends TweenProps>(initialValues: T): readonly [
  *    timeline.to({ x: 100, y: 100 })
  *
  *    onMount(() => {
- *      timeline.start()
+ *      timeline.play()
  *    })
  * </script>
  *

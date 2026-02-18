@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween  v0.0.3 (https://github.com/thednp/tween)
+* @thednp/tween  v0.0.4 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -167,11 +167,11 @@ declare class Tween<T extends TweenProps = TweenProps> {
   /**
    * Sets a number of seconds to delay the animation
    * after each repeat.
-   * @param amount - How many seconds to delay
+   * @param seconds - How many seconds to delay
    * @default 0 seconds
    * @returns this
    */
-  repeatDelay(amount?: number): this;
+  repeatDelay(seconds?: number): this;
   /**
    * Sets to tween from end to start values.
    * The easing is also goes backwards.
@@ -665,17 +665,18 @@ declare const objectHasProp: <T extends object>(obj: T, prop: keyof T) => boolea
  * A small utility to deep assign up to one level deep nested objects.
  * This is to prevent breaking reactivity of miniStore.
  *
- * **NOTE** - This doesn't perform ANY check and expects objects to
- * be validated beforehand.
+ * **NOTE** - This doesn't perform ANY check and expects objects values
+ * to be validated beforehand.
  * @param target The target to assign values to
  * @param source The source object to assign values from
  */
 declare function deepAssign<T extends TweenProps>(target: T, source: T): void;
 /**
- * Creates a clone of a target object / array without its
- * proxy elements / properties, only their values.
+ * Creates a new object with the same structure of a target object / array
+ * without its proxy elements / properties, only their values.
  *
  * **NOTE** - The utility is useful to create deep clones as well.
+ *
  * @param value An object / array with proxy elements
  * @returns the object / array value without proxy elements
  */
@@ -696,7 +697,8 @@ declare function validateValues<T extends TweenProps>(this: Timeline | Tween, ta
  * Interpolates two `Array<number>` values.
  *
  * **NOTE**: Values my be validated first!
- * @param target The target `Array<number>` value
+ *
+ * @param target The target `Array<number>` value of the state object
  * @param start The start `Array<number>` value
  * @param end The end `Array<number>` value
  * @param t The progress value
@@ -704,16 +706,18 @@ declare function validateValues<T extends TweenProps>(this: Timeline | Tween, ta
  */
 declare const interpolateArray: InterpolatorFunction<number[]>;
 /**
- * Check if a value is a valid array for interpolation
+ * Check if a value is a valid `Array<number>` for interpolation.
  * @param target The array to check
  * @returns `true` is value is array and all elements are numbers
  */
 declare const isValidArray: <T extends number[]>(target: unknown) => target is T;
 /**
- * Check if an array of numbers is compatible with a reference
+ * Check if an `Array<number>` is valid and compatible with a reference.
+ *
  * @param target The incoming value `from()` / `to()`
  * @param ref The state reference value
- * @returns [boolean, reason] tuple when arrays are compatible or
+ * @returns [boolean, reason] tuple with validation state as boolean and,
+ * if not valid, a reason why it's not valid
  */
 declare const validateArray: <T extends number[]>(propName: string, target: unknown, ref?: T) => ValidationResultEntry;
 /**
@@ -726,16 +730,18 @@ declare const arrayConfig: {
 //#endregion
 //#region src/extend/path.d.ts
 /**
- * Iterates a `PathArray` and concatenates the values into a string to return it.
+ * Iterates a `PathArray` value and concatenates the values into a string to return it.
+ *
  * **NOTE**: Segment values are rounded to 4 decimals by default.
  * @param path A source PathArray
  * @param round An optional parameter to round segment values to a number of decimals
- * @returns A path string
+ * @returns A valid HTML `description` (d) path string value
  */
 declare function pathToString(path: MorphPathArray, round?: number): string;
 /**
- * Interpolate PathArray values.
- * **NOTE**: these values must be validated first! Check validatePath for more info.
+ * Interpolate `PathArray` values.
+ *
+ * **NOTE**: these values must be validated first!
  * @param target - The target PathArray value
  * @param start - A starting PathArray value
  * @param end - An ending PathArray value
@@ -756,10 +762,10 @@ declare const isPathLike: (value: unknown) => value is PathLike;
  */
 declare const isValidPath: (value: unknown) => value is MorphPathArray;
 /**
- * Validate a PathArray and check if it's compatible with a reference.
+ * Validate a `PathArray` and check if it's compatible with a reference.
  *
  * **NOTE**: Path interpolation only works when both paths have:
- * - Identical segments structure (same number and order of M/L/C/Z)
+ * - Identical segments structure (same number and order of M/L/C/Z path commands)
  * - Corresponding coordinates to interpolate
  * Complex morphs require preprocessing (e.g. KUTE.js, Flubber)
  *
@@ -788,7 +794,8 @@ declare const isValidPath: (value: unknown) => value is MorphPathArray;
  *
  * @param target The incoming value `from()` / `to()`
  * @param ref The state reference value
- * @returns `true` when arrays are compatible or a reason why not
+ * @returns a tuple with validation result as a `boolean` and,
+ * if not valid, a reason why value isn't
  */
 declare const validatePath: <T extends MorphPathArray>(propName: string, target: unknown, ref?: T) => ValidationResultEntry;
 /**
@@ -801,12 +808,19 @@ declare const pathArrayConfig: {
 //#endregion
 //#region src/extend/object.d.ts
 /**
- * Single-level object interpolator
- * **Note**: values must be validated first!
+ * Single-level `Record<string, number>` object interpolate function.
  *
- * Input: { scale: { x: 1, y: 1 } }
+ * **NOTE**: values must be validated first!
+ *
+ * Input: single-level nested object
+ *
  * Output: interpolated flat object with same structure
- * @param target The target value of the object
+ *
+ * @example
+ * const initialValues = { translate : { x: 0, y: 0 } };
+ * // we will need to validate the value of `translate`
+ *
+ * @param target The target value of the state object
  * @param start The start value of the object
  * @param end The end value of the object
  * @param t The progress value
@@ -814,7 +828,8 @@ declare const pathArrayConfig: {
  */
 declare const interpolateObject: InterpolatorFunction<BaseTweenProps>;
 /**
- * Validate a simple plain object and compare its compatibility with a reference object.
+ * Validate a plain `Record<string, number>` object and compare its compatibility
+ * with a reference object.
  * @param propName The property name to which this object belongs to
  * @param target The target object itself
  * @param ref A reference object to compare our target to
@@ -850,8 +865,10 @@ declare const transformToString: (steps: TransformStep[], toMatrix?: boolean) =>
  */
 declare const eulerToAxisAngle: (x: number, y: number, z: number) => [number, number, number, number];
 /**
- * Interpolator: takes start/end arrays of `TransformStep`s → returns interpolated `TransformStep`s.
- * **Note** - Like `PathArray`, these values are required to have same length and structure.
+ * Interpolates arrays of `TransformStep`s → returns interpolated `TransformStep`s.
+ *
+ * **NOTE** - Like `PathArray`, these values are required to have same length,
+ * structure and must be validated beforehand.
  * @example
  * const a1: TransformArray = [
  *  ["translate", 0, 0],              // [translateX, translateY]
@@ -872,7 +889,7 @@ declare const eulerToAxisAngle: (x: number, y: number, z: number) => [number, nu
  *  ["perspective", 400],
  * ];
  *
- * @param target The target `TransformArray`
+ * @param target The target `TransformArray` of the state object
  * @param start The start `TransformArray`
  * @param end The end `TransformArray`
  * @param t The progress value
@@ -880,20 +897,22 @@ declare const eulerToAxisAngle: (x: number, y: number, z: number) => [number, nu
  */
 declare const interpolateTransform: InterpolatorFunction<TransformStep[]>;
 /**
- * Check if an array of arrays is potentially a TransformArray
+ * Check if a value is potentially a `TransformArray`.
  * @param target The incoming value `constructor()` `from()` / `to()`
  * @returns `true` when array is potentially a PathArray
  */
 declare const isTransformLike: (value: unknown) => value is TransformLike;
 /**
- * Check if an array of arrays is a valid TransformArray for interpolation
+ * Check if a value is a valid `TransformArray` for interpolation.
  * @param target The incoming value `from()` / `to()`
- * @returns `true` when array is valid
+ * @returns a tuple with validation result as a `boolean` and,
+ * if not valid, a reason why value isn't
  */
 declare const isValidTransformArray: (value: unknown) => value is TransformArray;
 /**
- * Validator for TransformArray
- * Checks structure + number types + optional param counts
+ * Validator for `TransformArray` that checks
+ * structure + parameter counts, and if provided,
+ * the compatibility with a reference value.
  */
 declare const validateTransform: (propName: string, target: unknown, ref?: TransformArray) => ValidationResultEntry;
 /**
@@ -913,7 +932,7 @@ declare function setNow(nowFunction: typeof _nowFunc): void;
 /**
  * The runtime queue
  */
-declare const Queue: (AnimationItem | null)[];
+declare const Queue: AnimationItem[];
 /**
  * The hot update loop updates all items in the queue,
  * and stops automatically when there are no items left.

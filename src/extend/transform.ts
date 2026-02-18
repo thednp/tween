@@ -196,8 +196,10 @@ const quaternionToAxisAngle = (
 };
 
 /**
- * Interpolator: takes start/end arrays of `TransformStep`s → returns interpolated `TransformStep`s.
- * **Note** - Like `PathArray`, these values are required to have same length and structure.
+ * Interpolates arrays of `TransformStep`s → returns interpolated `TransformStep`s.
+ *
+ * **NOTE** - Like `PathArray`, these values are required to have same length,
+ * structure and must be validated beforehand.
  * @example
  * const a1: TransformArray = [
  *  ["translate", 0, 0],              // [translateX, translateY]
@@ -218,7 +220,7 @@ const quaternionToAxisAngle = (
  *  ["perspective", 400],
  * ];
  *
- * @param target The target `TransformArray`
+ * @param target The target `TransformArray` of the state object
  * @param start The start `TransformArray`
  * @param end The end `TransformArray`
  * @param t The progress value
@@ -281,7 +283,7 @@ const supportedTransform = [
 ] as const;
 
 /**
- * Check if an array of arrays is potentially a TransformArray
+ * Check if a value is potentially a `TransformArray`.
  * @param target The incoming value `constructor()` `from()` / `to()`
  * @returns `true` when array is potentially a PathArray
  */
@@ -292,9 +294,10 @@ export const isTransformLike = (value: unknown): value is TransformLike =>
   );
 
 /**
- * Check if an array of arrays is a valid TransformArray for interpolation
+ * Check if a value is a valid `TransformArray` for interpolation.
  * @param target The incoming value `from()` / `to()`
- * @returns `true` when array is valid
+ * @returns a tuple with validation result as a `boolean` and,
+ * if not valid, a reason why value isn't
  */
 export const isValidTransformArray = (
   value: unknown,
@@ -316,8 +319,9 @@ export const isValidTransformArray = (
   );
 
 /**
- * Validator for TransformArray
- * Checks structure + number types + optional param counts
+ * Validator for `TransformArray` that checks
+ * structure + parameter counts, and if provided,
+ * the compatibility with a reference value.
  */
 export const validateTransform = (
   propName: string,

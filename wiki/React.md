@@ -13,6 +13,7 @@ The hooks handle React's frequent re-renders and `<StrictMode>` double-mounting 
   - Both `Tween` and `Timeline` classes themselves are SSR-safe as long as you don't access instance methods (`tween.start` or `timeline.play`).
   - The hooks use safe guards for server side rendering (**SSR**) and always provide `initialValues` to the rendering engine.
   - The Tween/Timeline configuration (validation of tween values, creation of `miniStore` instance, registering extensions) never happens during server rendering and this is to speed up the overall rendering runtime.
+  - **IMPORTANT** - while we do provide the `initialValues` to make sure your server rendered HTML is consistent, that only depends on actual validity of the values you provide, so make sure your values have been validated beforehand.
 
 
 ### Prerequisites

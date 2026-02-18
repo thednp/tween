@@ -1,6 +1,5 @@
 ## Troubleshooting
 
-
 ### CSS Gotchas
 
 Properties like `top`/`left` require `position`: `absolute`/`relative` on the element and its parent. `transform`/`translate` usually works best for animations.

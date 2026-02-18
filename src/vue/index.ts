@@ -60,7 +60,7 @@ export function useTween<T extends TweenProps>(initialValues: T) {
  *    timeline.to({ x: 100, y: 100 })
  *
  *    onMounted(() => {
- *      timeline.start()
+ *      timeline.play()
  *    })
  * </script>
  *

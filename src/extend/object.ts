@@ -7,12 +7,19 @@ import type {
 import { isNumber, isPlainObject } from "../Util.ts";
 
 /**
- * Single-level object interpolator
- * **Note**: values must be validated first!
+ * Single-level `Record<string, number>` object interpolate function.
  *
- * Input: { scale: { x: 1, y: 1 } }
+ * **NOTE**: values must be validated first!
+ *
+ * Input: single-level nested object
+ *
  * Output: interpolated flat object with same structure
- * @param target The target value of the object
+ *
+ * @example
+ * const initialValues = { translate : { x: 0, y: 0 } };
+ * // we will need to validate the value of `translate`
+ *
+ * @param target The target value of the state object
  * @param start The start value of the object
  * @param end The end value of the object
  * @param t The progress value
@@ -42,7 +49,8 @@ export const interpolateObject: InterpolatorFunction<BaseTweenProps> = <
 };
 
 /**
- * Validate a simple plain object and compare its compatibility with a reference object.
+ * Validate a plain `Record<string, number>` object and compare its compatibility
+ * with a reference object.
  * @param propName The property name to which this object belongs to
  * @param target The target object itself
  * @param ref A reference object to compare our target to

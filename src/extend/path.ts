@@ -12,11 +12,12 @@ import type {
 import { roundTo } from "../Util.ts";
 
 /**
- * Iterates a `PathArray` and concatenates the values into a string to return it.
+ * Iterates a `PathArray` value and concatenates the values into a string to return it.
+ *
  * **NOTE**: Segment values are rounded to 4 decimals by default.
  * @param path A source PathArray
  * @param round An optional parameter to round segment values to a number of decimals
- * @returns A path string
+ * @returns A valid HTML `description` (d) path string value
  */
 export function pathToString(path: MorphPathArray, round = 4) {
   const pathLen = path.length;
@@ -42,8 +43,9 @@ export function pathToString(path: MorphPathArray, round = 4) {
 }
 
 /**
- * Interpolate PathArray values.
- * **NOTE**: these values must be validated first! Check validatePath for more info.
+ * Interpolate `PathArray` values.
+ *
+ * **NOTE**: these values must be validated first!
  * @param target - The target PathArray value
  * @param start - A starting PathArray value
  * @param end - An ending PathArray value
@@ -120,10 +122,10 @@ export const isValidPath = (value: unknown): value is MorphPathArray =>
   );
 
 /**
- * Validate a PathArray and check if it's compatible with a reference.
+ * Validate a `PathArray` and check if it's compatible with a reference.
  *
  * **NOTE**: Path interpolation only works when both paths have:
- * - Identical segments structure (same number and order of M/L/C/Z)
+ * - Identical segments structure (same number and order of M/L/C/Z path commands)
  * - Corresponding coordinates to interpolate
  * Complex morphs require preprocessing (e.g. KUTE.js, Flubber)
  *
@@ -152,7 +154,8 @@ export const isValidPath = (value: unknown): value is MorphPathArray =>
  *
  * @param target The incoming value `from()` / `to()`
  * @param ref The state reference value
- * @returns `true` when arrays are compatible or a reason why not
+ * @returns a tuple with validation result as a `boolean` and,
+ * if not valid, a reason why value isn't
  */
 export const validatePath = <T extends MorphPathArray>(
   propName: string,

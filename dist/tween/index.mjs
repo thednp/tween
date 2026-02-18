@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween  v0.0.3 (https://github.com/thednp/tween)
+* @thednp/tween  v0.0.4 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -236,8 +236,8 @@ const objectHasProp = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, p
 * A small utility to deep assign up to one level deep nested objects.
 * This is to prevent breaking reactivity of miniStore.
 *
-* **NOTE** - This doesn't perform ANY check and expects objects to
-* be validated beforehand.
+* **NOTE** - This doesn't perform ANY check and expects objects values
+* to be validated beforehand.
 * @param target The target to assign values to
 * @param source The source object to assign values from
 */
@@ -272,10 +272,11 @@ function deepAssign(target, source) {
 	}
 }
 /**
-* Creates a clone of a target object / array without its
-* proxy elements / properties, only their values.
+* Creates a new object with the same structure of a target object / array
+* without its proxy elements / properties, only their values.
 *
 * **NOTE** - The utility is useful to create deep clones as well.
+*
 * @param value An object / array with proxy elements
 * @returns the object / array value without proxy elements
 */
@@ -283,7 +284,7 @@ const deproxy = (value) => {
 	if (isArray(value)) return value.map(deproxy);
 	if (isPlainObject(value)) {
 		const result = {};
-		for (const key in value) if (Object.prototype.hasOwnProperty.call(value, key)) result[key] = deproxy(value[key]);
+		for (const key in value) if (objectHasProp(value, key)) result[key] = deproxy(value[key]);
 		return result;
 	}
 	return value;
@@ -341,7 +342,8 @@ function validateValues(target, reference) {
 * Interpolates two `Array<number>` values.
 *
 * **NOTE**: Values my be validated first!
-* @param target The target `Array<number>` value
+*
+* @param target The target `Array<number>` value of the state object
 * @param start The start `Array<number>` value
 * @param end The end `Array<number>` value
 * @param t The progress value
@@ -357,16 +359,18 @@ const interpolateArray = (target, start, end, t) => {
 	return target;
 };
 /**
-* Check if a value is a valid array for interpolation
+* Check if a value is a valid `Array<number>` for interpolation.
 * @param target The array to check
 * @returns `true` is value is array and all elements are numbers
 */
 const isValidArray = (target) => isArray(target) && target.every(isNumber);
 /**
-* Check if an array of numbers is compatible with a reference
+* Check if an `Array<number>` is valid and compatible with a reference.
+*
 * @param target The incoming value `from()` / `to()`
 * @param ref The state reference value
-* @returns [boolean, reason] tuple when arrays are compatible or
+* @returns [boolean, reason] tuple with validation state as boolean and,
+* if not valid, a reason why it's not valid
 */
 const validateArray = (propName, target, ref) => {
 	if (!isArray(target)) return [false, `Property "${String(propName)}" is not Array.`];
@@ -385,11 +389,12 @@ const arrayConfig = {
 //#endregion
 //#region src/extend/path.ts
 /**
-* Iterates a `PathArray` and concatenates the values into a string to return it.
+* Iterates a `PathArray` value and concatenates the values into a string to return it.
+*
 * **NOTE**: Segment values are rounded to 4 decimals by default.
 * @param path A source PathArray
 * @param round An optional parameter to round segment values to a number of decimals
-* @returns A path string
+* @returns A valid HTML `description` (d) path string value
 */
 function pathToString(path, round = 4) {
 	const pathLen = path.length;
@@ -410,8 +415,9 @@ function pathToString(path, round = 4) {
 	return result;
 }
 /**
-* Interpolate PathArray values.
-* **NOTE**: these values must be validated first! Check validatePath for more info.
+* Interpolate `PathArray` values.
+*
+* **NOTE**: these values must be validated first!
 * @param target - The target PathArray value
 * @param start - A starting PathArray value
 * @param end - An ending PathArray value
@@ -462,10 +468,10 @@ const isPathLike = (value) => isArray(value) && value.some((seg) => isArray(seg)
 */
 const isValidPath = (value) => isPathLike(value) && value.length > 1 && value.every(isArray) && value.every(([cmd, ...values]) => supportedPathCommands.includes(cmd) && (["M", "L"].includes(cmd) && values.length === 2 && values.every(isNumber) || "C" === cmd && values.length === 6 && values.every(isNumber) || "Z" === cmd && values.length === 0));
 /**
-* Validate a PathArray and check if it's compatible with a reference.
+* Validate a `PathArray` and check if it's compatible with a reference.
 *
 * **NOTE**: Path interpolation only works when both paths have:
-* - Identical segments structure (same number and order of M/L/C/Z)
+* - Identical segments structure (same number and order of M/L/C/Z path commands)
 * - Corresponding coordinates to interpolate
 * Complex morphs require preprocessing (e.g. KUTE.js, Flubber)
 *
@@ -494,7 +500,8 @@ const isValidPath = (value) => isPathLike(value) && value.length > 1 && value.ev
 *
 * @param target The incoming value `from()` / `to()`
 * @param ref The state reference value
-* @returns `true` when arrays are compatible or a reason why not
+* @returns a tuple with validation result as a `boolean` and,
+* if not valid, a reason why value isn't
 */
 const validatePath = (propName, target, ref) => {
 	if (!isValidPath(target)) return [false, `Property "${propName}" is not a valid PathArray.`];
@@ -526,12 +533,19 @@ const pathArrayConfig = {
 //#endregion
 //#region src/extend/object.ts
 /**
-* Single-level object interpolator
-* **Note**: values must be validated first!
+* Single-level `Record<string, number>` object interpolate function.
 *
-* Input: { scale: { x: 1, y: 1 } }
+* **NOTE**: values must be validated first!
+*
+* Input: single-level nested object
+*
 * Output: interpolated flat object with same structure
-* @param target The target value of the object
+*
+* @example
+* const initialValues = { translate : { x: 0, y: 0 } };
+* // we will need to validate the value of `translate`
+*
+* @param target The target value of the state object
 * @param start The start value of the object
 * @param end The end value of the object
 * @param t The progress value
@@ -549,7 +563,8 @@ const interpolateObject = (target, start, end, t) => {
 	return target;
 };
 /**
-* Validate a simple plain object and compare its compatibility with a reference object.
+* Validate a plain `Record<string, number>` object and compare its compatibility
+* with a reference object.
 * @param propName The property name to which this object belongs to
 * @param target The target object itself
 * @param ref A reference object to compare our target to
@@ -721,8 +736,10 @@ const quaternionToAxisAngle = (q) => {
 	];
 };
 /**
-* Interpolator: takes start/end arrays of `TransformStep`s → returns interpolated `TransformStep`s.
-* **Note** - Like `PathArray`, these values are required to have same length and structure.
+* Interpolates arrays of `TransformStep`s → returns interpolated `TransformStep`s.
+*
+* **NOTE** - Like `PathArray`, these values are required to have same length,
+* structure and must be validated beforehand.
 * @example
 * const a1: TransformArray = [
 *  ["translate", 0, 0],              // [translateX, translateY]
@@ -743,7 +760,7 @@ const quaternionToAxisAngle = (q) => {
 *  ["perspective", 400],
 * ];
 *
-* @param target The target `TransformArray`
+* @param target The target `TransformArray` of the state object
 * @param start The start `TransformArray`
 * @param end The end `TransformArray`
 * @param t The progress value
@@ -786,15 +803,16 @@ const supportedTransform = [
 	"skewY"
 ];
 /**
-* Check if an array of arrays is potentially a TransformArray
+* Check if a value is potentially a `TransformArray`.
 * @param target The incoming value `constructor()` `from()` / `to()`
 * @returns `true` when array is potentially a PathArray
 */
 const isTransformLike = (value) => isArray(value) && value.some((step) => isArray(step) && supportedTransform.includes(step[0]));
 /**
-* Check if an array of arrays is a valid TransformArray for interpolation
+* Check if a value is a valid `TransformArray` for interpolation.
 * @param target The incoming value `from()` / `to()`
-* @returns `true` when array is valid
+* @returns a tuple with validation result as a `boolean` and,
+* if not valid, a reason why value isn't
 */
 const isValidTransformArray = (value) => isTransformLike(value) && value.every(([fn, ...values]) => supportedTransform.includes(fn) && ([
 	"translate",
@@ -806,8 +824,9 @@ const isValidTransformArray = (value) => isTransformLike(value) && value.every((
 	"perspective"
 ].includes(fn) && values.length === 1 && isNumber(values[0])));
 /**
-* Validator for TransformArray
-* Checks structure + number types + optional param counts
+* Validator for `TransformArray` that checks
+* structure + parameter counts, and if provided,
+* the compatibility with a reference value.
 */
 const validateTransform = (propName, target, ref) => {
 	if (!isValidTransformArray(target)) return [false, `Property "${propName}" must be an array of TransformStep.`];
@@ -851,7 +870,7 @@ function setNow(nowFunction) {
 /**
 * The runtime queue
 */
-const Queue = new Array(1e4).fill(null);
+const Queue = new Array(0);
 let rafID = 0;
 let queueLength = 0;
 /**
@@ -861,12 +880,11 @@ let queueLength = 0;
 */
 function Runtime(t = now()) {
 	let i = 0;
-	let writeIdx = 0;
-	while (i < queueLength) {
-		const item = Queue[i++];
-		if (item && item.update(t)) Queue[writeIdx++] = item;
+	while (i < queueLength) if (Queue[i]?.update(t)) i += 1;
+	else {
+		Queue.splice(i, 1);
+		queueLength--;
 	}
-	queueLength = writeIdx;
 	if (queueLength === 0) {
 		cancelAnimationFrame(rafID);
 		rafID = 0;
@@ -878,8 +896,8 @@ function Runtime(t = now()) {
 * @param newItem Tween / Timeline
 */
 function addToQueue(newItem) {
-	const item = newItem;
-	Queue[queueLength++] = item;
+	if (Queue.includes(newItem)) return;
+	Queue[queueLength++] = newItem;
 	if (!rafID) Runtime();
 }
 /**
@@ -888,7 +906,7 @@ function addToQueue(newItem) {
 */
 function removeFromQueue(removedItem) {
 	const idx = Queue.indexOf(removedItem);
-	if (idx !== -1) Queue[idx] = null;
+	if (idx > -1) Queue.splice(idx, 1);
 }
 
 //#endregion
@@ -1155,12 +1173,12 @@ var Tween = class {
 	/**
 	* Sets a number of seconds to delay the animation
 	* after each repeat.
-	* @param amount - How many seconds to delay
+	* @param seconds - How many seconds to delay
 	* @default 0 seconds
 	* @returns this
 	*/
-	repeatDelay(amount = 0) {
-		this._repeatDelay = amount * 1e3;
+	repeatDelay(seconds = 0) {
+		this._repeatDelay = seconds * 1e3;
 		return this;
 	}
 	/**
@@ -1922,7 +1940,7 @@ var Timeline = class {
 
 //#endregion
 //#region package.json
-var version = "0.0.3";
+var version = "0.0.4";
 
 //#endregion
 export { Easing, Queue, Runtime, Timeline, Tween, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, roundTo, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };

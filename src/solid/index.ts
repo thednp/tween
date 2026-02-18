@@ -59,7 +59,7 @@ export function createTween<T extends TweenProps>(initialValues: T) {
  *    timeline.to({ x: 100, y: 100 })
  *
  *    onMount(() => {
- *      timeline.start()
+ *      timeline.play()
  *    })
  *
  *    return (

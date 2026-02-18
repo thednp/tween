@@ -5,7 +5,7 @@ import { now } from "./Now.ts";
 /**
  * The runtime queue
  */
-export const Queue: (AnimationItem | null)[] = new Array(10000).fill(null);
+export const Queue: AnimationItem[] = new Array(0);
 
 let rafID = 0;
 let queueLength = 0;
@@ -17,23 +17,20 @@ let queueLength = 0;
  */
 export function Runtime(t = now()) {
   let i = 0;
-  let writeIdx = 0;
-
+  // queueLength = Queue.length;
   while (i < queueLength) {
-    const item = Queue[i++];
-    if (item && item.update(t)) {
-      Queue[writeIdx++] = item;
+    if (Queue[i]?.update(t)) {
+      i += 1;
+    } else {
+      Queue.splice(i, 1);
+      queueLength--;
     }
   }
-
-  queueLength = writeIdx;
 
   if (queueLength === 0) {
     cancelAnimationFrame(rafID);
     rafID = 0;
-  } else {
-    rafID = requestAnimationFrame(Runtime);
-  }
+  } else rafID = requestAnimationFrame(Runtime);
 }
 
 /**
@@ -44,9 +41,11 @@ export function Runtime(t = now()) {
 export function addToQueue<T extends TweenProps>(
   newItem: AnimationItem<T>,
 ): void {
-  const item = newItem as unknown as AnimationItem<never>;
-  Queue[queueLength++] = item;
-
+  // istanbul ignore else @preserve
+  if (Queue.includes(newItem as AnimationItem<never>)) return;
+  // Queue.push(item);
+  Queue[queueLength++] = newItem as AnimationItem<never>;
+  // istanbul ignore else @preserve
   if (!rafID) Runtime();
 }
 
@@ -57,9 +56,7 @@ export function addToQueue<T extends TweenProps>(
 export function removeFromQueue<T extends TweenProps>(
   removedItem: AnimationItem<T>,
 ): void {
-  const idx = Queue.indexOf(removedItem as unknown as AnimationItem<never>);
+  const idx = Queue.indexOf(removedItem as AnimationItem<never>);
   // istanbul ignore else @preserve
-  if (idx !== -1) {
-    Queue[idx] = null;
-  }
+  if (idx > -1) Queue.splice(idx, 1);
 }

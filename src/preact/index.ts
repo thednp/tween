@@ -67,7 +67,7 @@ export function useTween<T extends TweenProps>(initialValues: T) {
  *    const [state, timeline] = useTimeline({ x: 0, y: 0 })
  *
  *    useEffect(() => {
- *      timeline.to({ x: 100, y: 100 }).start()
+ *      timeline.to({ x: 100, y: 100 }).play()
  *    }, [])
  *
  *    return (

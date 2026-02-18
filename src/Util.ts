@@ -91,8 +91,8 @@ export const objectHasProp = <T extends object>(obj: T, prop: keyof T) =>
  * A small utility to deep assign up to one level deep nested objects.
  * This is to prevent breaking reactivity of miniStore.
  *
- * **NOTE** - This doesn't perform ANY check and expects objects to
- * be validated beforehand.
+ * **NOTE** - This doesn't perform ANY check and expects objects values
+ * to be validated beforehand.
  * @param target The target to assign values to
  * @param source The source object to assign values from
  */
@@ -156,10 +156,11 @@ export function deepAssign<T extends TweenProps>(
 }
 
 /**
- * Creates a clone of a target object / array without its
- * proxy elements / properties, only their values.
+ * Creates a new object with the same structure of a target object / array
+ * without its proxy elements / properties, only their values.
  *
  * **NOTE** - The utility is useful to create deep clones as well.
+ *
  * @param value An object / array with proxy elements
  * @returns the object / array value without proxy elements
  */
@@ -172,7 +173,7 @@ export const deproxy = <T>(value: T): T => {
     const result: Record<string, unknown> = {};
     for (const key in value) {
       // istanbul ignore else @preserve
-      if (Object.prototype.hasOwnProperty.call(value, key)) {
+      if (objectHasProp(value, key)) {
         result[key] = deproxy(value[key]);
       }
     }

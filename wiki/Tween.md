@@ -92,7 +92,7 @@ While tween is running, calling `reverse()` will switch starting values with end
 #### `.update(time?, autoStart?)`
 Updates the state and fires the `onUpdate` callback. Returns true if still active.
 
-Individual tweens have an `update()` method to so that they can be updated over time in an animation loop, and on each update they will apply updated values to their target object.
+Individual tweens have an `update()` method so that they can be updated over time in the global update loop runtime, and on each update they will apply updated values to their target object.
 
 The global update loop is handled automatically once you call `start()`:
 

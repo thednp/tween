@@ -10,7 +10,7 @@ To interpolate other types (quaternions / tupples / arrays, SVG paths, transform
 - this is the **best** way to make sure your app / page never breaks because animation update loops
 - this is the **best** way to avoid leaks and keep performance in check
 
-As a general rule, we can only use extensions for root properties, and never as nested object properties. While in theory this might work, we cannot guarantee a safe and consistent outcome.
+As a general rule, we can only use extensions for **root** properties of the target object, and never as nested object properties. While in theory this might work, we cannot guarantee a safe and consistent outcome.
 
 
 ### TypeScript Definitions

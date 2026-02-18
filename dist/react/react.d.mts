@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween hooks for React v0.0.3 (https://github.com/thednp/tween)
+* @thednp/tween hooks for React v0.0.4 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -48,7 +48,7 @@ declare const useTween: <T extends TweenProps>(initialValues: T) => readonly [T,
  *    const [state, timeline] = useTimeline({ x: 0, y: 0 })
  *
  *    useEffect(() => {
- *      timeline.to({ x: 100, y: 100 }).start()
+ *      timeline.to({ x: 100, y: 100 }).play()
  *    }, [])
  *
  *    return (

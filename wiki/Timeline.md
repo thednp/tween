@@ -94,6 +94,13 @@ Makes every un-even repeat iteration run in reverse. The resulted elapsed value 
 #### `.reverse()`
 While timeline is running, calling `reverse()` will switch starting values with end values for each entry and invert the eased progress value (no need to use `reverseEasing`). If the instance must repeat a number of times, the repeat value is also updated to mirror the state in which `reverse()` was called.
 
+#### `.update(time?, autoStart?)`
+Updates the state and fires the `onUpdate` callback. Returns `true` if still active.
+
+Individual timelines have an `update()` method so that they can be updated over time in the global update loop runtime, and on each update they will apply updated values to their target object.
+
+The global update loop is handled automatically once you call `play()`.
+
 #### Callbacks
 
 Callbacks give you the abillity to run your own functions at specific times in each timeline's life cycle. This might be needed when changing tween entries is not enough.
@@ -184,7 +191,7 @@ The package already comes with 4 built in extensions:
 import { Timeline, arrayConfig } from "@thednp/tween";
 
 const target = document.getElementById("my-target");
-const tl = new Timeline({ rgb: [255,0,0] }) // start from red
+const timeline = new Timeline({ rgb: [255,0,0] }) // start from red
   // the `rgb` property will now use the custom interpolation
   .use('rgb', arrayConfig);
   // set an update function
@@ -196,10 +203,10 @@ const tl = new Timeline({ rgb: [255,0,0] }) // start from red
   });
 
 // set new value
-tl.to({ rgb: [0,255,0], duration: 1.5 }); // fade to green
+timeline.to({ rgb: [0,255,0], duration: 1.5 }); // fade to green
 
 // start animation
-tl.play();
+timeline.play();
 ```
 
 For more guide and examples on using extensions, check out the [Extensions Guide](Extend.md).

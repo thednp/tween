@@ -6,7 +6,8 @@ import { InterpolatorFunction, ValidationResultEntry } from "../types.ts";
  * Interpolates two `Array<number>` values.
  *
  * **NOTE**: Values my be validated first!
- * @param target The target `Array<number>` value
+ *
+ * @param target The target `Array<number>` value of the state object
  * @param start The start `Array<number>` value
  * @param end The end `Array<number>` value
  * @param t The progress value
@@ -32,7 +33,7 @@ export const interpolateArray: InterpolatorFunction<number[]> = <
 };
 
 /**
- * Check if a value is a valid array for interpolation
+ * Check if a value is a valid `Array<number>` for interpolation.
  * @param target The array to check
  * @returns `true` is value is array and all elements are numbers
  */
@@ -41,10 +42,12 @@ export const isValidArray = <T extends number[]>(
 ): target is T => isArray(target) && target.every(isNumber);
 
 /**
- * Check if an array of numbers is compatible with a reference
+ * Check if an `Array<number>` is valid and compatible with a reference.
+ *
  * @param target The incoming value `from()` / `to()`
  * @param ref The state reference value
- * @returns [boolean, reason] tuple when arrays are compatible or
+ * @returns [boolean, reason] tuple with validation state as boolean and,
+ * if not valid, a reason why it's not valid
  */
 export const validateArray = <T extends number[]>(
   propName: string,

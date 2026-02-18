@@ -1,8 +1,8 @@
 ## Ministore
 
-Each supported UI framework (React, SolidJS, Preact, Svelte, Vue) make use of a highly specialized `miniStore` to store tween values and update your UI. The `miniStore` makes it possible for both `Tween` and `Timeline` to mutate and trigger DOM updates/effects in most efficient way possible: no object/array re-allocation, no un-necessary object look-ups, just pure linear interpolation.
+Each supported UI framework (React, SolidJS, Preact, Svelte, Vue) make use of a highly specialized `miniStore` to hold tween values and update your UI. The `miniStore` makes it possible for both `Tween` and `Timeline` to mutate and trigger DOM updates/effects in most efficient way possible: no object/array re-allocation, no un-necessary object look-ups, just pure linear interpolation.
 
-If we were to use the [SolidJS store](https://docs.solidjs.com/concepts/stores) for instance, this would lead to un-necessary memory usage for complex tween values (path, transform, quaternions) and an overload of effects to execute. The same goes for Svelte `$state` rune.
+If we were to use the [SolidJS store](https://docs.solidjs.com/concepts/stores) for instance, this would lead to un-necessary memory usage for complex tween values (path, transform, quaternions) and an overload of effects to execute. The same goes for Svelte `$state` rune or other similar from signal based UI frameworks.
 
 In most cases your UI framework will consume the store root properties, except for deeper objects, a case where your UI framework will consume the properties of the nested object.
 
@@ -43,6 +43,7 @@ tween
   .use("transform", transformConfig)
   .use("path", pathArrayConfig)
   // use to() and from() to add tween values
+  // use start() anytime to start updating values
 
 ```
 > **NOTE** - extensions are required to validate the `initialValues` object.
