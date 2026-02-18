@@ -5,7 +5,10 @@ import { useTween, useTimeline } from "@thednp/tween/vue";
 const [twState, tween] = useTween({ x: 0 });
 const [tlState, timeline] = useTimeline({ x: 0, y: 0 });
 
-tween.to({ x: 150 }).easing(Easing.Circular.InOut).duration(1.5);
+tween
+  .to({ x: 150 })
+  .easing(Easing.Circular.InOut)
+  .duration(1.5);
 
 timeline
   .to({ x: 250, duration: 2, easing: Easing.Quadratic.Out })

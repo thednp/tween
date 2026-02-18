@@ -9,8 +9,8 @@ function App() {
   const [tlState, timeline] = createTimeline({ x: 0, y: 0 });
 
   tween
-  .to({ x: 150 })
-  .easing(Easing.Quadratic.InOut).duration(1.5);
+    .to({ x: 150 })
+    .easing(Easing.Quadratic.InOut).duration(1.5);
 
   timeline
     .to({ x: 150, duration: 2, easing: Easing.Quadratic.Out })

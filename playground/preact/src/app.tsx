@@ -18,10 +18,9 @@ export function App() {
       .to({ x: 150, duration: 2, easing: Easing.Quadratic.Out })
       .to({ y: 150, duration: 2, easing: Easing.Bounce.Out }, "-=1")
       .to({ x: 0, y: 0, duration: 1, easing: Easing.Back.InOut }, "+=1");
+    
+    console.log({ tween, timeline });
   }, []);
-
-  // test re-render
-  // console.log({ tween, timeline });
 
   return (
     <>

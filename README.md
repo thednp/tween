@@ -29,7 +29,7 @@ Your favorite framework isn't listed? [Let us know](https://github.com/thednp/tw
 * **Predictable outcomes** through upfront value validation — invalid values prevent animation start with clear feedback
 * **Production-ready validation system** catches configuration errors before they break your app
 * **Natural reverse playback** via inverted easing (no `reverseEasing` option or `valuesStart` reassignment)
-* **Extensible interpolation** with built-in [extensions](wiki/Extend.md) or custom per-property validators and interpolators
+* **Extensible interpolation** with built-in [extensions](wiki/Extend.md) for custom per-property validators and interpolators
 
 ### Performance Optimizations
 

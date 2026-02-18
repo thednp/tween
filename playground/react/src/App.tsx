@@ -9,7 +9,6 @@ function App() {
   const [twState, tween] = useTween({ x: 0 });
   const [tlState, timeline] = useTimeline({ x: 0, y: 0 });
 
-  // the above is equivalent to
   useEffect(() => {
     tween
     .to({ x: 150 })
