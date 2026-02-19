@@ -145,13 +145,13 @@ A callback which receives (`object`) parameter and is fired when a repeat iterat
 *Method*: returns the errors `Map` instance with all validation results.
 
 ##### `.progress`
-*Getter*: `number` is the [0-1] value which indicates how much of the timeline update is complete.
+*Getter*: `number` is the [0-1] value which indicates how much of the tween update is complete.
 
 ##### `.isPlaying`
-*Getter*: `boolean` that indicates whether timeline is currently **playing**.
+*Getter*: `boolean` that indicates whether tween is currently **playing**.
 
 ##### `.isPaused`
-*Getter*: `boolean` that indicates whether timeline is currently **paused**.
+*Getter*: `boolean` that indicates whether tween is currently **paused**.
 
 ##### `.isValidState`
 *Getter*: `boolean` that indicates whether initial values are valid.
@@ -165,7 +165,7 @@ A callback which receives (`object`) parameter and is fired when a repeat iterat
 
 #### Extensions
 
-The `.use(propName: string, extensionConfig)` method allows you to set a custom validation and interpolation function for a property in your timeline instance.
+The `.use(propName: string, extensionConfig)` method allows you to set a custom validation and interpolation function for a property in your tween instance.
 
 The package already comes with 4 built in extensions:
 

@@ -103,7 +103,7 @@ The global update loop is handled automatically once you call `play()`.
 
 #### Callbacks
 
-Callbacks give you the abillity to run your own functions at specific times in each timeline's life cycle. This might be needed when changing tween entries is not enough.
+Callbacks give you the abillity to run your own functions at specific times in each timeline's life cycle. This might be needed when changing timeline entries is not enough.
 
 ##### `.onStart(callback)`
 Callback receives (`object`) parameter and is fired when calling `play()`, regardless of its entries delay settings. Useful for synchronising to other events or triggering actions you want to happen when the timeline starts.
