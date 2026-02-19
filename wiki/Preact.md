@@ -88,7 +88,7 @@ import { Easing } from "@thednp/tween";
 import { useTimeline } from "@thednp/tween/preact";
 
 function AnimatedSequence() {
-  const [pos, timeline, dispose] = useTimeline({ x: 0, y: 0 });
+  const [pos, timeline] = useTimeline({ x: 0, y: 0 });
 
   /** Configure your Timeline inside useEffect */
   useEffect(() => {

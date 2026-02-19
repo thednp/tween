@@ -79,7 +79,7 @@ Creates a [`store`, `timeline`] tuple that has your `miniStore` instance (your s
   import { Easing } from "@thednp/tween";
   import { useTimeline } from "@thednp/tween/vue";
 
-  const [pos, timeline] = createTimeline({ x: 0, y: 0 });
+  const [pos, timeline] = useTimeline({ x: 0, y: 0 });
 
   /** Configure your Timeline anywhere */
   timeline

@@ -90,20 +90,9 @@ Stops animation and fires `onStop` callback. Stopping a tween that was never sta
 While tween is running, calling `reverse()` will switch starting values with end values and invert the eased progress value (no need to use `reverseEasing`). If the instance must repeat a number of times, the repeat value is also updated to mirror the state in which `reverse()` was called.
 
 #### `.update(time?, autoStart?)`
-Updates the state and fires the `onUpdate` callback. Returns true if still active.
+Updates the state and fires the `onUpdate` callback. Returns `true` if still active or `false` when completed all repeat iterations.
 
-Individual tweens have an `update()` method so that they can be updated over time in the global update loop runtime, and on each update they will apply updated values to their target object.
-
-The global update loop is handled automatically once you call `start()`:
-
-```ts
-// your defined tween
-const tween = new Tween(someObject).to(/*...*/)
-
-// later or anytime
-tween.start()
-```
-When no active `Tween` objects remain, the global update loop stops automatically.
+The global update runtime calls this method directly for all tweens/timelines and for each instance returning `false` the timeline/tween is removed from the update, and once no active instance remain, the runtime stops automatically.
 
 
 #### Callbacks
@@ -198,6 +187,7 @@ tween.to({ rgb: [0,255,0], duration: 1.5 }); // fade to green
 // start animation
 tween.start();
 ```
+> NOTE: you are not restricted to only use RGB, feel free to use any: HSLA, LAB, OKLCH, etc.
 
 For more guide and examples on using extensions, check out the [Extensions Guide](Extend.md).
 

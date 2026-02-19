@@ -95,11 +95,9 @@ Makes every un-even repeat iteration run in reverse. The resulted elapsed value 
 While timeline is running, calling `reverse()` will switch starting values with end values for each entry and invert the eased progress value (no need to use `reverseEasing`). If the instance must repeat a number of times, the repeat value is also updated to mirror the state in which `reverse()` was called.
 
 #### `.update(time?, autoStart?)`
-Updates the state and fires the `onUpdate` callback. Returns `true` if still active.
+Updates the state and fires the `onUpdate` callback. Returns `true` if still active or `false` when all repeat iterations are complete.
 
-Individual timelines have an `update()` method so that they can be updated over time in the global update loop runtime, and on each update they will apply updated values to their target object.
-
-The global update loop is handled automatically once you call `play()`.
+The global update runtime calls this method directly for all tweens/timelines and for each instance returning `false` the timeline/tween is removed from the update, and once no active instance remain, the runtime stops automatically.
 
 #### Callbacks
 
@@ -170,7 +168,7 @@ timeline.onUpdate((obj, progress) => {
 *Getter*: `boolean` whether no issues found, which means all initial values and entries values are valid.
 
 ##### `.totalDuration`
-*Getter*: `number` representine the total duration in seconds, which is a sum of all entries duration (including their delay) multiplied by repeat value and repeat delay multiplied by repeat value.
+*Getter*: `number` representing the total duration in seconds, which is a sum of all entries duration (including their delay) multiplied by repeat value and repeat delay multiplied by repeat value.
 
 
 #### Extensions
@@ -184,7 +182,6 @@ The package already comes with 4 built in extensions:
 * **objectConfig** - this allows you to validate and interpolate single-level nesting objects.
 * **pathArrayConfig** - this allows you to validate and interpolate `PathArray` values.
 * **transformConfig** - this allows you to validate and interpolate `TransformArray` values.
-
 
 #### Example Using Extensions
 ```ts
@@ -208,6 +205,7 @@ timeline.to({ rgb: [0,255,0], duration: 1.5 }); // fade to green
 // start animation
 timeline.play();
 ```
+> NOTE: you are not restricted to only use RGB, feel free to use any: HSLA, LAB, OKLCH, etc.
 
 For more guide and examples on using extensions, check out the [Extensions Guide](Extend.md).
 
