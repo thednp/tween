@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@thednp/tween": "^0.0.6",
+    "@thednp/tween": "^0.1.0",
     "vanjs-core": "^1.6.0"
   },
   "devDependencies": {
