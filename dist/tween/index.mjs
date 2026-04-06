@@ -1,10 +1,11 @@
 /*!
-* @thednp/tween  v0.0.5 (https://github.com/thednp/tween)
+* @thednp/tween  v0.1.0 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
 "use strict";
 
+import { equalizePaths, equalizeSegments, pathToString } from "svg-path-commander/util";
 //#region src/Easing.ts
 /**
 * The Ease class provides a collection of easing functions for use with tween.js.
@@ -175,7 +176,6 @@ const Easing = Object.freeze({
 		};
 	}
 });
-
 //#endregion
 //#region src/Util.ts
 const isString = (value) => typeof value === "string";
@@ -223,16 +223,6 @@ function dummyMethod() {
 	return this;
 }
 for (let i = 0; i < instanceMethods.length; i++) dummyInstance[instanceMethods[i]] = dummyMethod;
-/**
-* Utility to round numbers to a specified number of decimals.
-* @param n Input number value
-* @param round Number of decimals
-* @returns The rounded number
-*/
-const roundTo = (n, round) => {
-	const pow = round >= 1 ? 10 ** round : 1;
-	return round > 0 ? Math.round(n * pow) / pow : Math.round(n);
-};
 const objectHasProp = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop);
 const isUnsafeKey = (key) => key === "__proto__" || key === "constructor" || key === "prototype";
 /**
@@ -338,7 +328,6 @@ function validateValues(target, reference) {
 	}
 	errors.delete("init");
 }
-
 //#endregion
 //#region src/extend/array.ts
 /**
@@ -388,35 +377,8 @@ const arrayConfig = {
 	interpolate: interpolateArray,
 	validate: validateArray
 };
-
 //#endregion
 //#region src/extend/path.ts
-/**
-* Iterates a `PathArray` value and concatenates the values into a string to return it.
-*
-* **NOTE**: Segment values are rounded to 4 decimals by default.
-* @param path A source PathArray
-* @param round An optional parameter to round segment values to a number of decimals
-* @returns A valid HTML `description` (d) path string value
-*/
-function pathToString(path, round = 4) {
-	const pathLen = path.length;
-	let segment = path[0];
-	let result = "";
-	let i = 0;
-	let segLen = 0;
-	while (i < pathLen) {
-		segment = path[i++];
-		segLen = segment.length;
-		result += segment[0];
-		let j = 1;
-		while (j < segLen) {
-			result += roundTo(segment[j++], round);
-			if (j !== segLen) result += " ";
-		}
-	}
-	return result;
-}
 /**
 * Interpolate `PathArray` values.
 *
@@ -434,10 +396,8 @@ const interpolatePath = (target, start, end, t) => {
 		const targetSeg = target[i];
 		const startSeg = start[i];
 		const endSeg = end[i];
-		if (targetSeg[0] === "Z") {
-			i++;
-			continue;
-		} else if (targetSeg[0] === "C") {
+		if (targetSeg[0] === "Z") targetSeg[0];
+		else if (targetSeg[0] === "C") {
 			targetSeg[1] = startSeg[1] + (endSeg[1] - startSeg[1]) * t;
 			targetSeg[2] = startSeg[2] + (endSeg[2] - startSeg[2]) * t;
 			targetSeg[3] = startSeg[3] + (endSeg[3] - startSeg[3]) * t;
@@ -532,7 +492,6 @@ const pathArrayConfig = {
 	interpolate: interpolatePath,
 	validate: validatePath
 };
-
 //#endregion
 //#region src/extend/object.ts
 /**
@@ -596,7 +555,6 @@ const objectConfig = {
 	interpolate: interpolateObject,
 	validate: validateObject
 };
-
 //#endregion
 //#region src/extend/transform.ts
 /**
@@ -857,7 +815,6 @@ const transformConfig = {
 	interpolate: interpolateTransform,
 	validate: validateTransform
 };
-
 //#endregion
 //#region src/Now.ts
 let _nowFunc = () => globalThis.performance.now();
@@ -867,7 +824,6 @@ const now = () => {
 function setNow(nowFunction) {
 	_nowFunc = nowFunction;
 }
-
 //#endregion
 //#region src/Runtime.ts
 /**
@@ -914,7 +870,6 @@ function removeFromQueue(removedItem) {
 		queueLength--;
 	}
 }
-
 //#endregion
 //#region src/Tween.ts
 /**
@@ -1376,19 +1331,17 @@ var Tween = class {
 		let i = 0;
 		while (i < len) {
 			const property = endKeys[i++];
-			if (typeof propsStart[property] === "undefined" || overrideStartingValues) {
-				const objValue = obj[property];
-				if (isObject(objValue) || isArray(objValue)) propsStart[property] = deproxy(objValue);
-				else propsStart[property] = objValue;
-				const interpolator = this._interpolators.get(property) || null;
-				this._runtime[rtLen++] = [
-					objValue,
-					property,
-					interpolator,
-					propsStart[property],
-					propsEnd[property]
-				];
-			}
+			const objValue = obj[property];
+			if (typeof propsStart[property] === "undefined" || overrideStartingValues) if (isObject(objValue) || isArray(objValue)) propsStart[property] = deproxy(objValue);
+			else propsStart[property] = objValue;
+			const interpolator = this._interpolators.get(property) || null;
+			this._runtime[rtLen++] = [
+				objValue,
+				property,
+				interpolator,
+				propsStart[property],
+				propsEnd[property]
+			];
 		}
 	}
 	/**
@@ -1418,7 +1371,6 @@ var Tween = class {
 		return this;
 	}
 };
-
 //#endregion
 //#region src/Timeline.ts
 /**
@@ -1943,11 +1895,10 @@ var Timeline = class {
 		return this;
 	}
 };
-
 //#endregion
 //#region package.json
-var version = "0.0.5";
-
+var version = "0.1.0";
 //#endregion
-export { Easing, Queue, Runtime, Timeline, Tween, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, roundTo, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
+export { Easing, Queue, Runtime, Timeline, Tween, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, equalizePaths, equalizeSegments, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
+
 //# sourceMappingURL=index.mjs.map

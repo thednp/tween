@@ -1,9 +1,11 @@
 /*!
-* @thednp/tween  v0.0.5 (https://github.com/thednp/tween)
+* @thednp/tween  v0.1.0 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
 "use strict";
+
+import { equalizePaths, equalizeSegments, pathToString } from "svg-path-commander/util";
 
 //#region src/Tween.d.ts
 /**
@@ -653,13 +655,6 @@ declare const isServer: boolean;
  */
 declare const dummyInstance: Record<string, typeof dummyMethod>;
 declare function dummyMethod(this: typeof dummyInstance): Record<string, typeof dummyMethod>;
-/**
- * Utility to round numbers to a specified number of decimals.
- * @param n Input number value
- * @param round Number of decimals
- * @returns The rounded number
- */
-declare const roundTo: (n: number, round: number) => number;
 declare const objectHasProp: <T extends object>(obj: T, prop: keyof T) => boolean;
 /**
  * A small utility to deep assign up to one level deep nested objects.
@@ -729,15 +724,6 @@ declare const arrayConfig: {
 };
 //#endregion
 //#region src/extend/path.d.ts
-/**
- * Iterates a `PathArray` value and concatenates the values into a string to return it.
- *
- * **NOTE**: Segment values are rounded to 4 decimals by default.
- * @param path A source PathArray
- * @param round An optional parameter to round segment values to a number of decimals
- * @returns A valid HTML `description` (d) path string value
- */
-declare function pathToString(path: MorphPathArray, round?: number): string;
 /**
  * Interpolate `PathArray` values.
  *
@@ -954,5 +940,5 @@ declare function removeFromQueue<T extends TweenProps>(removedItem: AnimationIte
 //#region package.json.d.ts
 declare let version: string;
 //#endregion
-export { AnimationItem, ArrayVal, BaseTweenProps, CubicValues, DeepObject, DeepPartial, Easing, EasingFunction, EasingFunctionGroup, InterpolatorFunction, LineValues, MorphPathArray, MorphPathSegment, PathLike, Position, PropConfig, QuadValues, Queue, Rotate, RotateAxisAngle, RotateZ, Runtime, Scale, Timeline, TimelineCallback, TimelineEntry, TimelineEntryConfig, TransformArray, TransformLike, TransformStep, TransformStepInternal, Translate, Tween, TweenCallback, TweenProps, TweenRuntime, TweenUpdateCallback, ValidationFunction, ValidationResultEntry, Vec3, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, roundTo, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
+export { AnimationItem, ArrayVal, BaseTweenProps, CubicValues, DeepObject, DeepPartial, Easing, EasingFunction, EasingFunctionGroup, InterpolatorFunction, LineValues, MorphPathArray, MorphPathSegment, PathLike, Position, PropConfig, QuadValues, Queue, Rotate, RotateAxisAngle, RotateZ, Runtime, Scale, Timeline, TimelineCallback, TimelineEntry, TimelineEntryConfig, TransformArray, TransformLike, TransformStep, TransformStepInternal, Translate, Tween, TweenCallback, TweenProps, TweenRuntime, TweenUpdateCallback, ValidationFunction, ValidationResultEntry, Vec3, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, equalizePaths, equalizeSegments, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
 //# sourceMappingURL=index.d.mts.map

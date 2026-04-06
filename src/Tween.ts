@@ -590,6 +590,7 @@ export class Tween<T extends TweenProps = TweenProps> {
 
     while (i < len) {
       const property = endKeys[i++];
+      const objValue = obj[property] as T[keyof T];
 
       // Save the starting value, but only once unless override is requested.
       // istanbul ignore else
@@ -597,8 +598,6 @@ export class Tween<T extends TweenProps = TweenProps> {
         typeof propsStart[property] === "undefined" ||
         overrideStartingValues
       ) {
-        const objValue = obj[property] as T[keyof T];
-
         // Update start property value
         if (isObject(objValue) || isArray(objValue)) {
           propsStart[property] = deproxy(objValue);
@@ -606,19 +605,19 @@ export class Tween<T extends TweenProps = TweenProps> {
           // number
           propsStart[property] = objValue;
         }
-
-        // Pre-register interpolator
-        const interpolator = this._interpolators.get(property) || null;
-
-        // Store all values needed for interpolation
-        this._runtime[rtLen++] = [
-          objValue,
-          property,
-          interpolator,
-          propsStart[property] as T[keyof T],
-          propsEnd[property] as T[keyof T],
-        ] as TweenRuntime<T>;
       }
+      // Pre-register interpolator
+      const interpolator = this._interpolators.get(property) || null;
+
+      // Store all values needed for interpolation
+      // regardless if propsStart[property] is set or not
+      this._runtime[rtLen++] = [
+        objValue,
+        property,
+        interpolator,
+        propsStart[property] as T[keyof T],
+        propsEnd[property] as T[keyof T],
+      ] as TweenRuntime<T>;
     }
   }
 

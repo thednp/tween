@@ -1,31 +1,24 @@
-import * as React from 'preact';
-import { render, } from 'preact';
+import { render, h } from 'preact';
 import { vi } from "vitest"
 
 export async function withHook<T>(hookFactory: () => T) {
-  let result: T;
+  let result: T | undefined;
 
   const DummyComponent = () => {
-    if (!result) {
-      result = hookFactory();
-    }
-    return "";
+    result = hookFactory();
+    return h('div', null);
   };
 
   const container = document.createElement('div');
   document.body.appendChild(container);
 
-  async function renderTest() {
-    render(<DummyComponent />, container);
-    await vi.waitUntil(() => result);
-  }
+  render(h(DummyComponent, null), container);
+  await vi.waitUntil(() => result);
 
   const cleanup = () => {
     render(null, container);
     container.remove();
   };
-
-  await renderTest();
 
   return [result!, cleanup] as const;
 }

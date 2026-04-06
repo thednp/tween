@@ -57,9 +57,17 @@ describe("React", () => {
 
       vi.advanceTimersByTime(1);
       timeline.update();
-      vi.advanceTimersByTime(100);
+      vi.advanceTimersByTime(25);
       timeline.update();
-      vi.advanceTimersByTime(100);
+      vi.advanceTimersByTime(25);
+      timeline.update();
+      vi.advanceTimersByTime(25);
+      timeline.update();
+      vi.advanceTimersByTime(25);
+      timeline.update();
+      vi.advanceTimersByTime(50);
+      timeline.update();
+      vi.advanceTimersByTime(50);
       timeline.update();
 
       expect(pos.x).toBe(200);

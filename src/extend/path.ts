@@ -1,4 +1,9 @@
 // src/extend/path.ts
+import {
+  equalizePaths,
+  equalizeSegments,
+  pathToString,
+} from "svg-path-commander/util";
 import { isArray, isNumber } from "../Util.ts";
 
 import type {
@@ -9,38 +14,7 @@ import type {
   ValidationResultEntry,
 } from "../types.ts";
 
-import { roundTo } from "../Util.ts";
-
-/**
- * Iterates a `PathArray` value and concatenates the values into a string to return it.
- *
- * **NOTE**: Segment values are rounded to 4 decimals by default.
- * @param path A source PathArray
- * @param round An optional parameter to round segment values to a number of decimals
- * @returns A valid HTML `description` (d) path string value
- */
-export function pathToString(path: MorphPathArray, round = 4) {
-  const pathLen = path.length;
-  let segment = path[0];
-  let result = "";
-  let i = 0;
-  let segLen = 0;
-
-  while (i < pathLen) {
-    segment = path[i++];
-    segLen = segment.length;
-    result += segment[0];
-
-    let j = 1;
-
-    while (j < segLen) {
-      result += roundTo(segment[j++] as number, round);
-      if (j !== segLen) result += " ";
-    }
-  }
-
-  return result;
-}
+export { equalizePaths, equalizeSegments, pathToString };
 
 /**
  * Interpolate `PathArray` values.
@@ -69,8 +43,9 @@ export const interpolatePath: InterpolatorFunction<MorphPathSegment[]> = <
     const endSeg = end[i];
 
     if (targetSeg[0] === "Z") {
-      i++;
-      continue;
+      // force update when Z is used
+      // Z has no params
+      targetSeg[0] === "Z";
     } else if (targetSeg[0] === "C") {
       targetSeg[1] = startSeg[1]! + (endSeg[1]! - startSeg[1]!) * t;
       targetSeg[2] = startSeg[2]! + (endSeg[2]! - startSeg[2]!) * t;
@@ -78,7 +53,8 @@ export const interpolatePath: InterpolatorFunction<MorphPathSegment[]> = <
       targetSeg[4] = startSeg[4]! + (endSeg[4]! - startSeg[4]!) * t;
       targetSeg[5] = startSeg[5]! + (endSeg[5]! - startSeg[5]!) * t;
       targetSeg[6] = startSeg[6]! + (endSeg[6]! - startSeg[6]!) * t;
-    } else { // M / L
+    } else {
+      // M / L
       targetSeg[1] = startSeg[1]! + (endSeg[1]! - startSeg[1]!) * t;
       targetSeg[2] = startSeg[2]! + (endSeg[2]! - startSeg[2]!) * t;
     }
@@ -95,12 +71,10 @@ const supportedPathCommands = ["M", "L", "C", "Z"] as const;
  * @param target The incoming value `constructor()` `from()` / `to()`
  * @returns `true` when array is potentially a PathArray
  */
-export const isPathLike = (
-  value: unknown,
-): value is PathLike =>
+export const isPathLike = (value: unknown): value is PathLike =>
   isArray(value) &&
-  value.some((seg) =>
-    isArray(seg) && supportedPathCommands.includes(seg[0] as never)
+  value.some(
+    (seg) => isArray(seg) && supportedPathCommands.includes(seg[0] as never),
   );
 
 /**
@@ -109,16 +83,19 @@ export const isPathLike = (
  * @returns `true` when array is valid
  */
 export const isValidPath = (value: unknown): value is MorphPathArray =>
-  isPathLike(value) && value.length > 1 && value.every(isArray) &&
-  value.every(([cmd, ...values]) =>
-    supportedPathCommands.includes(cmd as MorphPathSegment[0]) && (
-      (["M", "L"].includes(cmd as MorphPathSegment[0]) &&
+  isPathLike(value) &&
+  value.length > 1 &&
+  value.every(isArray) &&
+  value.every(
+    ([cmd, ...values]) =>
+      supportedPathCommands.includes(cmd as MorphPathSegment[0]) &&
+      ((["M", "L"].includes(cmd as MorphPathSegment[0]) &&
         (values as number[]).length === 2 &&
         values.every(isNumber)) ||
-      ("C" === cmd && (values as number[]).length === 6 &&
-        values.every(isNumber)) ||
-      ("Z" === cmd && (values as number[]).length === 0)
-    )
+        ("C" === cmd &&
+          (values as number[]).length === 6 &&
+          values.every(isNumber)) ||
+        ("Z" === cmd && (values as number[]).length === 0)),
   );
 
 /**

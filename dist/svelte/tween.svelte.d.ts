@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween utils for Svelte v0.0.5 (https://github.com/thednp/tween)
+* @thednp/tween utils for Svelte v0.1.0 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */

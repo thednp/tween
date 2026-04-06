@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween hooks for Preact v0.0.5 (https://github.com/thednp/tween)
+* @thednp/tween hooks for Preact v0.1.0 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -7,7 +7,6 @@
 
 import { useEffect, useRef, useState } from "preact/hooks";
 import { Timeline, Tween, dummyInstance, isArray, isPlainObject, isServer, objectHasProp } from "@thednp/tween";
-
 //#region src/preact/miniStore.ts
 const STATE_PROXY = "_proxy";
 const proxyProps = {
@@ -101,10 +100,9 @@ function useMiniStore(initialValue) {
 	const storeRef = useRef(null);
 	const [, setVersion] = useState(0);
 	if (!storeRef.current) storeRef.current = miniStore(initialValue);
-	useEffect(() => storeRef.current.subscribe(() => setVersion((v) => v === 2 ? 0 : v + 1)), []);
+	useEffect(() => storeRef.current.subscribe(() => setVersion((v) => (v + 1) % 3)), []);
 	return storeRef.current.state;
 }
-
 //#endregion
 //#region src/preact/index.ts
 /**
@@ -175,7 +173,7 @@ function useTimeline(initialValues) {
 	useEffect(() => dispose, []);
 	return [store, timelineRef.current];
 }
-
 //#endregion
 export { Timeline, Tween, useMiniStore, useTimeline, useTween };
+
 //# sourceMappingURL=preact.mjs.map

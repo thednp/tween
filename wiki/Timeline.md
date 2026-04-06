@@ -73,6 +73,7 @@ Adds a new entry to the `Timeline` instance.
 
 #### `.play() / .pause() / .resume() / .stop()`
 Public methods that allow you to start/stop/pause/resume the timeline update. When paused `start()` will also resume.
+Each method calls it's own specific callback.
 
 #### `.seek(time | label)`
 A public methods that allows you to jump to a certain point in the time of the update:
@@ -85,7 +86,7 @@ Allows you to register a new label for a given string name and a label or INT nu
 #### `.repeat(count: number)`
 Allows you to set how many times the update should repeat. You can also use `Infinity`. 
 
-#### `.repeatDelay(delay: number)`
+#### `.repeatDelay(seconds: 0)`
 Sets a number of seconds to delay the animation after each repeat iteration.
 
 #### `.yoyo(yoyo: boolean)`

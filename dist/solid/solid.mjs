@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween primitives for SolidJS v0.0.5 (https://github.com/thednp/tween)
+* @thednp/tween primitives for SolidJS v0.1.0 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -7,7 +7,6 @@
 
 import { Timeline, Tween, dummyInstance, isArray, isPlainObject, isServer, objectHasProp } from "@thednp/tween";
 import { createSignal, onCleanup } from "solid-js";
-
 //#region src/solid/miniStore.ts
 const STATE_PROXY = "_proxy";
 const proxyProps = {
@@ -86,7 +85,6 @@ function createMiniState(obj, parentReceiver) {
 function miniStore(init) {
 	return createMiniState(init, {});
 }
-
 //#endregion
 //#region src/solid/index.ts
 /**
@@ -151,7 +149,7 @@ function createTimeline(initialValues) {
 	});
 	return [store, timeline];
 }
-
 //#endregion
 export { Timeline, Tween, createTimeline, createTween, miniStore };
+
 //# sourceMappingURL=solid.mjs.map

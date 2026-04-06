@@ -1,7 +1,7 @@
 import { defineConfig, type UserConfig } from "tsdown";
 import strip from "vite-plugin-strip-comments";
 import { readFile, rename, writeFile } from "fs/promises";
-import { join } from "path";
+import { join } from "node:path";
 const pkg = await import("./package.json", { with: { type: "json" } }).then(
   (m) => m.default,
 );
@@ -18,17 +18,24 @@ const miniBanner = `/*! @thednp/tween $package v${pkg.version} | ${pkg.author} Â
 "use strict";`;
 
 const baseConfig: UserConfig = {
-  external: [
-    "rolldown",
-    "vite",
-    "solid-js",
-    "react",
-    "svelte",
-    "vue",
-    "@thednp/tween",
-    "preact",
-    "@preact/signals",
-  ],
+  deps: {
+    skipNodeModulesBundle: true,
+    neverBundle: [
+      "rolldown",
+      "vite",
+      "solid-js",
+      "react",
+      "svelte",
+      "vue",
+      "@thednp/tween",
+      "preact",
+      "svg-path-commander",
+      "svg-path-commander/util",
+      "@thednp/dommatrix",
+      "@preact/signals",
+      "vanjs-core",
+    ],
+  },
   target: "esnext",
   exports: true,
   format: ["esm"],
@@ -39,7 +46,7 @@ const baseConfig: UserConfig = {
     sideEffects: false,
   },
   sourcemap: true,
-  skipNodeModulesBundle: true,
+  // skipNodeModulesBundle: true,
   globalName: "TWEEN",
   plugins: [strip({ type: "keep-jsdoc" })],
 };
@@ -82,7 +89,7 @@ const renameSvelteFiles = () => ({
         }
       }
       await renameSvelteJSON();
-    }
+    };
 
     setTimeout(callback, 150);
   },
@@ -94,6 +101,7 @@ export default defineConfig([
     ...baseConfig,
     clean: true,
     banner: banner.replace("$package", ""),
+    // skipNodeModulesBundle: true,
     entry: {
       index: "src/index.ts",
     },
@@ -107,6 +115,11 @@ export default defineConfig([
     minify: true,
     format: "umd",
     globalName: "TWEEN",
+    deps: {
+      skipNodeModulesBundle: false,
+      alwaysBundle: ["svg-path-commander", "svg-path-commander/util"],
+    },
+    // noExternal: ["svg-path-commander", "svg-path-commander/util"],
     banner: miniBanner.replace("$package", "UMD"),
     target: "esnext",
     entry: {
@@ -127,6 +140,7 @@ export default defineConfig([
     entry: {
       react: "src/react/index.ts",
     },
+    // skipNodeModulesBundle: true,
     outDir: "dist/react",
   },
 
@@ -137,6 +151,7 @@ export default defineConfig([
     entry: {
       preact: "src/preact/index.ts",
     },
+    // skipNodeModulesBundle: true,
     outDir: "dist/preact",
   },
 
@@ -147,6 +162,7 @@ export default defineConfig([
     entry: {
       solid: "src/solid/index.ts",
     },
+    // skipNodeModulesBundle: true,
     outDir: "dist/solid",
   },
   // Vue
@@ -156,7 +172,17 @@ export default defineConfig([
     entry: {
       vue: "src/vue/index.ts",
     },
+    // skipNodeModulesBundle: true,
     outDir: "dist/vue",
+  },
+  // VanJS
+  {
+    ...baseConfig,
+    banner: banner.replace("$package", "primitives for VanJS"),
+    entry: {
+      vanjs: "src/vanjs/index.ts",
+    },
+    outDir: "dist/vanjs",
   },
   // Svelte
   {
@@ -166,6 +192,7 @@ export default defineConfig([
     entry: {
       svelte: "src/svelte/index.svelte.ts",
     },
+    // skipNodeModulesBundle: true,
     plugins: [renameSvelteFiles()],
     outDir: "dist/svelte",
 

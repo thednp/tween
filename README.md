@@ -15,6 +15,7 @@ Popular UI frameworks supported:
 [<img width="32" height="32" src="wiki/assets/preact.svg" alt="Preact" />](https://stackblitz.com/fork/github/thednp/tween/tree/master/playground/preact)
 [<img width="32" height="32" src="wiki/assets/svelte.svg" alt="Svelte" />](https://stackblitz.com/fork/github/thednp/tween/tree/master/playground/svelte)
 [<img width="32" height="32" src="wiki/assets/vue.svg" alt="Vue" />](https://stackblitz.com/fork/github/thednp/tween/tree/master/playground/vue)
+[<img width="32" height="32" src="wiki/assets/vanjs.svg" alt="VanJS" />](https://stackblitz.com/fork/github/thednp/tween/tree/master/playground/vanjs)
 
 Your favorite framework isn't listed? [Let us know](https://github.com/thednp/tween/issues/new)!
 
@@ -55,6 +56,7 @@ Your favorite framework isn't listed? [Let us know](https://github.com/thednp/tw
 [<img width="32" height="32" src="wiki/assets/preact.svg" alt="Preact" />](wiki/Preact.md)
 [<img width="32" height="32" src="wiki/assets/svelte.svg" alt="Svelte" />](wiki/Svelte.md)
 [<img width="32" height="32" src="wiki/assets/vue.svg" alt="Vue" />](wiki/Vue.md)
+[<img width="32" height="32" src="wiki/assets/vanjs.svg" alt="VanJS" />](wiki/VanJS.md)
 
 #### Other Sources
 * [The original Tween.js User Guide](https://github.com/tweenjs/tween.js/blob/main/docs/user_guide.md) can also provide valuable tips.

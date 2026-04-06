@@ -66,9 +66,6 @@ Sets the easing function (from Easing object, custom or external). `Tween` will 
 #### `.repeat(times = 0)`
 Sets how many times to repeat the tween, default is zero.
 
-#### `.repeatDelay(delay = 0)`
-Sets a number of seconds to delay the animation after each repeat iteration.
-
 #### `.yoyo(yoyo = false)`
 Makes every un-even repeat iteration run in reverse. The resulted elapsed value from easing function is also reversed, which means we don't need to use a `reverseEasing`. 
 

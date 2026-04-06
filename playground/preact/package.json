@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@thednp/tween": "^0.0.3",
+    "@thednp/tween": "^0.0.6",
     "preact": "^10.28.3"
   },
   "devDependencies": {

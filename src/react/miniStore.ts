@@ -162,10 +162,7 @@ export function useMiniStore<T extends TweenProps>(initialValue: T) {
   }
 
   useEffect(
-    () =>
-      storeRef.current!.subscribe(() =>
-        setVersion((v) => v === 2 ? /* istanbul ignore next */ 0 : v + 1)
-      ),
+    () => storeRef.current!.subscribe(() => setVersion((v) => (v + 1) % 3)),
     [],
   );
 

@@ -15,15 +15,14 @@ export const isArray = (value: unknown): value is Array<unknown> =>
 export const isFunction = (value: unknown): value is () => unknown =>
   typeof value === "function";
 
-export const isObject = (
-  value: unknown,
-): value is Record<string, never> =>
-  value !== null && value !== undefined && typeof value === "object" &&
+export const isObject = (value: unknown): value is Record<string, never> =>
+  value !== null &&
+  value !== undefined &&
+  typeof value === "object" &&
   Object.getPrototypeOf(value) === Object.prototype;
 
-export const isPlainObject = (
-  value: unknown,
-): value is Record<string, never> => isObject(value) && !isArray(value);
+export const isPlainObject = (value: unknown): value is Record<string, never> =>
+  isObject(value) && !isArray(value);
 
 export const isDeepObject = (value: unknown): value is DeepObject =>
   isPlainObject(value) && Object.values(value).some(isPlainObject);
@@ -76,17 +75,6 @@ for (let i = 0; i < instanceMethods.length; i++) {
 
 export { dummyInstance };
 
-/**
- * Utility to round numbers to a specified number of decimals.
- * @param n Input number value
- * @param round Number of decimals
- * @returns The rounded number
- */
-export const roundTo = (n: number, round: number) => {
-  const pow = round >= 1 ? 10 ** round : 1;
-  return round > 0 ? Math.round(n * pow) / pow : Math.round(n);
-};
-
 export const objectHasProp = <T extends object>(obj: T, prop: keyof T) =>
   Object.prototype.hasOwnProperty.call(obj, prop);
 
@@ -102,10 +90,7 @@ const isUnsafeKey = (key: string): boolean =>
  * @param target The target to assign values to
  * @param source The source object to assign values from
  */
-export function deepAssign<T extends TweenProps>(
-  target: T,
-  source: T,
-): void {
+export function deepAssign<T extends TweenProps>(target: T, source: T): void {
   const keys = Object.keys(source) as (keyof T)[];
   let i = 0;
   const len = keys.length;
