@@ -263,15 +263,12 @@ const tween = new Tween({ path: eqStar })
 import { equalizePaths } from "svg-path-commander";
 
 // Run this once during setup, not at animation time
-const paths = {
-  start: equalizePaths("M10 10h80v80h-80z", "M50 0l61 35-23 70-76 0-23-70z", { close: true })[0],
-  end: equalizePaths("M10 10h80v80h-80z", "M50 0l61 35-23 70-76 0-23-70z", { close: true })[1],
-};
+const [start, end] = equalizePaths("M10 10h80v80h-80z", "M50 0l61 35-23 70-76 0-23-70z", { close: true });
 
 // Animation code uses pre-equalized paths
-const tween = new Tween({ path: paths.start })
+const tween = new Tween({ path: start })
   .use("path", pathArrayConfig)
-  .to({ path: paths.end });
+  .to({ path: end });
 ```
 
 > **NOTE**: Both paths must have identical structure (same number/order of segments and commands). Complex morphs may need preprocessing (e.g. Flubber).
