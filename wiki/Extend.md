@@ -211,15 +211,75 @@ tween.onUpdate(obj =>
 ```
 
 
+#### Equalizing Paths for Morphing
+
+When morphing paths with different structures (different number of segments or commands), you need to equalize them first. The `svg-path-commander` library provides `equalizePaths` and `equalizeSegments` utilities for this purpose and are included with the exports of `@thednp/tween` package.
+
+**Using `equalizePaths`** (handles multi-subpath shapes):
+
+```ts
+import { Tween, pathArrayConfig, equalizePaths, pathToString } from "@thednp/tween";
+
+// Two shapes with different segment counts
+const pathA = "M0 0L100 0L50 100Z";        // triangle (3 segments)
+const pathB = "M0 0L100 0L100 100L0 100Z";  // rectangle (4 segments)
+
+// Equalize both paths to have matching structure
+const [eqA, eqB] = equalizePaths(pathA, pathB, { close: true });
+
+const target = document.getElementById("my-target");
+const tween = new Tween({ path: eqA });
+tween.use("path", pathArrayConfig);
+tween.to({ path: eqB });
+
+tween.onUpdate(obj =>
+  target.setAttribute("d", pathToString(obj.path))
+);
+
+tween.start();
+```
+
+**Using `equalizeSegments`** (single-subpath shapes, simpler):
+
+```ts
+import { Tween, pathArrayConfig, pathToString, equalizeSegments } from "@thednp/tween";
+
+const star = "M50 0L61 35L98 35L68 57L79 91L50 70L21 91L32 57L2 35L39 35Z";
+const circle = "M50 0C77.6 0,100 22.4,100 50C100 77.6,77.6 100,50 100C22.4 100,0 77.6,0 50C0 22.4,22.4 0,50 0Z";
+
+const [eqStar, eqCircle] = equalizeSegments(star, circle);
+
+const tween = new Tween({ path: eqStar })
+  .use("path", pathArrayConfig)
+  .to({ path: eqCircle })
+  .duration(1.5)
+  .onUpdate(obj => target.setAttribute("d", pathToString(obj.path)))
+  .start();
+```
+
+**Pre-processing paths at build/preparation time** (recommended for performance):
+
+```ts
+import { equalizePaths } from "svg-path-commander";
+
+// Run this once during setup, not at animation time
+const paths = {
+  start: equalizePaths("M10 10h80v80h-80z", "M50 0l61 35-23 70-76 0-23-70z", { close: true })[0],
+  end: equalizePaths("M10 10h80v80h-80z", "M50 0l61 35-23 70-76 0-23-70z", { close: true })[1],
+};
+
+// Animation code uses pre-equalized paths
+const tween = new Tween({ path: paths.start })
+  .use("path", pathArrayConfig)
+  .to({ path: paths.end });
+```
 
 > **NOTE**: Both paths must have identical structure (same number/order of segments and commands). Complex morphs may need preprocessing (e.g. Flubber).
 
 **Notes**
 * The example provides ready-made `PathArray` objects, they usually require prior preparation manually or using some script to [equalize segments](https://minus-ze.ro/posts/morphing-arbitrary-paths-in-svg/);
 * Continuous `path` updates between multiple shapes requires that **all** path values are compatible, which means they all have same amount of segments and all segments are of the same type (ideal are `[[M, x, y], ...[L, x, y]], ` OR `[[M, x, y], ...[C, cx1, cy1, cx2, cy2, x, y]], `);
-* Our [svg-path-commander](https://github.com/thednp/svg-path-commander/) provides all the tools necessary to process path strings, optimize and even equalize segments (work in progress).
-
-Future versions will provide an easy to use `equalizeSegments` and `equalizePaths` utilities you can use to quickly process and prepare various path shapes for interpolation.
+* Our [svg-path-commander](https://github.com/thednp/svg-path-commander/) provides all the tools necessary to process path strings, optimize and even equalize segments.
 
 
 ### Transform
