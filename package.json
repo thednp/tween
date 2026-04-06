@@ -50,15 +50,8 @@
     "clean:playground": "rm -rf playground/**/node_modules playground/**/package-lock.json playground/**/pnpm-lock.yaml playground/**/bun.lockb playground/**/deno.lock",
     "clean:test": "rm -rf test/node_modules test/package-lock.json test/pnpm-lock.yaml test/bun.lockb test/deno.lock",
     "clean": "rm -rf node_modules && pnpm clean:playground && pnpm clean:test",
-    "update-r": "pnpm clean && pnpm --filter \"./playground/**\" update --latest",
-    "up-preact": "cd playground/preact && pnpm up --latest",
-    "up-react": "cd playground/react && pnpm up --latest",
-    "up-svelte": "cd playground/svelte && pnpm up --latest",
-    "up-solid": "cd playground/solid && pnpm up --latest",
-    "up-vue": "cd playground/vue && pnpm up --latest",
-    "up-vanjs": "cd playground/vanjs && pnpm up --latest",
-    "up-play": "pnpm up-preact && pnpm up-react && pnpm up-svelte && pnpm up-solid && pnpm up-vue && pnpm up-vanjs",
-    "update-deps": "pnpm clean && pnpm update --latest"
+    "up-play": "for dir in playground/*/; do (cd \"$dir\" && pnpm update --latest) & done; wait",
+    "update-deps": "pnpm clean && pnpm update --latest && pnpm up-play"
   },
   "repository": {
     "type": "git",
