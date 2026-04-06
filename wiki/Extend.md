@@ -209,6 +209,12 @@ tween.onUpdate(obj =>
   target.setAttribute("d", pathToString(obj.path))
 )
 ```
+> **NOTE**: Both paths must have identical structure (same number/order of segments and commands). Complex morphs may need preprocessing (e.g. Flubber).
+
+**Notes**
+* The example provides ready-made `PathArray` objects, they usually require prior preparation manually or using some script to [equalize segments](https://minus-ze.ro/posts/morphing-arbitrary-paths-in-svg/);
+* Continuous `path` updates between multiple shapes requires that **all** path values are compatible, which means they all have same amount of segments and all segments are of the same type (ideal are `[[M, x, y], ...[L, x, y]], ` OR `[[M, x, y], ...[C, cx1, cy1, cx2, cy2, x, y]], `);
+* Our [svg-path-commander](https://github.com/thednp/svg-path-commander/) provides all the tools necessary to process path strings, optimize and even equalize segments.
 
 
 #### Equalizing Paths for Morphing
@@ -270,13 +276,6 @@ const tween = new Tween({ path: start })
   .use("path", pathArrayConfig)
   .to({ path: end });
 ```
-
-> **NOTE**: Both paths must have identical structure (same number/order of segments and commands). Complex morphs may need preprocessing (e.g. Flubber).
-
-**Notes**
-* The example provides ready-made `PathArray` objects, they usually require prior preparation manually or using some script to [equalize segments](https://minus-ze.ro/posts/morphing-arbitrary-paths-in-svg/);
-* Continuous `path` updates between multiple shapes requires that **all** path values are compatible, which means they all have same amount of segments and all segments are of the same type (ideal are `[[M, x, y], ...[L, x, y]], ` OR `[[M, x, y], ...[C, cx1, cy1, cx2, cy2, x, y]], `);
-* Our [svg-path-commander](https://github.com/thednp/svg-path-commander/) provides all the tools necessary to process path strings, optimize and even equalize segments.
 
 
 ### Transform
