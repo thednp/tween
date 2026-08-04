@@ -8,6 +8,9 @@ import {
 import { onCleanup } from "solid-js";
 import { miniStore } from "./miniStore.ts";
 
+/**
+ * Re-exports the core classes and the miniStore helper.
+ */
 export { miniStore, Timeline, Tween };
 
 /**

@@ -3,32 +3,84 @@ import type { Tween } from "./Tween.ts";
 import type { Timeline } from "./Timeline.ts";
 
 // Util.ts
+/**
+ * Checks if a value is a `string`.
+ *
+ * @param value - The value to check
+ * @returns `true` when the value is a `string`
+ */
 export const isString = (value: unknown): value is string =>
   typeof value === "string";
 
+/**
+ * Checks if a value is a `number`.
+ *
+ * @param value - The value to check
+ * @returns `true` when the value is a `number`
+ */
 export const isNumber = (value: unknown): value is number =>
   typeof value === "number";
 
+/**
+ * Checks if a value is an `Array`.
+ *
+ * @param value - The value to check
+ * @returns `true` when the value is an `Array`
+ */
 export const isArray = (value: unknown): value is Array<unknown> =>
   Array.isArray(value);
 
+/**
+ * Checks if a value is a `function`.
+ *
+ * @param value - The value to check
+ * @returns `true` when the value is a `function`
+ */
 export const isFunction = (value: unknown): value is () => unknown =>
   typeof value === "function";
 
+/**
+ * Checks if a value is a plain object (an object whose prototype
+ * is `Object.prototype`), excluding `null`, `undefined` and arrays.
+ *
+ * @param value - The value to check
+ * @returns `true` when the value is a plain object
+ */
 export const isObject = (value: unknown): value is Record<string, never> =>
   value !== null &&
   value !== undefined &&
   typeof value === "object" &&
   Object.getPrototypeOf(value) === Object.prototype;
 
+/**
+ * Checks if a value is a plain object and not an array.
+ *
+ * @param value - The value to check
+ * @returns `true` when the value is a plain non-array object
+ */
 export const isPlainObject = (value: unknown): value is Record<string, never> =>
   isObject(value) && !isArray(value);
 
+/**
+ * Checks if a value is a single-level nested object (a plain object
+ * that contains at least one plain object value).
+ *
+ * @param value - The value to check
+ * @returns `true` when the value is a {@link DeepObject}
+ */
 export const isDeepObject = (value: unknown): value is DeepObject =>
   isPlainObject(value) && Object.values(value).some(isPlainObject);
 
+/**
+ * A boolean that is `true` when running in a server environment
+ * (e.g. SSR / Node.js), where `window` is not defined.
+ */
 export const isServer = typeof window === "undefined";
 
+/**
+ * The method names shared by {@link Tween} and {@link Timeline} that
+ * are stubbed on the SSR {@link dummyInstance}.
+ */
 const instanceMethods = [
   "play",
   "label",
@@ -65,6 +117,12 @@ const instanceMethods = [
 const dummyInstance: Record<string, typeof dummyMethod> = {};
 // istanbul ignore next @preserve
 // const dummyMethod = () => dummyInstance;
+/**
+ * A no-op method that returns the calling instance, used to stub
+ * {@link Tween} / {@link Timeline} methods in SSR environments.
+ *
+ * @returns The calling `dummyInstance`
+ */
 function dummyMethod(this: typeof dummyInstance): typeof dummyInstance {
   return this;
 }
@@ -75,11 +133,24 @@ for (let i = 0; i < instanceMethods.length; i++) {
 
 export { dummyInstance };
 
+/**
+ * Checks if an object has a property as its own (not inherited).
+ *
+ * @param obj - The object to check
+ * @param prop - The property name to look for
+ * @returns `true` when the object has the property
+ */
 export const objectHasProp = <T extends object>(
   obj: T,
   prop: keyof T,
 ): boolean => Object.prototype.hasOwnProperty.call(obj, prop);
 
+/**
+ * Checks if a key is unsafe for assignment, to prevent prototype pollution.
+ *
+ * @param key - The property key to check
+ * @returns `true` when the key is `__proto__`, `constructor` or `prototype`
+ */
 const isUnsafeKey = (key: string): boolean =>
   key === "__proto__" || key === "constructor" || key === "prototype";
 

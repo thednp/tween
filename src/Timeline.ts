@@ -38,31 +38,60 @@ import { now } from "./Now.ts";
  * @param initialValues The initial values object
  */
 export class Timeline<T extends TweenProps = TweenProps> {
+  /**
+   * The animated state object, mutated in place on every frame by
+   * the active timeline entries.
+   */
   public state: T;
+  /** A deproxied reference of the initial state, used to reset values */
   private _state: T;
+  /** The animation entries, in insertion order */
   private _entries: TimelineEntry<T>[] = [];
+  /** The named labels, mapping a label name to an absolute time in ms */
   private _labels = new Map<string, number>();
+  /** The current progress value in the `[0, 1]` range */
   private _progress = 0;
+  /** The total duration of all entries, in milliseconds */
   private _duration = 0;
+  /** Whether the timeline alternates direction (yoyo) */
   private _yoyo = false;
+  /** Whether the playback direction is reversed */
   private _reversed = false;
+  /** The current playback time, in milliseconds */
   private _time = 0;
+  /** The timestamp when the timeline was paused, `0` when not paused */
   private _pauseTime = 0;
+  /** The last update timestamp, used to compute the frame delta */
   private _lastTime = 0;
+  /** Whether the timeline is currently in the runtime queue */
   private _isPlaying = false;
+  /** The remaining number of repeats */
   private _repeat = 0;
+  /** The delay between repeats, in milliseconds */
   private _repeatDelay = 0;
+  /** The timestamp when the current repeat delay started */
   private _repeatDelayStart = 0;
+  /** The number of repeats set by the user */
   private _initialRepeat = 0;
+  /** The validation errors map, keyed by property name or `"init"` */
   private _errors = new Map<string | "init", string>();
+  /** The registered interpolators, keyed by property name */
   private _interpolators = new Map<string | keyof T, InterpolatorFunction>();
+  /** The registered validators, keyed by property name */
   private _validators = new Map<string | keyof T, ValidationFunction>();
+  /** The `onStart` callback, fired when playback begins */
   private _onStart?: TimelineCallback<T>;
+  /** The `onStop` callback, fired when the timeline is stopped */
   private _onStop?: TimelineCallback<T>;
+  /** The `onPause` callback, fired when the timeline is paused */
   private _onPause?: TimelineCallback<T>;
+  /** The `onResume` callback, fired when playback resumes */
   private _onResume?: TimelineCallback<T>;
+  /** The `onUpdate` callback, fired on every frame */
   private _onUpdate?: TimelineCallback<T>;
+  /** The `onComplete` callback, fired when the timeline finishes */
   private _onComplete?: TimelineCallback<T>;
+  /** The `onRepeat` callback, fired on every repeat cycle */
   private _onRepeat?: TimelineCallback<T>;
 
   /**
@@ -345,6 +374,8 @@ export class Timeline<T extends TweenProps = TweenProps> {
 
   /**
    * Registers a callback fired when playback begins.
+   * @param cb - Receives state and progress (`0`) at play time
+   * @returns this
    */
   onStart(cb: TimelineCallback<T>): this {
     this._onStart = cb;
@@ -353,6 +384,8 @@ export class Timeline<T extends TweenProps = TweenProps> {
 
   /**
    * Registers a callback fired when `pause()` was called.
+   * @param cb - Receives state and progress at pause time
+   * @returns this
    */
   onPause(cb: TimelineCallback<T>): this {
     this._onPause = cb;
@@ -361,6 +394,8 @@ export class Timeline<T extends TweenProps = TweenProps> {
 
   /**
    * Registers a callback fired when `.play()` / `.resume()` was called.
+   * @param cb - Receives state and progress at resume time
+   * @returns this
    */
   onResume(cb: TimelineCallback<T>): this {
     this._onResume = cb;
@@ -369,6 +404,8 @@ export class Timeline<T extends TweenProps = TweenProps> {
 
   /**
    * Registers a callback fired on explicit `.stop()`.
+   * @param cb - Receives state and progress at stop time
+   * @returns this
    */
   onStop(cb: TimelineCallback<T>): this {
     this._onStop = cb;
@@ -377,6 +414,8 @@ export class Timeline<T extends TweenProps = TweenProps> {
 
   /**
    * Registers a callback fired every frame.
+   * @param cb - Receives state and progress in the `[0, 1]` range
+   * @returns this
    */
   onUpdate(cb: TimelineCallback<T>): this {
     this._onUpdate = cb;
@@ -385,6 +424,8 @@ export class Timeline<T extends TweenProps = TweenProps> {
 
   /**
    * Registers a callback fired when timeline naturally completes.
+   * @param cb - Receives state and progress (`1`) at completion time
+   * @returns this
    */
   onComplete(cb: TimelineCallback<T>): this {
     this._onComplete = cb;
@@ -392,7 +433,10 @@ export class Timeline<T extends TweenProps = TweenProps> {
   }
 
   /**
-   * Registers a callback fired when `.play()` / `.resume()` was called.
+   * Registers a callback fired on every repeat cycle, usually before
+   * the next iteration begins.
+   * @param cb - Receives state and the current progress value
+   * @returns this
    */
   onRepeat(cb?: TimelineCallback<T>): this {
     this._onRepeat = cb;
@@ -554,6 +598,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
   /**
    * Public method to clear all entries, labels and reset timers to zero
    * or initial value (repeat).
+   * @returns this
    */
   clear(): this {
     this._entries.length = 0;

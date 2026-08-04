@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween hooks for Preact v0.1.1 (https://github.com/thednp/tween)
+* @thednp/tween hooks for Preact v0.1.2 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -7,6 +7,15 @@
 
 import { Timeline, Tween, TweenProps } from "@thednp/tween";
 //#region src/preact/miniStore.d.ts
+/**
+ * A hook that creates (once per component) a reactive store for the
+ * given initial values and subscribes the component to its changes,
+ * forcing a re-render via a version-toggle signal.
+ *
+ * @template T - The type of the state object
+ * @param initialValue - The initial values object
+ * @returns The reactive state object
+ */
 declare function useMiniStore<T extends TweenProps>(initialValue: T): T;
 //#endregion
 //#region src/preact/index.d.ts

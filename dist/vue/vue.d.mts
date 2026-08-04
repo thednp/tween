@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween composables for Vue v0.1.1 (https://github.com/thednp/tween)
+* @thednp/tween composables for Vue v0.1.2 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -7,6 +7,16 @@
 
 import { Timeline, Tween, TweenProps } from "@thednp/tween";
 //#region src/vue/miniStore.d.ts
+/**
+ * Creates a reactive store for the given initial values, where every
+ * property is backed by a Vue `ref`. Reading a property inside a
+ * component tracks the ref; writing it (e.g. by the tween update loop)
+ * triggers reactivity.
+ *
+ * @template T - The type of the state object
+ * @param init - The initial values object
+ * @returns The reactive state object
+ */
 declare function miniStore<T extends TweenProps>(init: T): T;
 //#endregion
 //#region src/vue/index.d.ts

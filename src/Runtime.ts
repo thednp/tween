@@ -3,17 +3,20 @@ import type { AnimationItem, TweenProps } from "./types.ts";
 import { now } from "./Now.ts";
 
 /**
- * The runtime queue
+ * The runtime queue holding all active {@link AnimationItem} instances
+ * (Tween / Timeline) that are updated by the RAF loop.
  */
 export const Queue: AnimationItem[] = new Array(0);
 
+/** The current `requestAnimationFrame` id, `0` when the loop is stopped */
 let rafID = 0;
+/** The length of the {@link Queue}, kept in sync for micro-optimization */
 let queueLength = 0;
 
 /**
  * The hot update loop updates all items in the queue,
  * and stops automatically when there are no items left.
- * @param t execution time (performance.now)
+ * @param t - Execution time, in milliseconds (defaults to {@link now})
  */
 export function Runtime(t: number = now()) {
   let i = 0;
@@ -36,7 +39,7 @@ export function Runtime(t: number = now()) {
 /**
  * Add a new item to the update loop.
  * If it's the first item, it will also start the update loop.
- * @param newItem Tween / Timeline
+ * @param newItem - Tween / Timeline instance to add
  */
 export function addToQueue<T extends TweenProps>(
   newItem: AnimationItem<T>,
@@ -51,7 +54,7 @@ export function addToQueue<T extends TweenProps>(
 
 /**
  * Remove item from the update loop.
- * @param newItem Tween / Timeline
+ * @param removedItem - Tween / Timeline instance to remove
  */
 export function removeFromQueue<T extends TweenProps>(
   removedItem: AnimationItem<T>,

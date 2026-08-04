@@ -8,6 +8,9 @@ import {
 import { onDestroy } from "svelte";
 import { miniStore } from "./miniStore.svelte.ts";
 
+/**
+ * Re-exports the core classes and the miniStore helper.
+ */
 export { miniStore, Timeline, Tween };
 
 /**

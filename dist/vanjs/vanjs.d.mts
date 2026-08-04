@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween primitives for VanJS v0.1.1 (https://github.com/thednp/tween)
+* @thednp/tween primitives for VanJS v0.1.2 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -7,6 +7,17 @@
 
 import { Timeline, Tween, TweenProps } from "@thednp/tween";
 //#region src/vanjs/miniStore.d.ts
+/**
+ * Creates a reactive store for the given initial values, where every
+ * property is backed by a VanJS state. Reading a property inside a
+ * VanJS binding tracks the state; writing it (e.g. by the tween update
+ * loop) triggers reactivity. The state refs are stored on the
+ * non-enumerable `_states` property for auto-cleanup tracking.
+ *
+ * @template T - The type of the state object
+ * @param init - The initial values object
+ * @returns The reactive state object
+ */
 declare function miniStore<T extends TweenProps>(init: T): T;
 //#endregion
 //#region src/vanjs/index.d.ts

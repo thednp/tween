@@ -39,33 +39,64 @@ import { now } from "./Now.ts";
  * @param initialValues The initial values object
  */
 export class Tween<T extends TweenProps = TweenProps> {
+  /**
+   * The animated state object, mutated in place on every frame.
+   * The values here are the ones interpolated between `from` / `to` values.
+   */
   state: T;
+  /** A deproxied reference of the initial state, used to reset values */
   private _state: T;
+  /** Whether the start values were captured for the current configuration */
   private _startIsSet = false;
+  /** The remaining number of repeats */
   private _repeat = 0;
+  /** Whether the tween alternates direction (yoyo) */
   private _yoyo = false;
+  /** Whether the playback direction is reversed */
   private _reversed = false;
+  /** The number of repeats set by the user */
   private _initialRepeat = 0;
+  /** Whether the `onStart` callback was fired for the current run */
   private _startFired = false;
+  /** The starting values of each animated property */
   private _propsStart: Partial<T> = {};
+  /** The ending values of each animated property */
   private _propsEnd: Partial<T> = {};
+  /** Whether the tween is currently in the runtime queue */
   private _isPlaying = false;
+  /** The duration of the tween, in milliseconds */
   private _duration = 1000;
+  /** The delay before the tween starts, in milliseconds */
   private _delay = 0;
+  /** The timestamp when the tween was paused, `0` when not paused */
   private _pauseStart = 0;
+  /** The delay between repeats, in milliseconds */
   private _repeatDelay = 0;
+  /** The absolute start timestamp of the current run */
   private _startTime: number = 0;
+  /** The validation errors map, keyed by property name or `"init"` */
   private _errors = new Map<string | "init", string>();
+  /** The registered interpolators, keyed by property name */
   private _interpolators = new Map<string | keyof T, InterpolatorFunction>();
+  /** The registered validators, keyed by property name */
   private _validators = new Map<string | keyof T, ValidationFunction>();
+  /** The easing function applied to the progress value, defaults to linear */
   private _easing: EasingFunction = (t) => t;
+  /** The `onUpdate` callback, fired on every frame */
   private _onUpdate?: TweenUpdateCallback<T>;
+  /** The `onComplete` callback, fired when the tween finishes */
   private _onComplete?: TweenCallback<T>;
+  /** The `onStart` callback, fired when the tween starts */
   private _onStart?: TweenCallback<T>;
+  /** The `onStop` callback, fired when the tween is stopped */
   private _onStop?: TweenCallback<T>;
+  /** The `onPause` callback, fired when the tween is paused */
   private _onPause?: TweenCallback<T>;
+  /** The `onResume` callback, fired when the tween resumes */
   private _onResume?: TweenCallback<T>;
+  /** The `onRepeat` callback, fired on every repeat cycle */
   private _onRepeat?: TweenCallback<T>;
+  /** The runtime tuples used by the update loop for interpolation */
   private _runtime: (TweenRuntime<T>)[] = [];
   /**
    * Creates a new Tween instance.
@@ -303,7 +334,7 @@ export class Tween<T extends TweenProps = TweenProps> {
   /**
    * Sets the duration of the tween in seconds.
    * Internally it's converted to milliseconds.
-   * @param duration - Time in seconds
+   * @param seconds - Time in seconds
    * @default 1 second
    * @returns this
    */
@@ -414,6 +445,8 @@ export class Tween<T extends TweenProps = TweenProps> {
 
   /**
    * Registers a callback fired when `pause()` was called.
+   * @param cb - Receives state at pause time
+   * @returns this
    */
   onPause(cb: TweenCallback<T>): this {
     this._onPause = cb;
@@ -422,6 +455,8 @@ export class Tween<T extends TweenProps = TweenProps> {
 
   /**
    * Registers a callback fired when `.resume()` was called.
+   * @param cb - Receives state at resume time
+   * @returns this
    */
   onResume(cb: TweenCallback<T>): this {
     this._onResume = cb;

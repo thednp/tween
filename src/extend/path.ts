@@ -14,6 +14,10 @@ import type {
   ValidationResultEntry,
 } from "../types.ts";
 
+/**
+ * Re-exports the path utilities from `svg-path-commander/util`:
+ * `equalizePaths`, `equalizeSegments` and `pathToString`.
+ */
 export { equalizePaths, equalizeSegments, pathToString };
 
 /**
@@ -64,11 +68,12 @@ export const interpolatePath: InterpolatorFunction<MorphPathSegment[]> = <
   return target as T;
 };
 
+/** The path commands supported by the interpolation engine */
 const supportedPathCommands = ["M", "L", "C", "Z"] as const;
 
 /**
  * Check if an array of arrays is potentially a PathArray
- * @param target The incoming value `constructor()` `from()` / `to()`
+ * @param value The incoming value `constructor()` `from()` / `to()`
  * @returns `true` when array is potentially a PathArray
  */
 export const isPathLike = (value: unknown): value is PathLike =>
@@ -79,7 +84,7 @@ export const isPathLike = (value: unknown): value is PathLike =>
 
 /**
  * Check if an array of arrays is a valid PathArray for interpolation
- * @param target The incoming value `from()` / `to()`
+ * @param value The incoming value `from()` / `to()`
  * @returns `true` when array is valid
  */
 export const isValidPath = (value: unknown): value is MorphPathArray =>

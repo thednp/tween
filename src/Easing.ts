@@ -2,9 +2,16 @@
 import type { EasingFunction, EasingFunctionGroup } from "./types.ts";
 
 /**
- * The Ease class provides a collection of easing functions for use with tween.js.
+ * A frozen collection of preset easing functions, grouped by name
+ * (`Linear`, `Quadratic`, `Cubic`, `Quartic`, `Quintic`, `Sinusoidal`,
+ * `Exponential`, `Circular`, `Elastic`, `Back`, `Bounce`), each exposing
+ * `In`, `Out` and `InOut` variants. Use with `.easing()`.
+ *
+ * @example
+ * ```ts
+ * const tween = new Tween({ x: 0 }).to({ x: 300 }).easing(Easing.Elastic.Out);
+ * ```
  */
-
 export const Easing: {
   Linear: EasingFunctionGroup & { None: EasingFunction };
   Quadratic: EasingFunctionGroup;
@@ -19,6 +26,9 @@ export const Easing: {
   Bounce: EasingFunctionGroup;
   pow(power?: number): EasingFunctionGroup;
 } = Object.freeze({
+  /**
+   * Linear easing functions, including a `None` variant that returns the input unchanged.
+   */
   Linear: Object.freeze<EasingFunctionGroup & { None: EasingFunction }>({
     None(amount: number): number {
       return amount;
@@ -34,6 +44,9 @@ export const Easing: {
     },
   }),
 
+  /**
+   * Quadratic easing functions (power of 2).
+   */
   Quadratic: Object.freeze(
     <EasingFunctionGroup> {
       In(amount: number): number {
@@ -52,6 +65,9 @@ export const Easing: {
     },
   ),
 
+  /**
+   * Cubic easing functions (power of 3).
+   */
   Cubic: Object.freeze(
     <EasingFunctionGroup> {
       In(amount: number): number {
@@ -69,6 +85,9 @@ export const Easing: {
     },
   ),
 
+  /**
+   * Quartic easing functions (power of 4).
+   */
   Quartic: Object.freeze(
     <EasingFunctionGroup> {
       In(amount: number): number {
@@ -87,6 +106,9 @@ export const Easing: {
     },
   ),
 
+  /**
+   * Quintic easing functions (power of 5).
+   */
   Quintic: Object.freeze(
     <EasingFunctionGroup> {
       In(amount: number): number {
@@ -105,6 +127,9 @@ export const Easing: {
     },
   ),
 
+  /**
+   * Sinusoidal easing functions based on the sine curve.
+   */
   Sinusoidal: Object.freeze(
     <EasingFunctionGroup> {
       In(amount: number): number {
@@ -119,6 +144,9 @@ export const Easing: {
     },
   ),
 
+  /**
+   * Exponential easing functions based on powers of 2.
+   */
   Exponential: Object.freeze(
     <EasingFunctionGroup> {
       In(amount: number): number {
@@ -145,6 +173,9 @@ export const Easing: {
     },
   ),
 
+  /**
+   * Circular easing functions based on the quarter circle.
+   */
   Circular: Object.freeze(
     <EasingFunctionGroup> {
       In(amount: number): number {
@@ -162,6 +193,9 @@ export const Easing: {
     },
   ),
 
+  /**
+   * Elastic easing functions with an oscillating spring-like effect.
+   */
   Elastic: Object.freeze(
     <EasingFunctionGroup> {
       In(amount: number): number {
@@ -219,6 +253,9 @@ export const Easing: {
     },
   ),
 
+  /**
+   * Back easing functions that overshoot the target before settling.
+   */
   Back: Object.freeze(
     <EasingFunctionGroup> {
       In(amount: number): number {
@@ -241,6 +278,9 @@ export const Easing: {
     },
   ),
 
+  /**
+   * Bounce easing functions that simulate a bouncing ball.
+   */
   Bounce: Object.freeze(
     <EasingFunctionGroup> {
       In(amount: number): number {
@@ -266,6 +306,11 @@ export const Easing: {
     },
   ),
 
+  /**
+   * Creates a new group of easing functions with the given power.
+   * @param power - The exponent used by the easing functions, clamped to `[Number.EPSILON, 10000]`
+   * @returns An `EasingFunctionGroup` with `In`, `Out` and `InOut` variants
+   */
   pow(power = 4): EasingFunctionGroup {
     power = power < Number.EPSILON ? Number.EPSILON : power;
     power = power > 10000 ? 10000 : power;

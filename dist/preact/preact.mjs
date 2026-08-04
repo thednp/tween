@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween hooks for Preact v0.1.1 (https://github.com/thednp/tween)
+* @thednp/tween hooks for Preact v0.1.2 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -8,13 +8,27 @@
 import { useEffect, useRef, useState } from "preact/hooks";
 import { Timeline, Tween, dummyInstance, isArray, isPlainObject, isServer, objectHasProp } from "@thednp/tween";
 //#region src/preact/miniStore.ts
+/** The marker property name used to flag already-proxied values */
 const STATE_PROXY = "_proxy";
+/** The descriptor used for the non-enumerable `_proxy` marker property */
 const proxyProps = {
 	value: 1,
 	enumerable: false,
 	configurable: false,
 	writable: false
 };
+/**
+* Defines a reactive proxy for a single array index, with a nested
+* proxy for sub-arrays. Listeners are only notified when the last
+* element changes, to batch updates.
+*
+* @template T - The type of the array value
+* @param index - The array index to proxy
+* @param value - The initial value at the given index
+* @param target - The array being built
+* @param sourceLen - The length of the source array
+* @param notifyListeners - The function called when the last element changes
+*/
 function defineArrayProxy(index, value, target, sourceLen, notifyListeners) {
 	const itemIsLast = index === sourceLen - 1;
 	if (isArray(value)) {
@@ -47,6 +61,17 @@ function defineArrayProxy(index, value, target, sourceLen, notifyListeners) {
 		} });
 	}
 }
+/**
+* Defines a reactive getter/setter pair for a state property, wrapping
+* array values with the version-toggle trick so mutations stay reactive
+* without replacing the array reference.
+*
+* @template T - The type of the state object
+* @param key - The property key to proxy
+* @param value - The initial property value
+* @param target - The object being built
+* @param notifyListeners - The function called when the value changes
+*/
 function defineStateProxy(key, value, target, notifyListeners) {
 	const valueIsArray = isArray(value);
 	let currentValue = value;
@@ -72,12 +97,32 @@ function defineStateProxy(key, value, target, notifyListeners) {
 		}
 	});
 }
+/**
+* Recursively builds the reactive state object for a plain object,
+* proxying primitive and array values and delegating plain objects.
+*
+* @template T - The type of the state object
+* @param obj - The source object
+* @param parentReceiver - The object being built
+* @param notifyListeners - The function called when a value changes
+* @returns The built reactive state object
+*/
 function createMiniState(obj, parentReceiver, notifyListeners) {
 	if (objectHasProp(obj, STATE_PROXY)) return obj;
 	for (const [key, value] of Object.entries(obj)) if (isPlainObject(value)) parentReceiver[key] = createMiniState(value, {}, notifyListeners);
 	else defineStateProxy(key, value, parentReceiver, notifyListeners);
 	return parentReceiver;
 }
+/**
+* Creates a reactive store for the given initial values, where every
+* property is backed by a getter/setter pair that notifies subscribed
+* listeners on change. Use it with `useMiniStore` inside a component.
+*
+* @template T - The type of the state object
+* @param init - The initial values object
+* @returns An object with the reactive `state` and a `subscribe` method
+* that registers listeners and returns an unsubscribe function
+*/
 function miniStore(init) {
 	const listeners = /* @__PURE__ */ new Set();
 	const notifyListeners = () => {
@@ -96,6 +141,15 @@ function miniStore(init) {
 		}
 	};
 }
+/**
+* A hook that creates (once per component) a reactive store for the
+* given initial values and subscribes the component to its changes,
+* forcing a re-render via a version-toggle signal.
+*
+* @template T - The type of the state object
+* @param initialValue - The initial values object
+* @returns The reactive state object
+*/
 function useMiniStore(initialValue) {
 	const storeRef = useRef(null);
 	const [, setVersion] = useState(0);

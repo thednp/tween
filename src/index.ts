@@ -1,3 +1,9 @@
+/**
+ * @thednp/tween — a TypeScript-sourced tweening engine with Tween and Timeline.
+ *
+ * This entry point re-exports the core engine, utilities, easing presets,
+ * interpolation extensions and all shared types.
+ */
 export type * from "./types.ts";
 export * from "./Easing.ts";
 export * from "./Util.ts";

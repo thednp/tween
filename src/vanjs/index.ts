@@ -8,6 +8,9 @@ import {
 import { miniStore } from "./miniStore.ts";
 import { mount, nextId } from "./lifecycle.ts";
 
+/**
+ * Re-exports the core classes and the miniStore helper.
+ */
 export { miniStore, Timeline, Tween };
 
 /**

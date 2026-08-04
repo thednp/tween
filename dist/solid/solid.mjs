@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween primitives for SolidJS v0.1.1 (https://github.com/thednp/tween)
+* @thednp/tween primitives for SolidJS v0.1.2 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -8,13 +8,27 @@
 import { Timeline, Tween, dummyInstance, isArray, isPlainObject, isServer, objectHasProp } from "@thednp/tween";
 import { createSignal, onCleanup } from "solid-js";
 //#region src/solid/miniStore.ts
+/** The marker property name used to flag already-proxied values */
 const STATE_PROXY = "_proxy";
+/** The descriptor used for the non-enumerable `_proxy` marker property */
 const proxyProps = {
 	value: 1,
 	enumerable: false,
 	configurable: false,
 	writable: false
 };
+/**
+* Defines a reactive proxy for a single array index, with a nested
+* proxy for sub-arrays. Array mutations are tracked with a
+* version-toggle signal so the owning getter stays reactive.
+*
+* @template T - The type of the array value
+* @param index - The array index to proxy
+* @param value - The initial value at the given index
+* @param target - The array being built
+* @param sourceLen - The length of the source array
+* @param notifyListeners - The function called when the last element changes
+*/
 function defineArrayProxy(index, value, target, sourceLen, notifyListeners) {
 	const itemIsLast = index === sourceLen - 1;
 	if (isArray(value)) {
@@ -47,6 +61,16 @@ function defineArrayProxy(index, value, target, sourceLen, notifyListeners) {
 		} });
 	}
 }
+/**
+* Defines a reactive getter/setter pair for a state property, backed by
+* a SolidJS signal. Array values are wrapped with a version-toggle signal
+* so element mutations stay reactive without replacing the array.
+*
+* @template T - The type of the state object
+* @param key - The property key to proxy
+* @param value - The initial property value
+* @param target - The object being built
+*/
 function defineStateProxy(key, value, target) {
 	const [get, set] = createSignal(value);
 	let getter = get;
@@ -76,12 +100,31 @@ function defineStateProxy(key, value, target) {
 		}
 	});
 }
+/**
+* Recursively builds the reactive state object for a plain object,
+* proxying primitive and array values and delegating plain objects.
+*
+* @template T - The type of the state object
+* @param obj - The source object
+* @param parentReceiver - The object being built
+* @returns The built reactive state object
+*/
 function createMiniState(obj, parentReceiver) {
 	if (objectHasProp(obj, STATE_PROXY)) return obj;
 	for (const [key, value] of Object.entries(obj)) if (isPlainObject(value)) parentReceiver[key] = createMiniState(value, {});
 	else defineStateProxy(key, value, parentReceiver);
 	return parentReceiver;
 }
+/**
+* Creates a reactive store for the given initial values, where every
+* property is backed by a SolidJS signal. Reading a property inside a
+* component tracks the signal; writing it (e.g. by the tween update loop)
+* triggers reactivity.
+*
+* @template T - The type of the state object
+* @param init - The initial values object
+* @returns The reactive state object
+*/
 function miniStore(init) {
 	return createMiniState(init, {});
 }

@@ -275,6 +275,7 @@ export const interpolateTransform: InterpolatorFunction<TransformStep[]> = <
   return target as T;
 };
 
+/** The transform functions supported by the interpolation engine */
 const supportedTransform = [
   "perspective",
   "translate",
@@ -287,8 +288,8 @@ const supportedTransform = [
 
 /**
  * Check if a value is potentially a `TransformArray`.
- * @param target The incoming value `constructor()` `from()` / `to()`
- * @returns `true` when array is potentially a PathArray
+ * @param value The incoming value `constructor()` `from()` / `to()`
+ * @returns `true` when array is potentially a `TransformArray`
  */
 export const isTransformLike = (value: unknown): value is TransformLike =>
   isArray(value) &&
@@ -298,9 +299,8 @@ export const isTransformLike = (value: unknown): value is TransformLike =>
 
 /**
  * Check if a value is a valid `TransformArray` for interpolation.
- * @param target The incoming value `from()` / `to()`
- * @returns a tuple with validation result as a `boolean` and,
- * if not valid, a reason why value isn't
+ * @param value The incoming value `from()` / `to()`
+ * @returns `true` when value is a valid `TransformArray`
  */
 export const isValidTransformArray = (
   value: unknown,

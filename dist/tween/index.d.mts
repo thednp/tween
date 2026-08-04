@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween  v0.1.1 (https://github.com/thednp/tween)
+* @thednp/tween  v0.1.2 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -26,33 +26,64 @@ import { equalizePaths, equalizeSegments, pathToString } from "svg-path-commande
  * @param initialValues The initial values object
  */
 declare class Tween<T extends TweenProps = TweenProps> {
+  /**
+   * The animated state object, mutated in place on every frame.
+   * The values here are the ones interpolated between `from` / `to` values.
+   */
   state: T;
+  /** A deproxied reference of the initial state, used to reset values */
   private _state;
+  /** Whether the start values were captured for the current configuration */
   private _startIsSet;
+  /** The remaining number of repeats */
   private _repeat;
+  /** Whether the tween alternates direction (yoyo) */
   private _yoyo;
+  /** Whether the playback direction is reversed */
   private _reversed;
+  /** The number of repeats set by the user */
   private _initialRepeat;
+  /** Whether the `onStart` callback was fired for the current run */
   private _startFired;
+  /** The starting values of each animated property */
   private _propsStart;
+  /** The ending values of each animated property */
   private _propsEnd;
+  /** Whether the tween is currently in the runtime queue */
   private _isPlaying;
+  /** The duration of the tween, in milliseconds */
   private _duration;
+  /** The delay before the tween starts, in milliseconds */
   private _delay;
+  /** The timestamp when the tween was paused, `0` when not paused */
   private _pauseStart;
+  /** The delay between repeats, in milliseconds */
   private _repeatDelay;
+  /** The absolute start timestamp of the current run */
   private _startTime;
+  /** The validation errors map, keyed by property name or `"init"` */
   private _errors;
+  /** The registered interpolators, keyed by property name */
   private _interpolators;
+  /** The registered validators, keyed by property name */
   private _validators;
+  /** The easing function applied to the progress value, defaults to linear */
   private _easing;
+  /** The `onUpdate` callback, fired on every frame */
   private _onUpdate?;
+  /** The `onComplete` callback, fired when the tween finishes */
   private _onComplete?;
+  /** The `onStart` callback, fired when the tween starts */
   private _onStart?;
+  /** The `onStop` callback, fired when the tween is stopped */
   private _onStop?;
+  /** The `onPause` callback, fired when the tween is paused */
   private _onPause?;
+  /** The `onResume` callback, fired when the tween resumes */
   private _onResume?;
+  /** The `onRepeat` callback, fired on every repeat cycle */
   private _onRepeat?;
+  /** The runtime tuples used by the update loop for interpolation */
   private _runtime;
   /**
    * Creates a new Tween instance.
@@ -145,7 +176,7 @@ declare class Tween<T extends TweenProps = TweenProps> {
   /**
    * Sets the duration of the tween in seconds.
    * Internally it's converted to milliseconds.
-   * @param duration - Time in seconds
+   * @param seconds - Time in seconds
    * @default 1 second
    * @returns this
    */
@@ -215,10 +246,14 @@ declare class Tween<T extends TweenProps = TweenProps> {
   onStop(callback: TweenCallback<T>): this;
   /**
    * Registers a callback fired when `pause()` was called.
+   * @param cb - Receives state at pause time
+   * @returns this
    */
   onPause(cb: TweenCallback<T>): this;
   /**
    * Registers a callback fired when `.resume()` was called.
+   * @param cb - Receives state at resume time
+   * @returns this
    */
   onResume(cb: TweenCallback<T>): this;
   /**
@@ -300,31 +335,60 @@ declare class Tween<T extends TweenProps = TweenProps> {
  * @param initialValues The initial values object
  */
 declare class Timeline<T extends TweenProps = TweenProps> {
+  /**
+   * The animated state object, mutated in place on every frame by
+   * the active timeline entries.
+   */
   state: T;
+  /** A deproxied reference of the initial state, used to reset values */
   private _state;
+  /** The animation entries, in insertion order */
   private _entries;
+  /** The named labels, mapping a label name to an absolute time in ms */
   private _labels;
+  /** The current progress value in the `[0, 1]` range */
   private _progress;
+  /** The total duration of all entries, in milliseconds */
   private _duration;
+  /** Whether the timeline alternates direction (yoyo) */
   private _yoyo;
+  /** Whether the playback direction is reversed */
   private _reversed;
+  /** The current playback time, in milliseconds */
   private _time;
+  /** The timestamp when the timeline was paused, `0` when not paused */
   private _pauseTime;
+  /** The last update timestamp, used to compute the frame delta */
   private _lastTime;
+  /** Whether the timeline is currently in the runtime queue */
   private _isPlaying;
+  /** The remaining number of repeats */
   private _repeat;
+  /** The delay between repeats, in milliseconds */
   private _repeatDelay;
+  /** The timestamp when the current repeat delay started */
   private _repeatDelayStart;
+  /** The number of repeats set by the user */
   private _initialRepeat;
+  /** The validation errors map, keyed by property name or `"init"` */
   private _errors;
+  /** The registered interpolators, keyed by property name */
   private _interpolators;
+  /** The registered validators, keyed by property name */
   private _validators;
+  /** The `onStart` callback, fired when playback begins */
   private _onStart?;
+  /** The `onStop` callback, fired when the timeline is stopped */
   private _onStop?;
+  /** The `onPause` callback, fired when the timeline is paused */
   private _onPause?;
+  /** The `onResume` callback, fired when playback resumes */
   private _onResume?;
+  /** The `onUpdate` callback, fired on every frame */
   private _onUpdate?;
+  /** The `onComplete` callback, fired when the timeline finishes */
   private _onComplete?;
+  /** The `onRepeat` callback, fired on every repeat cycle */
   private _onRepeat?;
   /**
    * Creates a new Timeline instance.
@@ -445,30 +509,45 @@ declare class Timeline<T extends TweenProps = TweenProps> {
   to({ duration, easing, ...values }: (Partial<T> | DeepPartial<T>) & TimelineEntryConfig, position?: Position): this;
   /**
    * Registers a callback fired when playback begins.
+   * @param cb - Receives state and progress (`0`) at play time
+   * @returns this
    */
   onStart(cb: TimelineCallback<T>): this;
   /**
    * Registers a callback fired when `pause()` was called.
+   * @param cb - Receives state and progress at pause time
+   * @returns this
    */
   onPause(cb: TimelineCallback<T>): this;
   /**
    * Registers a callback fired when `.play()` / `.resume()` was called.
+   * @param cb - Receives state and progress at resume time
+   * @returns this
    */
   onResume(cb: TimelineCallback<T>): this;
   /**
    * Registers a callback fired on explicit `.stop()`.
+   * @param cb - Receives state and progress at stop time
+   * @returns this
    */
   onStop(cb: TimelineCallback<T>): this;
   /**
    * Registers a callback fired every frame.
+   * @param cb - Receives state and progress in the `[0, 1]` range
+   * @returns this
    */
   onUpdate(cb: TimelineCallback<T>): this;
   /**
    * Registers a callback fired when timeline naturally completes.
+   * @param cb - Receives state and progress (`1`) at completion time
+   * @returns this
    */
   onComplete(cb: TimelineCallback<T>): this;
   /**
-   * Registers a callback fired when `.play()` / `.resume()` was called.
+   * Registers a callback fired on every repeat cycle, usually before
+   * the next iteration begins.
+   * @param cb - Receives state and the current progress value
+   * @returns this
    */
   onRepeat(cb?: TimelineCallback<T>): this;
   /**
@@ -499,6 +578,7 @@ declare class Timeline<T extends TweenProps = TweenProps> {
   /**
    * Public method to clear all entries, labels and reset timers to zero
    * or initial value (repeat).
+   * @returns this
    */
   clear(): this;
   /**
@@ -531,86 +611,256 @@ declare class Timeline<T extends TweenProps = TweenProps> {
 }
 //#endregion
 //#region src/types.d.ts
+/**
+ * A union type that represents any animation instance that can be
+ * added to the runtime queue: either a {@link Tween} or a {@link Timeline}.
+ *
+ * @template T - The type of the animated state object (defaults to `never`)
+ */
 type AnimationItem<T extends TweenProps = never> = Tween<T> | Timeline<T>;
+/**
+ * The callback signature used by the {@link Timeline} lifecycle events,
+ * receiving the current state and progress value.
+ *
+ * @template T - The type of the animated state object
+ * @param state - The current state of the animated object
+ * @param progress - The current progress value in the `[0, 1]` range
+ */
 type TimelineCallback<T extends TweenProps> = (state: T, progress: number) => void;
+/**
+ * The callback signature fired on every animation frame by the
+ * {@link Tween} update loop.
+ *
+ * @template T - The type of the animated state object
+ * @param obj - The current state of the animated object
+ * @param elapsed - The current progress value in the `[0, 1]` range
+ */
 type TweenUpdateCallback<T extends TweenProps> = (obj: T, elapsed: number) => void;
+/**
+ * The callback signature fired once by lifecycle events such as
+ * `onStart`, `onComplete`, `onStop`, `onPause`, `onResume` or `onRepeat`.
+ *
+ * @template T - The type of the animated state object
+ * @param obj - The current state of the animated object
+ */
 type TweenCallback<T extends TweenProps> = (obj: T) => void;
+/**
+ * A function that maps a linear progress value in the `[0, 1]` range
+ * to an eased progress value, also in the `[0, 1]` range.
+ *
+ * @param amount - The linear progress value in the `[0, 1]` range
+ * @returns The eased progress value in the `[0, 1]` range
+ */
 type EasingFunction = (amount: number) => number;
+/**
+ * A group of easing functions with `In`, `Out` and `InOut` variants.
+ */
 type EasingFunctionGroup = {
+  /** The easing function that accelerates the animation */
   In: EasingFunction;
+  /** The easing function that decelerates the animation */
   Out: EasingFunction;
+  /** The easing function that accelerates then decelerates the animation */
   InOut: EasingFunction;
 };
+/**
+ * A time position value used by the Timeline API: either an absolute
+ * number of seconds or a string like `"+=0.5"`, `"-=0.3"` or a label name.
+ */
 type Position = number | string;
 /**
  * Extend Specific
  */
+/**
+ * A generic interpolation function that updates the `target` value
+ * from `start` to `end` based on the progress value `t`.
+ *
+ * @template I - The type constraint of the interpolated values
+ * @template T - The concrete value type, must extend `I`
+ * @param target - The target object / array to mutate
+ * @param start - The starting value
+ * @param end - The ending value
+ * @param t - The progress value in the `[0, 1]` range
+ * @returns The mutated `target` value
+ */
 type InterpolatorFunction<I extends TweenProps[never] = never> = <T extends I>(target: T, start: T, end: T, t: number) => T;
+/**
+ * The result of a validation call: either `[true]` when valid or
+ * `[false, reason]` when the value is not valid.
+ */
 type ValidationResultEntry = [true] | [
 /** prop name */
 false,
 /** reason */
 string];
+/**
+ * A validation function that checks a property value and, optionally,
+ * its compatibility with a reference value.
+ *
+ * @template I - The type constraint of the validated values
+ * @param propName - The name of the property being validated
+ * @param target - The incoming value to validate
+ * @param ref - The reference state value to compare against
+ * @returns A {@link ValidationResultEntry} tuple
+ */
 type ValidationFunction<I extends Record<string, unknown> = never> = <T extends I[keyof I]>(propName: string, target: T, ref?: T) => ValidationResultEntry;
+/**
+ * The configuration object passed to `.use(propName, config)` for
+ * registering a custom interpolation extension for a property.
+ */
 type PropConfig = {
+  /** The validator used to check initial, `from()` and `to()` values */
   validate: ValidationFunction;
+  /** The interpolator used to update the property value every frame */
   interpolate: InterpolatorFunction;
 };
 /**
  * TIMELINE
  */
+/**
+ * The optional per-entry configuration accepted by the {@link Timeline.to}
+ * method, in addition to the actual values to animate.
+ */
 interface TimelineEntryConfig {
+  /** The duration of the entry in seconds */
   duration?: number;
+  /** The easing function applied to the entry, defaults to linear */
   easing?: EasingFunction;
 }
+/**
+ * A single animation entry stored inside a {@link Timeline}, holding
+ * the start / end values and the runtime data needed for interpolation.
+ *
+ * @template T - The type of the animated state object
+ */
 interface TimelineEntry<T extends TweenProps> {
+  /** The target values to animate to */
   to: Partial<T> | DeepPartial<T>;
+  /** The starting values captured at the moment the entry activates */
   from: Partial<T> | DeepPartial<T>;
+  /** The absolute start time of the entry, in milliseconds */
   startTime: number;
+  /** The duration of the entry, in milliseconds */
   duration: number;
+  /** The easing function applied to the entry */
   easing: EasingFunction;
+  /** Whether the entry runtime was initialized and is currently animating */
   isActive?: boolean;
+  /**
+   * The per-property runtime tuples used by the update loop:
+   * `[targetObject, property, interpolator, startVal, endVal]`
+   */
   runtime: [propValue: T[keyof T], property: string | keyof T, interpolator: InterpolatorFunction, startVal: T[keyof T], endVal: T[keyof T]][];
 }
+/**
+ * The per-property runtime tuple stored by the {@link Tween} engine and
+ * by each {@link TimelineEntry}: `[targetObject, property, interpolator, startVal, endVal]`.
+ *
+ * @template T - The type of the animated state object
+ */
 type TweenRuntime<T extends TweenProps> = [targetObject: T[keyof T], property: string | keyof T, interpolator: InterpolatorFunction, startVal: T[keyof T], endVal: T[keyof T]];
 /**
  * Nested Objects
  */
+/**
+ * A single-level nested object of `string` keys mapping to plain
+ * objects of `unknown` values.
+ */
 type DeepObject = Record<string, Record<string, unknown>>;
+/**
+ * Recursively makes every property of `T` optional, supporting
+ * one level deep nested objects (e.g. `{ translate: { x, y } }`).
+ *
+ * @template T - The type to make deeply partial
+ */
 type DeepPartial<T> = T extends Record<string, T[keyof T]> ? Partial<T> | { [P in keyof T]?: DeepPartial<T[P]>; } : T;
 /**
  * Supported types
  */
+/**
+ * A supported array value: either a flat `number[]` (e.g. RGB values)
+ * or an array of `[command, ...number[]]` tuples (e.g. transform steps).
+ */
 type ArrayVal = number[] | [string, ...number[]][];
+/**
+ * The base state object type: a plain object whose values are numbers
+ * (e.g. `{ x: 0, y: 0 }`).
+ */
 type BaseTweenProps = Record<string, number>;
+/**
+ * The supported state object type: a plain object whose values can be
+ * numbers, arrays, nested objects or arrays of command tuples.
+ */
 type TweenProps = Record<string, number | ArrayVal | BaseTweenProps | [string, ...(CubicValues | LineValues | QuadValues | Vec3)][]>;
 /**
  * PathArray specific
  */
+/** A line segment values tuple `[x, y]` */
 type LineValues = [number, number];
+/** A cubic bezier segment values tuple `[x1, y1, x2, y2, x, y]` */
 type CubicValues = [number, number, number, number, number, number];
+/** A quadratic bezier segment values tuple `[x1, y1, x, y]` */
 type QuadValues = [number, number, number, number];
+/**
+ * A single path segment of a morphable {@link MorphPathArray}:
+ * `["M" | "L", x, y]`, `["C", x1, y1, x2, y2, x, y]` or `["Z"]`.
+ */
 type MorphPathSegment = ["M" | "L", ...LineValues] | ["C", ...CubicValues] | ["Z"];
+/** The supported path commands used by {@link PathLike} */
 type PC = "M" | "m" | "L" | "l" | "C" | "c" | "Z" | "z";
+/**
+ * An array of path segments in any supported SVG path command format.
+ */
 type MorphPathArray = MorphPathSegment[];
+/**
+ * A path-like value: an array of `[command, ...number[]]` tuples
+ * with any of the supported path commands.
+ */
 type PathLike = [PC, ...number[]][];
 /**
  * Transform specific
  */
+/**
+ * The values tuple for the `rotateAxisAngle` transform step:
+ * `[originX, originY, originZ, angle]`.
+ */
 type RotateAxisAngle = [originX: number, originY: number, originZ: number, angle: number];
+/** A generic 3D vector tuple, with optional `y` and `z` components */
 type Vec3 = [number, number?, number?];
+/** The values tuple for a single-axis `rotateZ` transform step */
 type RotateZ = [rotateZ: number];
+/** The values tuple for a `rotate` transform step */
 type Rotate = [rotateX: number, rotateY: number, rotateZ?: number];
+/** The values tuple for a `translate` transform step */
 type Translate = [translateX: number, translateY?: number, translateZ?: number];
+/** The values tuple for a `scale` transform step */
 type Scale = [scaleX: number, scaleY?: number, scaleZ?: number];
+/**
+ * The internal variant of a {@link TransformStep}, used by the
+ * interpolation engine at runtime.
+ */
 type TransformStepInternal = ["rotateAxisAngle", ...QuadValues] | ["translate", ...Vec3] | ["rotate", ...Vec3] | ["scale", ...Vec3] | ["skewX", number] | ["skewY", number] | ["perspective", number];
+/**
+ * A single CSS transform step: a `[function, ...values]` tuple
+ * such as `["translate", 50, 50]` or `["rotate", 45]`.
+ */
 type TransformStep = ["rotateAxisAngle", ...RotateAxisAngle] | ["translate", ...Translate] | ["rotate", ...(Rotate | RotateZ)] | ["scale", ...Scale] | ["skewX", angle: number] | ["skewY", angle: number] | ["perspective", length: number];
+/** An array of {@link TransformStep} tuples */
 type TransformArray = TransformStep[];
+/** A transform-like value: an array of `[function, ...number[]]` tuples */
 type TransformLike = [TransformStep[0], ...number[]][];
 //#endregion
 //#region src/Easing.d.ts
 /**
- * The Ease class provides a collection of easing functions for use with tween.js.
+ * A frozen collection of preset easing functions, grouped by name
+ * (`Linear`, `Quadratic`, `Cubic`, `Quartic`, `Quintic`, `Sinusoidal`,
+ * `Exponential`, `Circular`, `Elastic`, `Back`, `Bounce`), each exposing
+ * `In`, `Out` and `InOut` variants. Use with `.easing()`.
+ *
+ * @example
+ * ```ts
+ * const tween = new Tween({ x: 0 }).to({ x: 300 }).easing(Easing.Elastic.Out);
+ * ```
  */
 declare const Easing: {
   Linear: EasingFunctionGroup & {
@@ -630,13 +880,61 @@ declare const Easing: {
 };
 //#endregion
 //#region src/Util.d.ts
+/**
+ * Checks if a value is a `string`.
+ *
+ * @param value - The value to check
+ * @returns `true` when the value is a `string`
+ */
 declare const isString: (value: unknown) => value is string;
+/**
+ * Checks if a value is a `number`.
+ *
+ * @param value - The value to check
+ * @returns `true` when the value is a `number`
+ */
 declare const isNumber: (value: unknown) => value is number;
+/**
+ * Checks if a value is an `Array`.
+ *
+ * @param value - The value to check
+ * @returns `true` when the value is an `Array`
+ */
 declare const isArray: (value: unknown) => value is Array<unknown>;
+/**
+ * Checks if a value is a `function`.
+ *
+ * @param value - The value to check
+ * @returns `true` when the value is a `function`
+ */
 declare const isFunction: (value: unknown) => value is () => unknown;
+/**
+ * Checks if a value is a plain object (an object whose prototype
+ * is `Object.prototype`), excluding `null`, `undefined` and arrays.
+ *
+ * @param value - The value to check
+ * @returns `true` when the value is a plain object
+ */
 declare const isObject: (value: unknown) => value is Record<string, never>;
+/**
+ * Checks if a value is a plain object and not an array.
+ *
+ * @param value - The value to check
+ * @returns `true` when the value is a plain non-array object
+ */
 declare const isPlainObject: (value: unknown) => value is Record<string, never>;
+/**
+ * Checks if a value is a single-level nested object (a plain object
+ * that contains at least one plain object value).
+ *
+ * @param value - The value to check
+ * @returns `true` when the value is a {@link DeepObject}
+ */
 declare const isDeepObject: (value: unknown) => value is DeepObject;
+/**
+ * A boolean that is `true` when running in a server environment
+ * (e.g. SSR / Node.js), where `window` is not defined.
+ */
 declare const isServer: boolean;
 /**
  * SSR helper to speed up UI frameworks render.
@@ -647,7 +945,20 @@ declare const isServer: boolean;
  * - allow free-form configuration for signal based frameworks
  */
 declare const dummyInstance: Record<string, typeof dummyMethod>;
+/**
+ * A no-op method that returns the calling instance, used to stub
+ * {@link Tween} / {@link Timeline} methods in SSR environments.
+ *
+ * @returns The calling `dummyInstance`
+ */
 declare function dummyMethod(this: typeof dummyInstance): typeof dummyInstance;
+/**
+ * Checks if an object has a property as its own (not inherited).
+ *
+ * @param obj - The object to check
+ * @param prop - The property name to look for
+ * @returns `true` when the object has the property
+ */
 declare const objectHasProp: <T extends object>(obj: T, prop: keyof T) => boolean;
 /**
  * A small utility to deep assign up to one level deep nested objects.
@@ -730,13 +1041,13 @@ declare const arrayConfig: {
 declare const interpolatePath: InterpolatorFunction<MorphPathSegment[]>;
 /**
  * Check if an array of arrays is potentially a PathArray
- * @param target The incoming value `constructor()` `from()` / `to()`
+ * @param value The incoming value `constructor()` `from()` / `to()`
  * @returns `true` when array is potentially a PathArray
  */
 declare const isPathLike: (value: unknown) => value is PathLike;
 /**
  * Check if an array of arrays is a valid PathArray for interpolation
- * @param target The incoming value `from()` / `to()`
+ * @param value The incoming value `from()` / `to()`
  * @returns `true` when array is valid
  */
 declare const isValidPath: (value: unknown) => value is MorphPathArray;
@@ -877,15 +1188,14 @@ declare const eulerToAxisAngle: (x: number, y: number, z: number) => [number, nu
 declare const interpolateTransform: InterpolatorFunction<TransformStep[]>;
 /**
  * Check if a value is potentially a `TransformArray`.
- * @param target The incoming value `constructor()` `from()` / `to()`
- * @returns `true` when array is potentially a PathArray
+ * @param value The incoming value `constructor()` `from()` / `to()`
+ * @returns `true` when array is potentially a `TransformArray`
  */
 declare const isTransformLike: (value: unknown) => value is TransformLike;
 /**
  * Check if a value is a valid `TransformArray` for interpolation.
- * @param target The incoming value `from()` / `to()`
- * @returns a tuple with validation result as a `boolean` and,
- * if not valid, a reason why value isn't
+ * @param value The incoming value `from()` / `to()`
+ * @returns `true` when value is a valid `TransformArray`
  */
 declare const isValidTransformArray: (value: unknown) => value is TransformArray;
 /**
@@ -903,35 +1213,53 @@ declare const transformConfig: {
 };
 //#endregion
 //#region src/Now.d.ts
+/**
+ * The current time function used by the engine, defaults to
+ * `globalThis.performance.now()`. Can be replaced with {@link setNow}
+ * for testing or custom time sources.
+ */
 declare let _nowFunc: () => number;
+/**
+ * Returns the current time in milliseconds since the time origin,
+ * using the function set via {@link setNow}.
+ *
+ * @returns The current time in milliseconds
+ */
 declare const now: () => number;
+/**
+ * Replaces the internal time function used by {@link now}.
+ *
+ * @param nowFunction - A function returning the current time in milliseconds
+ */
 declare function setNow(nowFunction: typeof _nowFunc): void;
 //#endregion
 //#region src/Runtime.d.ts
 /**
- * The runtime queue
+ * The runtime queue holding all active {@link AnimationItem} instances
+ * (Tween / Timeline) that are updated by the RAF loop.
  */
 declare const Queue: AnimationItem[];
 /**
  * The hot update loop updates all items in the queue,
  * and stops automatically when there are no items left.
- * @param t execution time (performance.now)
+ * @param t - Execution time, in milliseconds (defaults to {@link now})
  */
 declare function Runtime(t?: number): void;
 /**
  * Add a new item to the update loop.
  * If it's the first item, it will also start the update loop.
- * @param newItem Tween / Timeline
+ * @param newItem - Tween / Timeline instance to add
  */
 declare function addToQueue<T extends TweenProps>(newItem: AnimationItem<T>): void;
 /**
  * Remove item from the update loop.
- * @param newItem Tween / Timeline
+ * @param removedItem - Tween / Timeline instance to remove
  */
 declare function removeFromQueue<T extends TweenProps>(removedItem: AnimationItem<T>): void;
 //#endregion
 //#region src/Version.d.ts
-declare const version = "0.1.1";
+/** The current version of the library, synced from package.json */
+declare const version = "0.1.2";
 //#endregion
 export { type AnimationItem, type ArrayVal, type BaseTweenProps, type CubicValues, type DeepObject, type DeepPartial, Easing, type EasingFunction, type EasingFunctionGroup, type InterpolatorFunction, type LineValues, type MorphPathArray, type MorphPathSegment, type PathLike, type Position, type PropConfig, type QuadValues, Queue, type Rotate, type RotateAxisAngle, type RotateZ, Runtime, type Scale, Timeline, type TimelineCallback, type TimelineEntry, type TimelineEntryConfig, type TransformArray, type TransformLike, type TransformStep, type TransformStepInternal, type Translate, Tween, type TweenCallback, type TweenProps, type TweenRuntime, type TweenUpdateCallback, type ValidationFunction, type ValidationResultEntry, type Vec3, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, equalizePaths, equalizeSegments, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
 //# sourceMappingURL=index.d.mts.map

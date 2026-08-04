@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.2] - 2026-08-04
+
+### Changed
+- Added full JSDoc coverage across the entire source: all types, interfaces, properties, classes, methods, functions, parameters and return values are now documented
+
 ## [0.1.1] - 2026-08-04
 
 ### Added
@@ -20,6 +25,7 @@ All notable changes to this project will be documented in this file.
 - Fixed the UMD build warning about invalid `output.dir` by switching to a file-based `outputOptions` function
 - Updated `typescript` to `^7.0.2`
 - Updated test expectations for the latest `@thednp/dommatrix` output
+- Made the `matrix3d` string test environment-agnostic by comparing values rounded to 10 decimals, so it passes under both Node and Deno runtimes
 - Updated dependencies and playground configurations
 
 ### Removed

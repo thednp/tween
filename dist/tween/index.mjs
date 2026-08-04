@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween  v0.1.1 (https://github.com/thednp/tween)
+* @thednp/tween  v0.1.2 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -8,9 +8,20 @@
 import { equalizePaths, equalizeSegments, pathToString } from "svg-path-commander/util";
 //#region src/Easing.ts
 /**
-* The Ease class provides a collection of easing functions for use with tween.js.
+* A frozen collection of preset easing functions, grouped by name
+* (`Linear`, `Quadratic`, `Cubic`, `Quartic`, `Quintic`, `Sinusoidal`,
+* `Exponential`, `Circular`, `Elastic`, `Back`, `Bounce`), each exposing
+* `In`, `Out` and `InOut` variants. Use with `.easing()`.
+*
+* @example
+* ```ts
+* const tween = new Tween({ x: 0 }).to({ x: 300 }).easing(Easing.Elastic.Out);
+* ```
 */
 const Easing = Object.freeze({
+	/**
+	* Linear easing functions, including a `None` variant that returns the input unchanged.
+	*/
 	Linear: Object.freeze({
 		None(amount) {
 			return amount;
@@ -25,6 +36,9 @@ const Easing = Object.freeze({
 			return amount;
 		}
 	}),
+	/**
+	* Quadratic easing functions (power of 2).
+	*/
 	Quadratic: Object.freeze({
 		In(amount) {
 			return amount * amount;
@@ -37,6 +51,9 @@ const Easing = Object.freeze({
 			return -.5 * (--amount * (amount - 2) - 1);
 		}
 	}),
+	/**
+	* Cubic easing functions (power of 3).
+	*/
 	Cubic: Object.freeze({
 		In(amount) {
 			return amount * amount * amount;
@@ -49,6 +66,9 @@ const Easing = Object.freeze({
 			return .5 * ((amount -= 2) * amount * amount + 2);
 		}
 	}),
+	/**
+	* Quartic easing functions (power of 4).
+	*/
 	Quartic: Object.freeze({
 		In(amount) {
 			return amount * amount * amount * amount;
@@ -61,6 +81,9 @@ const Easing = Object.freeze({
 			return -.5 * ((amount -= 2) * amount * amount * amount - 2);
 		}
 	}),
+	/**
+	* Quintic easing functions (power of 5).
+	*/
 	Quintic: Object.freeze({
 		In(amount) {
 			return amount * amount * amount * amount * amount;
@@ -73,6 +96,9 @@ const Easing = Object.freeze({
 			return .5 * ((amount -= 2) * amount * amount * amount * amount + 2);
 		}
 	}),
+	/**
+	* Sinusoidal easing functions based on the sine curve.
+	*/
 	Sinusoidal: Object.freeze({
 		In(amount) {
 			return 1 - Math.sin((1 - amount) * Math.PI / 2);
@@ -84,6 +110,9 @@ const Easing = Object.freeze({
 			return .5 * (1 - Math.sin(Math.PI * (.5 - amount)));
 		}
 	}),
+	/**
+	* Exponential easing functions based on powers of 2.
+	*/
 	Exponential: Object.freeze({
 		In(amount) {
 			return amount === 0 ? 0 : Math.pow(1024, amount - 1);
@@ -98,6 +127,9 @@ const Easing = Object.freeze({
 			return .5 * (-Math.pow(2, -10 * (amount - 1)) + 2);
 		}
 	}),
+	/**
+	* Circular easing functions based on the quarter circle.
+	*/
 	Circular: Object.freeze({
 		In(amount) {
 			return 1 - Math.sqrt(1 - amount * amount);
@@ -110,6 +142,9 @@ const Easing = Object.freeze({
 			return .5 * (Math.sqrt(1 - (amount -= 2) * amount) + 1);
 		}
 	}),
+	/**
+	* Elastic easing functions with an oscillating spring-like effect.
+	*/
 	Elastic: Object.freeze({
 		In(amount) {
 			if (amount === 0) return 0;
@@ -129,6 +164,9 @@ const Easing = Object.freeze({
 			return .5 * Math.pow(2, -10 * (amount - 1)) * Math.sin((amount - 1.1) * 5 * Math.PI) + 1;
 		}
 	}),
+	/**
+	* Back easing functions that overshoot the target before settling.
+	*/
 	Back: Object.freeze({
 		In(amount) {
 			return amount === 1 ? 1 : amount * amount * (2.70158 * amount - 1.70158);
@@ -142,6 +180,9 @@ const Easing = Object.freeze({
 			return .5 * ((amount -= 2) * amount * (3.5949095 * amount + s) + 2);
 		}
 	}),
+	/**
+	* Bounce easing functions that simulate a bouncing ball.
+	*/
 	Bounce: Object.freeze({
 		In(amount) {
 			return 1 - Easing.Bounce.Out(1 - amount);
@@ -157,6 +198,11 @@ const Easing = Object.freeze({
 			return Easing.Bounce.Out(amount * 2 - 1) * .5 + .5;
 		}
 	}),
+	/**
+	* Creates a new group of easing functions with the given power.
+	* @param power - The exponent used by the easing functions, clamped to `[Number.EPSILON, 10000]`
+	* @returns An `EasingFunctionGroup` with `In`, `Out` and `InOut` variants
+	*/
 	pow(power = 4) {
 		power = power < Number.EPSILON ? Number.EPSILON : power;
 		power = power > 1e4 ? 1e4 : power;
@@ -176,14 +222,66 @@ const Easing = Object.freeze({
 });
 //#endregion
 //#region src/Util.ts
+/**
+* Checks if a value is a `string`.
+*
+* @param value - The value to check
+* @returns `true` when the value is a `string`
+*/
 const isString = (value) => typeof value === "string";
+/**
+* Checks if a value is a `number`.
+*
+* @param value - The value to check
+* @returns `true` when the value is a `number`
+*/
 const isNumber = (value) => typeof value === "number";
+/**
+* Checks if a value is an `Array`.
+*
+* @param value - The value to check
+* @returns `true` when the value is an `Array`
+*/
 const isArray = (value) => Array.isArray(value);
+/**
+* Checks if a value is a `function`.
+*
+* @param value - The value to check
+* @returns `true` when the value is a `function`
+*/
 const isFunction = (value) => typeof value === "function";
+/**
+* Checks if a value is a plain object (an object whose prototype
+* is `Object.prototype`), excluding `null`, `undefined` and arrays.
+*
+* @param value - The value to check
+* @returns `true` when the value is a plain object
+*/
 const isObject = (value) => value !== null && value !== void 0 && typeof value === "object" && Object.getPrototypeOf(value) === Object.prototype;
+/**
+* Checks if a value is a plain object and not an array.
+*
+* @param value - The value to check
+* @returns `true` when the value is a plain non-array object
+*/
 const isPlainObject = (value) => isObject(value) && !isArray(value);
+/**
+* Checks if a value is a single-level nested object (a plain object
+* that contains at least one plain object value).
+*
+* @param value - The value to check
+* @returns `true` when the value is a {@link DeepObject}
+*/
 const isDeepObject = (value) => isPlainObject(value) && Object.values(value).some(isPlainObject);
+/**
+* A boolean that is `true` when running in a server environment
+* (e.g. SSR / Node.js), where `window` is not defined.
+*/
 const isServer = typeof window === "undefined";
+/**
+* The method names shared by {@link Tween} and {@link Timeline} that
+* are stubbed on the SSR {@link dummyInstance}.
+*/
 const instanceMethods = [
 	"play",
 	"label",
@@ -217,11 +315,30 @@ const instanceMethods = [
 * - allow free-form configuration for signal based frameworks
 */
 const dummyInstance = {};
+/**
+* A no-op method that returns the calling instance, used to stub
+* {@link Tween} / {@link Timeline} methods in SSR environments.
+*
+* @returns The calling `dummyInstance`
+*/
 function dummyMethod() {
 	return this;
 }
 for (let i = 0; i < instanceMethods.length; i++) dummyInstance[instanceMethods[i]] = dummyMethod;
+/**
+* Checks if an object has a property as its own (not inherited).
+*
+* @param obj - The object to check
+* @param prop - The property name to look for
+* @returns `true` when the object has the property
+*/
 const objectHasProp = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop);
+/**
+* Checks if a key is unsafe for assignment, to prevent prototype pollution.
+*
+* @param key - The property key to check
+* @returns `true` when the key is `__proto__`, `constructor` or `prototype`
+*/
 const isUnsafeKey = (key) => key === "__proto__" || key === "constructor" || key === "prototype";
 /**
 * A small utility to deep assign up to one level deep nested objects.
@@ -410,6 +527,7 @@ const interpolatePath = (target, start, end, t) => {
 	}
 	return target;
 };
+/** The path commands supported by the interpolation engine */
 const supportedPathCommands = [
 	"M",
 	"L",
@@ -418,13 +536,13 @@ const supportedPathCommands = [
 ];
 /**
 * Check if an array of arrays is potentially a PathArray
-* @param target The incoming value `constructor()` `from()` / `to()`
+* @param value The incoming value `constructor()` `from()` / `to()`
 * @returns `true` when array is potentially a PathArray
 */
 const isPathLike = (value) => isArray(value) && value.some((seg) => isArray(seg) && supportedPathCommands.includes(seg[0]));
 /**
 * Check if an array of arrays is a valid PathArray for interpolation
-* @param target The incoming value `from()` / `to()`
+* @param value The incoming value `from()` / `to()`
 * @returns `true` when array is valid
 */
 const isValidPath = (value) => isPathLike(value) && value.length > 1 && value.every(isArray) && value.every(([cmd, ...values]) => supportedPathCommands.includes(cmd) && (["M", "L"].includes(cmd) && values.length === 2 && values.every(isNumber) || "C" === cmd && values.length === 6 && values.every(isNumber) || "Z" === cmd && values.length === 0));
@@ -747,6 +865,7 @@ const interpolateTransform = (target, start, end, t) => {
 	}
 	return target;
 };
+/** The transform functions supported by the interpolation engine */
 const supportedTransform = [
 	"perspective",
 	"translate",
@@ -758,15 +877,14 @@ const supportedTransform = [
 ];
 /**
 * Check if a value is potentially a `TransformArray`.
-* @param target The incoming value `constructor()` `from()` / `to()`
-* @returns `true` when array is potentially a PathArray
+* @param value The incoming value `constructor()` `from()` / `to()`
+* @returns `true` when array is potentially a `TransformArray`
 */
 const isTransformLike = (value) => isArray(value) && value.some((step) => isArray(step) && supportedTransform.includes(step[0]));
 /**
 * Check if a value is a valid `TransformArray` for interpolation.
-* @param target The incoming value `from()` / `to()`
-* @returns a tuple with validation result as a `boolean` and,
-* if not valid, a reason why value isn't
+* @param value The incoming value `from()` / `to()`
+* @returns `true` when value is a valid `TransformArray`
 */
 const isValidTransformArray = (value) => isTransformLike(value) && value.every(([fn, ...values]) => supportedTransform.includes(fn) && ([
 	"translate",
@@ -810,25 +928,44 @@ const transformConfig = {
 };
 //#endregion
 //#region src/Now.ts
+/**
+* The current time function used by the engine, defaults to
+* `globalThis.performance.now()`. Can be replaced with {@link setNow}
+* for testing or custom time sources.
+*/
 let _nowFunc = () => globalThis.performance.now();
+/**
+* Returns the current time in milliseconds since the time origin,
+* using the function set via {@link setNow}.
+*
+* @returns The current time in milliseconds
+*/
 const now = () => {
 	return _nowFunc();
 };
+/**
+* Replaces the internal time function used by {@link now}.
+*
+* @param nowFunction - A function returning the current time in milliseconds
+*/
 function setNow(nowFunction) {
 	_nowFunc = nowFunction;
 }
 //#endregion
 //#region src/Runtime.ts
 /**
-* The runtime queue
+* The runtime queue holding all active {@link AnimationItem} instances
+* (Tween / Timeline) that are updated by the RAF loop.
 */
 const Queue = new Array(0);
+/** The current `requestAnimationFrame` id, `0` when the loop is stopped */
 let rafID = 0;
+/** The length of the {@link Queue}, kept in sync for micro-optimization */
 let queueLength = 0;
 /**
 * The hot update loop updates all items in the queue,
 * and stops automatically when there are no items left.
-* @param t execution time (performance.now)
+* @param t - Execution time, in milliseconds (defaults to {@link now})
 */
 function Runtime(t = now()) {
 	let i = 0;
@@ -845,7 +982,7 @@ function Runtime(t = now()) {
 /**
 * Add a new item to the update loop.
 * If it's the first item, it will also start the update loop.
-* @param newItem Tween / Timeline
+* @param newItem - Tween / Timeline instance to add
 */
 function addToQueue(newItem) {
 	if (Queue.includes(newItem)) return;
@@ -854,7 +991,7 @@ function addToQueue(newItem) {
 }
 /**
 * Remove item from the update loop.
-* @param newItem Tween / Timeline
+* @param removedItem - Tween / Timeline instance to remove
 */
 function removeFromQueue(removedItem) {
 	const idx = Queue.indexOf(removedItem);
@@ -884,33 +1021,64 @@ function removeFromQueue(removedItem) {
 * @param initialValues The initial values object
 */
 var Tween = class {
+	/**
+	* The animated state object, mutated in place on every frame.
+	* The values here are the ones interpolated between `from` / `to` values.
+	*/
 	state;
+	/** A deproxied reference of the initial state, used to reset values */
 	_state;
+	/** Whether the start values were captured for the current configuration */
 	_startIsSet = false;
+	/** The remaining number of repeats */
 	_repeat = 0;
+	/** Whether the tween alternates direction (yoyo) */
 	_yoyo = false;
+	/** Whether the playback direction is reversed */
 	_reversed = false;
+	/** The number of repeats set by the user */
 	_initialRepeat = 0;
+	/** Whether the `onStart` callback was fired for the current run */
 	_startFired = false;
+	/** The starting values of each animated property */
 	_propsStart = {};
+	/** The ending values of each animated property */
 	_propsEnd = {};
+	/** Whether the tween is currently in the runtime queue */
 	_isPlaying = false;
+	/** The duration of the tween, in milliseconds */
 	_duration = 1e3;
+	/** The delay before the tween starts, in milliseconds */
 	_delay = 0;
+	/** The timestamp when the tween was paused, `0` when not paused */
 	_pauseStart = 0;
+	/** The delay between repeats, in milliseconds */
 	_repeatDelay = 0;
+	/** The absolute start timestamp of the current run */
 	_startTime = 0;
+	/** The validation errors map, keyed by property name or `"init"` */
 	_errors = /* @__PURE__ */ new Map();
+	/** The registered interpolators, keyed by property name */
 	_interpolators = /* @__PURE__ */ new Map();
+	/** The registered validators, keyed by property name */
 	_validators = /* @__PURE__ */ new Map();
+	/** The easing function applied to the progress value, defaults to linear */
 	_easing = (t) => t;
+	/** The `onUpdate` callback, fired on every frame */
 	_onUpdate;
+	/** The `onComplete` callback, fired when the tween finishes */
 	_onComplete;
+	/** The `onStart` callback, fired when the tween starts */
 	_onStart;
+	/** The `onStop` callback, fired when the tween is stopped */
 	_onStop;
+	/** The `onPause` callback, fired when the tween is paused */
 	_onPause;
+	/** The `onResume` callback, fired when the tween resumes */
 	_onResume;
+	/** The `onRepeat` callback, fired on every repeat cycle */
 	_onRepeat;
+	/** The runtime tuples used by the update loop for interpolation */
 	_runtime = [];
 	/**
 	* Creates a new Tween instance.
@@ -1094,7 +1262,7 @@ var Tween = class {
 	/**
 	* Sets the duration of the tween in seconds.
 	* Internally it's converted to milliseconds.
-	* @param duration - Time in seconds
+	* @param seconds - Time in seconds
 	* @default 1 second
 	* @returns this
 	*/
@@ -1195,6 +1363,8 @@ var Tween = class {
 	}
 	/**
 	* Registers a callback fired when `pause()` was called.
+	* @param cb - Receives state at pause time
+	* @returns this
 	*/
 	onPause(cb) {
 		this._onPause = cb;
@@ -1202,6 +1372,8 @@ var Tween = class {
 	}
 	/**
 	* Registers a callback fired when `.resume()` was called.
+	* @param cb - Receives state at resume time
+	* @returns this
 	*/
 	onResume(cb) {
 		this._onResume = cb;
@@ -1384,31 +1556,60 @@ var Tween = class {
 * @param initialValues The initial values object
 */
 var Timeline = class {
+	/**
+	* The animated state object, mutated in place on every frame by
+	* the active timeline entries.
+	*/
 	state;
+	/** A deproxied reference of the initial state, used to reset values */
 	_state;
+	/** The animation entries, in insertion order */
 	_entries = [];
+	/** The named labels, mapping a label name to an absolute time in ms */
 	_labels = /* @__PURE__ */ new Map();
+	/** The current progress value in the `[0, 1]` range */
 	_progress = 0;
+	/** The total duration of all entries, in milliseconds */
 	_duration = 0;
+	/** Whether the timeline alternates direction (yoyo) */
 	_yoyo = false;
+	/** Whether the playback direction is reversed */
 	_reversed = false;
+	/** The current playback time, in milliseconds */
 	_time = 0;
+	/** The timestamp when the timeline was paused, `0` when not paused */
 	_pauseTime = 0;
+	/** The last update timestamp, used to compute the frame delta */
 	_lastTime = 0;
+	/** Whether the timeline is currently in the runtime queue */
 	_isPlaying = false;
+	/** The remaining number of repeats */
 	_repeat = 0;
+	/** The delay between repeats, in milliseconds */
 	_repeatDelay = 0;
+	/** The timestamp when the current repeat delay started */
 	_repeatDelayStart = 0;
+	/** The number of repeats set by the user */
 	_initialRepeat = 0;
+	/** The validation errors map, keyed by property name or `"init"` */
 	_errors = /* @__PURE__ */ new Map();
+	/** The registered interpolators, keyed by property name */
 	_interpolators = /* @__PURE__ */ new Map();
+	/** The registered validators, keyed by property name */
 	_validators = /* @__PURE__ */ new Map();
+	/** The `onStart` callback, fired when playback begins */
 	_onStart;
+	/** The `onStop` callback, fired when the timeline is stopped */
 	_onStop;
+	/** The `onPause` callback, fired when the timeline is paused */
 	_onPause;
+	/** The `onResume` callback, fired when playback resumes */
 	_onResume;
+	/** The `onUpdate` callback, fired on every frame */
 	_onUpdate;
+	/** The `onComplete` callback, fired when the timeline finishes */
 	_onComplete;
+	/** The `onRepeat` callback, fired on every repeat cycle */
 	_onRepeat;
 	/**
 	* Creates a new Timeline instance.
@@ -1641,6 +1842,8 @@ var Timeline = class {
 	}
 	/**
 	* Registers a callback fired when playback begins.
+	* @param cb - Receives state and progress (`0`) at play time
+	* @returns this
 	*/
 	onStart(cb) {
 		this._onStart = cb;
@@ -1648,6 +1851,8 @@ var Timeline = class {
 	}
 	/**
 	* Registers a callback fired when `pause()` was called.
+	* @param cb - Receives state and progress at pause time
+	* @returns this
 	*/
 	onPause(cb) {
 		this._onPause = cb;
@@ -1655,6 +1860,8 @@ var Timeline = class {
 	}
 	/**
 	* Registers a callback fired when `.play()` / `.resume()` was called.
+	* @param cb - Receives state and progress at resume time
+	* @returns this
 	*/
 	onResume(cb) {
 		this._onResume = cb;
@@ -1662,6 +1869,8 @@ var Timeline = class {
 	}
 	/**
 	* Registers a callback fired on explicit `.stop()`.
+	* @param cb - Receives state and progress at stop time
+	* @returns this
 	*/
 	onStop(cb) {
 		this._onStop = cb;
@@ -1669,6 +1878,8 @@ var Timeline = class {
 	}
 	/**
 	* Registers a callback fired every frame.
+	* @param cb - Receives state and progress in the `[0, 1]` range
+	* @returns this
 	*/
 	onUpdate(cb) {
 		this._onUpdate = cb;
@@ -1676,13 +1887,18 @@ var Timeline = class {
 	}
 	/**
 	* Registers a callback fired when timeline naturally completes.
+	* @param cb - Receives state and progress (`1`) at completion time
+	* @returns this
 	*/
 	onComplete(cb) {
 		this._onComplete = cb;
 		return this;
 	}
 	/**
-	* Registers a callback fired when `.play()` / `.resume()` was called.
+	* Registers a callback fired on every repeat cycle, usually before
+	* the next iteration begins.
+	* @param cb - Receives state and the current progress value
+	* @returns this
 	*/
 	onRepeat(cb) {
 		this._onRepeat = cb;
@@ -1787,6 +2003,7 @@ var Timeline = class {
 	/**
 	* Public method to clear all entries, labels and reset timers to zero
 	* or initial value (repeat).
+	* @returns this
 	*/
 	clear() {
 		this._entries.length = 0;
@@ -1891,7 +2108,8 @@ var Timeline = class {
 };
 //#endregion
 //#region src/Version.ts
-const version = "0.1.1";
+/** The current version of the library, synced from package.json */
+const version = "0.1.2";
 //#endregion
 export { Easing, Queue, Runtime, Timeline, Tween, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, equalizePaths, equalizeSegments, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
 

@@ -8,6 +8,9 @@ import {
 } from "@thednp/tween";
 import { useMiniStore } from "./miniStore.ts";
 
+/**
+ * Re-exports the core classes, the miniStore helper and the reactive store hook.
+ */
 export { Timeline, Tween, useMiniStore };
 
 /**

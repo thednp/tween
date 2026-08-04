@@ -7,7 +7,9 @@ import {
   type TweenProps,
 } from "@thednp/tween";
 
+/** The marker property name used to flag already-proxied values */
 const STATE_PROXY = "_proxy";
+/** The descriptor used for the non-enumerable `_proxy` marker property */
 const proxyProps = {
   value: 1,
   enumerable: false,
@@ -15,6 +17,18 @@ const proxyProps = {
   writable: false,
 };
 
+/**
+ * Defines a reactive proxy for a single array index, with a nested
+ * proxy for sub-arrays. Array mutations are tracked with a
+ * version-toggle `ref` so the owning getter stays reactive.
+ *
+ * @template T - The type of the array value
+ * @param index - The array index to proxy
+ * @param value - The initial value at the given index
+ * @param target - The array being built
+ * @param sourceLen - The length of the source array
+ * @param notifyListeners - The function called when the last element changes
+ */
 function defineArrayProxy<T extends ArrayVal>(
   index: number,
   value: T[number] | ArrayVal,
@@ -65,6 +79,16 @@ function defineArrayProxy<T extends ArrayVal>(
   }
 }
 
+/**
+ * Defines a reactive getter/setter pair for a state property, backed by
+ * a Vue `ref`. Array values are wrapped with a version-toggle `ref` so
+ * element mutations stay reactive without replacing the array.
+ *
+ * @template T - The type of the state object
+ * @param key - The property key to proxy
+ * @param value - The initial property value
+ * @param target - The object being built
+ */
 function defineStateProxy<T extends Omit<TweenProps, "_proxy">>(
   key: number | keyof T,
   value: T[keyof T] | ArrayVal,
@@ -105,6 +129,15 @@ function defineStateProxy<T extends Omit<TweenProps, "_proxy">>(
   });
 }
 
+/**
+ * Recursively builds the reactive state object for a plain object,
+ * proxying primitive and array values and delegating plain objects.
+ *
+ * @template T - The type of the state object
+ * @param obj - The source object
+ * @param parentReceiver - The object being built
+ * @returns The built reactive state object
+ */
 function createMiniState<T extends TweenProps>(
   obj: T,
   parentReceiver: TweenProps | number[] | [string, ...number[]][],
@@ -122,6 +155,16 @@ function createMiniState<T extends TweenProps>(
   return parentReceiver as T;
 }
 
+/**
+ * Creates a reactive store for the given initial values, where every
+ * property is backed by a Vue `ref`. Reading a property inside a
+ * component tracks the ref; writing it (e.g. by the tween update loop)
+ * triggers reactivity.
+ *
+ * @template T - The type of the state object
+ * @param init - The initial values object
+ * @returns The reactive state object
+ */
 export function miniStore<
   T extends TweenProps,
 >(init: T): T {
