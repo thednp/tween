@@ -1,3 +1,12 @@
+/**
+ * React integration for {@link @thednp/tween}.
+ *
+ * Provides `useTween` and `useTimeline` hooks backed by a reactive
+ * miniStore, plus re-exports of the core {@link Tween} / {@link Timeline}
+ * classes and the {@link useMiniStore} helper.
+ *
+ * @module
+ */
 import { useEffect, useRef } from "react";
 import {
   dummyInstance,

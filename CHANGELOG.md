@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Added full JSDoc coverage across the entire source: all types, interfaces, properties, classes, methods, functions, parameters and return values are now documented
+- Added `@module` docs to all seven JSR entrypoints (core, react, preact, solid, svelte, vue, vanjs) to fix the JSR score "module docs in all entrypoints" check
 
 ## [0.1.1] - 2026-08-04
 

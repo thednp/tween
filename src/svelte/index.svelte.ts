@@ -1,3 +1,12 @@
+/**
+ * Svelte integration for {@link @thednp/tween}.
+ *
+ * Provides `createTween` and `createTimeline` primitives backed by a
+ * reactive miniStore, plus re-exports of the core {@link Tween} /
+ * {@link Timeline} classes and the {@link miniStore} helper.
+ *
+ * @module
+ */
 import {
   dummyInstance,
   isServer,
