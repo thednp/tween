@@ -1,5 +1,5 @@
 // Runtime.ts
-import type { AnimationItem, TweenProps } from "./types.d.ts";
+import type { AnimationItem, TweenProps } from "./types.ts";
 import { now } from "./Now.ts";
 
 /**
@@ -15,7 +15,7 @@ let queueLength = 0;
  * and stops automatically when there are no items left.
  * @param t execution time (performance.now)
  */
-export function Runtime(t = now()) {
+export function Runtime(t: number = now()) {
   let i = 0;
   // queueLength = Queue.length;
   while (i < queueLength) {

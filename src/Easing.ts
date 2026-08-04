@@ -1,11 +1,24 @@
 // Easing.ts
-import type { EasingFunction, EasingFunctionGroup } from "./types.d.ts";
+import type { EasingFunction, EasingFunctionGroup } from "./types.ts";
 
 /**
  * The Ease class provides a collection of easing functions for use with tween.js.
  */
 
-export const Easing = Object.freeze({
+export const Easing: {
+  Linear: EasingFunctionGroup & { None: EasingFunction };
+  Quadratic: EasingFunctionGroup;
+  Cubic: EasingFunctionGroup;
+  Quartic: EasingFunctionGroup;
+  Quintic: EasingFunctionGroup;
+  Sinusoidal: EasingFunctionGroup;
+  Exponential: EasingFunctionGroup;
+  Circular: EasingFunctionGroup;
+  Elastic: EasingFunctionGroup;
+  Back: EasingFunctionGroup;
+  Bounce: EasingFunctionGroup;
+  pow(power?: number): EasingFunctionGroup;
+} = Object.freeze({
   Linear: Object.freeze<EasingFunctionGroup & { None: EasingFunction }>({
     None(amount: number): number {
       return amount;

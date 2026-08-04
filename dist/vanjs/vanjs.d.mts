@@ -1,12 +1,11 @@
 /*!
-* @thednp/tween primitives for VanJS v0.1.0 (https://github.com/thednp/tween)
+* @thednp/tween primitives for VanJS v0.1.1 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
 "use strict";
 
 import { Timeline, Tween, TweenProps } from "@thednp/tween";
-
 //#region src/vanjs/miniStore.d.ts
 declare function miniStore<T extends TweenProps>(init: T): T;
 //#endregion

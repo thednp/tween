@@ -31,7 +31,9 @@ export { miniStore, Timeline, Tween };
  *    );
  * }
  */
-export function createTween<T extends TweenProps>(initialValues: T) {
+export function createTween<
+  T extends TweenProps,
+>(initialValues: T): readonly [T, Tween<T>] {
   if (isServer) {
     return [initialValues, dummyInstance as unknown as Tween<T>] as const;
   }
@@ -67,7 +69,9 @@ export function createTween<T extends TweenProps>(initialValues: T) {
  *    );
  * }
  */
-export function createTimeline<T extends TweenProps>(initialValues: T) {
+export function createTimeline<
+  T extends TweenProps,
+>(initialValues: T): readonly [T, Timeline<T>] {
   if (isServer) {
     return [initialValues, dummyInstance as unknown as Timeline<T>] as const;
   }

@@ -2,6 +2,7 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/thednp/tween/badge.svg)](https://coveralls.io/github/thednp/tween)
 [![NPM Version](https://img.shields.io/npm/v/@thednp/tween.svg)](https://www.npmjs.com/package/@thednp/tween)
+[![JSR Version](https://img.shields.io/jsr/v/@thednp/tween)](https://jsr.io/@thednp/tween)
 [![CI](https://github.com/thednp/tween/actions/workflows/ci.yml/badge.svg)](https://github.com/thednp/tween/actions/workflows/ci.yml)
 [![CDN](https://img.shields.io/jsdelivr/npm/hw/@thednp/tween)](https://www.jsdelivr.com/package/npm/@thednp/tween)
 
@@ -76,8 +77,14 @@ deno add @thednp/tween
 ```
 
 ```
+deno add jsr:@thednp/tween
+```
+
+```
 bun add @thednp/tween
 ```
+
+Framework integrations are available as subpath exports: `@thednp/tween/react`, `@thednp/tween/preact`, `@thednp/tween/solid`, `@thednp/tween/svelte`, `@thednp/tween/vue` and `@thednp/tween/vanjs` (on npm and [JSR](https://jsr.io/@thednp/tween)). The JSR package ships the raw TypeScript source; the npm package ships compiled ESM + UMD bundles.
 
 ### Load From CDN
 

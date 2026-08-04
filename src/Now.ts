@@ -1,4 +1,4 @@
-let _nowFunc = () => globalThis.performance.now();
+let _nowFunc: () => number = () => globalThis.performance.now();
 
 export const now = (): number => {
   return _nowFunc();

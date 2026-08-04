@@ -1,0 +1,78 @@
+# @thednp/tween
+
+> A TypeScript-first tweening engine with `Tween` and `Timeline`, forked from [@tweenjs/tweenjs](https://github.com/tweenjs/tween.js). State-first architecture with upfront value validation, a single auto-managed `requestAnimationFrame` loop, and framework integrations for React, Preact, SolidJS, Svelte, Vue and VanJS. 100% test coverage, SSR-compatible hooks, published to both npm and JSR.
+
+## Links
+
+- [GitHub Repository](https://github.com/thednp/tween)
+- [README](README.md)
+- [Changelog](CHANGELOG.md)
+- [Agent Guidance](AGENTS.md)
+- [Tween Wiki](https://github.com/thednp/tween/wiki)
+- [NPM Package](https://www.npmjs.com/package/@thednp/tween)
+- [JSR Package](https://jsr.io/@thednp/tween)
+- [Original Tween.js User Guide](https://github.com/tweenjs/tween.js/blob/main/docs/user_guide.md)
+
+## About
+
+`@thednp/tween` is a lightweight tweening engine that animates plain objects of numbers, arrays and nested objects. The library:
+
+- ships a **core engine** (`Tween`, `Timeline`) with zero DOM dependency and an auto-managed shared `requestAnimationFrame` loop that starts and stops itself;
+- validates all values upfront on initialization, so invalid configurations never reach the runtime loop;
+- supports **reverse playback** via inverted easing (no `reverseEasing` option or start-value reassignment);
+- is **extensible** through per-property validators and interpolators registered with `.use('propName', config)`, with built-in extensions for arrays, objects, SVG paths and CSS transforms;
+- provides **SSR-compatible framework hooks** (`useTween` / `useTimeline` / `createTween` / `createTimeline`) that skip initialization on the server and render initial values;
+- is written in TypeScript, type-checked by Deno (`deno check`), and built with [tsdown](https://tsdown.dev) into ESM + UMD bundles in `dist/`;
+- is published to **npm** (`@thednp/tween`) and **JSR** (`jsr:@thednp/tween`, raw TypeScript source, with subpath exports for each framework integration);
+- is verified by a Vitest suite (happy-dom + Svelte plugin) with 100% coverage, runnable via `deno task test`.
+
+## Usage
+
+```ts
+import { Tween, Timeline, Easing } from "@thednp/tween";
+
+const tween = new Tween({ x: 0 })
+  .to({ x: 150 })
+  .easing(Easing.Quadratic.Out)
+  .duration(1.5)
+  .onUpdate((obj, elapsed) => {
+    element.style.translate = `${obj.x}px`;
+  })
+  .start();
+```
+
+```ts
+const timeline = new Timeline({ x: 0, y: 0 })
+  .to({ x: 150, duration: 2.5, easing: Easing.Elastic.Out })
+  .to({ y: 150, duration: 1.5 }, "-=1")
+  .play();
+```
+
+## API Overview
+
+**Core** — `Tween`, `Timeline`, `Easing` (preset easing functions), `Runtime` / `Queue` (auto-managed RAF loop), `now()` / `setNow()`, `version`.
+
+**Tween chainable methods** — `from`, `to`, `duration`, `delay`, `repeat`, `repeatDelay`, `yoyo`, `easing`, `start`, `startFromLast`, `stop`, `pause`, `resume`, `reverse`, `update`, `clear`, `use`, `onStart`, `onUpdate`, `onComplete`, `onStop`, `onPause`, `onResume`, `onRepeat`. Getters: `isPlaying`, `isPaused`, `isValidState`, `isValid`, `totalDuration`, plus `getDuration()`, `getValidator()`, `getErrors()`.
+
+**Timeline chainable methods** — `to`, `label`, `play`, `pause`, `resume`, `reverse`, `seek`, `repeat`, `repeatDelay`, `yoyo`, `stop`, `clear`, `update`, `use`, `onStart`, `onPause`, `onResume`, `onStop`, `onUpdate`, `onComplete`, `onRepeat`. Getters: `progress`, `duration`, `totalDuration`, `isPlaying`, `isPaused`, `isValidState`, `isValid`, plus `getValidator()`, `getErrors()`.
+
+**Extend** — `interpolate`, `validate` and stringify helpers for numbers, arrays, nested objects, SVG paths (`morph`) and CSS transform steps; e.g. `interpolateArray`, `interpolateObject`, `interpolatePath`, `interpolateTransform`, `pathToString`, `transformToString`, plus `isValidPath`, `isValidTransformArray`, `isValidValue` and per-type `*Config` objects (`arrayConfig`, `objectConfig`, `pathArrayConfig`, `transformConfig`).
+
+**Framework integrations** (subpath exports) — `@thednp/tween/react`, `./preact`, `./solid`, `./svelte`, `./vue`, `./vanjs`; each exports `miniStore` (or `useMiniStore` for React/Preact) and a `useTween` / `useTimeline` (React, Preact, Vue) or `createTween` / `createTimeline` (Solid, Svelte, VanJS) returning a `[store, instance]` tuple.
+
+## Key Design Points
+
+- **State-first validation** — `initialValues` is the source of truth; `from()` / `to()` values are validated against it before the animation is allowed to start, and errors are reported through `getErrors()`.
+- **Single shared RAF loop** — `Tween.start()` / `Timeline.play()` add the instance to a global queue; `Runtime()` updates all queued items each frame and stops (`cancelAnimationFrame`) automatically when the queue empties.
+- **Seconds, not milliseconds** — `duration()`, `delay()`, `repeatDelay()` and `seek()` accept seconds and convert internally.
+- **Reverse playback** — achieved by inverting the easing function, no extra options.
+- **Extensions over magic** — custom types are added per property with `.use(property, { validate, interpolate })`; the engine only interpolates numbers out of the box.
+- **SSR safety** — the core never touches the DOM; framework hooks guard server environments and framework-specific cleanup (effects / `onCleanup` / `onUnmounted` / MutationObserver) handles teardown.
+
+## Not Implemented (vs. the original Tween.js)
+
+`chain()`, `onEveryStart` / `onFirstStart` callbacks, original array interpolation, deeply nested objects, and dynamic end values. Use `onComplete` to sequence tweens and `.use()` for custom interpolation.
+
+## JSR / Deno
+
+The package is published to JSR with raw TypeScript source; the core entry is `jsr:@thednp/tween` and each framework integration is a subpath export (`jsr:@thednp/tween/react`, `.../preact`, `.../solid`, `.../svelte`, `.../vue`, `.../vanjs`). Development tasks run through Deno: `deno task check`, `deno task lint`, `deno task test` (Vitest via npm imports), `deno task format`, `deno task fix`, `deno task up:deno` (syncs `deno.json` and `src/Version.ts` from `package.json`).

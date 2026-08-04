@@ -31,7 +31,9 @@ export { miniStore, Timeline, Tween };
  *  <div :style="{ translate: `${state.x}px ${state.y}px` }" />
  * </template>
  */
-export function useTween<T extends TweenProps>(initialValues: T) {
+export function useTween<
+  T extends TweenProps,
+>(initialValues: T): readonly [T, Tween<T>] {
   if (isServer) {
     return [initialValues, dummyInstance as unknown as Tween<T>] as const;
   }
@@ -68,7 +70,9 @@ export function useTween<T extends TweenProps>(initialValues: T) {
  *  <div :style="{ translate: `${state.x}px ${state.y}px` }" />
  * </template>
  */
-export function useTimeline<T extends TweenProps>(initialValues: T) {
+export function useTimeline<
+  T extends TweenProps,
+>(initialValues: T): readonly [T, Timeline<T>] {
   if (isServer) {
     return [initialValues, dummyInstance as unknown as Timeline<T>] as const;
   }

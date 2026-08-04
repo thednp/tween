@@ -1,0 +1,85 @@
+{
+  "name": "@thednp/tween",
+  "version": "0.1.1",
+  "license": "MIT",
+  "description": "🌸 A Typescript sourced tweening engine with Tween and Timeline",
+  "keywords": [
+    "tween",
+    "timeline",
+    "react",
+    "solid-js",
+    "svelte",
+    "preact",
+    "vue",
+    "vanjs",
+    "cubic-bezier",
+    "cubic-tween",
+    "easing",
+    "ease",
+    "easing functions",
+    "animation engine",
+    "animation",
+    "animations",
+    "svg-morphing",
+    "SSR",
+    "server-side rendering",
+    "typescript"
+  ],
+  "minimumDependencyAge": 0,
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/react/index.ts",
+    "./preact": "./src/preact/index.ts",
+    "./solid": "./src/solid/index.ts",
+    "./svelte": "./src/svelte/index.svelte.ts",
+    "./vue": "./src/vue/index.ts",
+    "./vanjs": "./src/vanjs/index.ts"
+  },
+  "imports": {
+    "@thednp/tween": "./src/index.ts",
+    "@sveltejs/vite-plugin-svelte": "npm:@sveltejs/vite-plugin-svelte@^7.2.0",
+    "@vitest/coverage-istanbul": "npm:@vitest/coverage-istanbul@^4.1.10",
+    "@vitest/ui": "npm:@vitest/ui@^4.1.10",
+    "happy-dom": "npm:happy-dom@^20.11.1",
+    "preact": "npm:preact@^10.29.8",
+    "react": "npm:react@^19.2.8",
+    "solid-js": "npm:solid-js@^1.9.14",
+    "svelte": "npm:svelte@^5.56.8",
+    "svelte-preprocess": "npm:svelte-preprocess@^6.0.5",
+    "svg-path-commander/util": "npm:svg-path-commander@^2.2.4/util",
+    "vanjs-core": "npm:vanjs-core@^1.6.1",
+    "vitest": "npm:vitest@^4.1.10",
+    "vue": "npm:vue@^3.5.40"
+  },
+  "tasks": {
+    "test": "deno task clean-coverage && vitest",
+    "test-ui": "deno task clean-coverage && vitest --ui",
+    "clean-coverage": "rm -rf coverage .nyc_output",
+    "lint": "deno lint src",
+    "check": "deno check src/index.ts src/react/index.ts src/preact/index.ts src/solid/index.ts src/svelte/index.svelte.ts src/vue/index.ts src/vanjs/index.ts",
+    "check:core": "deno check src/index.ts",
+    "format": "deno fmt src",
+    "fix": "deno lint src --fix",
+    "up:deno": "deno update --latest && deno run -A scripts/update-deno.js"
+  },
+  "publish": {
+    "include": [
+      "src",
+      "deno.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "AGENTS.md",
+      "llms.txt",
+      "LICENSE"
+    ]
+  },
+  "exclude": [
+    "coverage",
+    "dist",
+    "experiments",
+    "node_modules",
+    "playground",
+    "test"
+  ]
+}

@@ -1,4 +1,4 @@
-export type * from "./types.d.ts";
+export type * from "./types.ts";
 export * from "./Easing.ts";
 export * from "./Util.ts";
 export * from "./extend/index.ts";

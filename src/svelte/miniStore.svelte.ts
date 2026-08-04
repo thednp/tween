@@ -121,6 +121,8 @@ function createMiniState<T extends TweenProps>(
   return parentReceiver as T;
 }
 
-export function miniStore<T extends TweenProps>(init: T) {
+export function miniStore<
+  T extends TweenProps,
+>(init: T): T {
   return createMiniState(init, {}) as T;
 }

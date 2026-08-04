@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween  v0.1.0 (https://github.com/thednp/tween)
+* @thednp/tween  v0.1.1 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -131,17 +131,15 @@ const Easing = Object.freeze({
 	}),
 	Back: Object.freeze({
 		In(amount) {
-			const s = 1.70158;
-			return amount === 1 ? 1 : amount * amount * ((s + 1) * amount - s);
+			return amount === 1 ? 1 : amount * amount * (2.70158 * amount - 1.70158);
 		},
 		Out(amount) {
-			const s = 1.70158;
-			return amount === 0 ? 0 : --amount * amount * ((s + 1) * amount + s) + 1;
+			return amount === 0 ? 0 : --amount * amount * (2.70158 * amount + 1.70158) + 1;
 		},
 		InOut(amount) {
-			const s = 1.70158 * 1.525;
-			if ((amount *= 2) < 1) return .5 * (amount * amount * ((s + 1) * amount - s));
-			return .5 * ((amount -= 2) * amount * ((s + 1) * amount + s) + 2);
+			const s = 2.5949095;
+			if ((amount *= 2) < 1) return .5 * (amount * amount * (3.5949095 * amount - s));
+			return .5 * ((amount -= 2) * amount * (3.5949095 * amount + s) + 2);
 		}
 	}),
 	Bounce: Object.freeze({
@@ -595,9 +593,7 @@ const transformToString = (steps, toMatrix = false) => {
 				case "skewX":
 					matrix.skewXSelf(step[1]);
 					break;
-				case "skewY":
-					matrix.skewYSelf(step[1]);
-					break;
+				case "skewY": matrix.skewYSelf(step[1]);
 			}
 		}
 		return matrix.toString();
@@ -633,9 +629,7 @@ const transformToString = (steps, toMatrix = false) => {
 			case "skewX":
 				stringOutput += ` skewX(${step[1]}deg)`;
 				break;
-			case "skewY":
-				stringOutput += ` skewY(${step[1]}deg)`;
-				break;
+			case "skewY": stringOutput += ` skewY(${step[1]}deg)`;
 		}
 	}
 	return stringOutput.slice(1);
@@ -649,7 +643,8 @@ const transformToString = (steps, toMatrix = false) => {
 * @returns The axis angle tuple [vectorX, vectorY, vectorZ, angle]
 */
 const eulerToAxisAngle = (x, y, z) => {
-	return quaternionToAxisAngle(eulerToQuaternion(x, y, z));
+	const quat = eulerToQuaternion(x, y, z);
+	return quaternionToAxisAngle(quat);
 };
 /**
 * Convert euler rotation tuple to quaternion.
@@ -746,9 +741,7 @@ const interpolateTransform = (target, start, end, t) => {
 				break;
 			case "skewX":
 			case "skewY":
-			case "perspective":
-				targetStep[1] = startStep[1] + (endStep[1] - startStep[1]) * t;
-				break;
+			case "perspective": targetStep[1] = startStep[1] + (endStep[1] - startStep[1]) * t;
 		}
 		i++;
 	}
@@ -1555,7 +1548,8 @@ var Timeline = class {
 	* @returns this
 	*/
 	seek(pointer) {
-		this._time = this._resolvePosition(pointer);
+		const elapsed = this._resolvePosition(pointer);
+		this._time = elapsed;
 		return this;
 	}
 	/**
@@ -1896,8 +1890,8 @@ var Timeline = class {
 	}
 };
 //#endregion
-//#region package.json
-var version = "0.1.0";
+//#region src/Version.ts
+const version = "0.1.1";
 //#endregion
 export { Easing, Queue, Runtime, Timeline, Tween, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, equalizePaths, equalizeSegments, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
 

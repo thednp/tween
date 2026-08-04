@@ -1,12 +1,11 @@
 /*!
-* @thednp/tween hooks for Preact v0.1.0 (https://github.com/thednp/tween)
+* @thednp/tween hooks for Preact v0.1.1 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
 "use strict";
 
 import { Timeline, Tween, TweenProps } from "@thednp/tween";
-
 //#region src/preact/miniStore.d.ts
 declare function useMiniStore<T extends TweenProps>(initialValue: T): T;
 //#endregion

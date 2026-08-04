@@ -10,6 +10,7 @@
 - **Tests**: `test/*.spec.{ts,tsx}` with Vitest + happy-dom
 - **Build**: tsdown (rolldown-based), outputs ESM + UMD
 - **Package manager**: pnpm
+- **JSR/Deno**: dual-published to npm and JSR (`jsr:@thednp/tween`) — `deno.json` maps all subpath exports to raw `src/` TypeScript, and every `deno task` runs the same checks/tests
 
 ## Commands
 
@@ -21,7 +22,29 @@ pnpm lint          # deno lint src
 pnpm lint:types    # tsc --noEmit (pre-existing baseUrl deprecation warning is safe to ignore)
 pnpm fix:ts        # deno lint src --fix
 pnpm format        # deno fmt src
+pnpm up:deno       # deno update + sync deno.json & src/Version.ts from package.json
 ```
+
+Deno equivalents (the canonical check/test pipeline):
+
+```bash
+deno task check    # deno check on all entries (core + 6 frameworks)
+deno task test     # same vitest suite, run through Deno's npm integration
+deno task lint     # deno lint src
+deno task format   # deno fmt src
+deno task fix      # deno lint src --fix
+deno publish --dry-run  # JSR validation (slow types check)
+```
+
+## Deno/JSR Compatibility Notes
+
+- **Import style**: all relative imports use explicit `.ts` extensions; `src/types.d.ts` was renamed to `src/types.ts` (it is a real module, not ambient declarations)
+- **Self-imports**: framework files import the core as `@thednp/tween`, resolved by the `imports` map in `deno.json` → `./src/index.ts`; npm packages (react, svelte, etc.) resolve through `imports` map `npm:` specifiers that must match `package.json` ranges
+- **Slow types**: JSR requires explicit types on the public API — every exported function/method has an explicit return type, getters are typed, default parameters are annotated (`time: number = now()`); do not regress this
+- **`src/Version.ts` is generated** by `tsdown.config.ts` (at build) and `scripts/update-deno.js` — never edit it manually
+- **Svelte entry** (`src/svelte/*.svelte.ts`) type-checks under Deno because svelte's npm types declare the runes
+- **`deno.lock`** at repo root is tracked (playground/test `deno.lock` files are gitignored)
+- **Publishing**: `deno publish --dry-run` must pass before releasing; JSR exports = core + all six framework subpaths, svelte included
 
 ## Architecture
 

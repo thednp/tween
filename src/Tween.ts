@@ -9,7 +9,7 @@ import type {
   TweenRuntime,
   TweenUpdateCallback,
   ValidationFunction,
-} from "./types.d.ts";
+} from "./types.ts";
 import {
   deepAssign,
   deproxy,
@@ -119,7 +119,7 @@ export class Tween<T extends TweenProps = TweenProps> {
   /**
    * Returns the configured duration in seconds.
    */
-  getDuration() {
+  getDuration(): number {
     return this._duration / 1000;
   }
 
@@ -128,7 +128,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * the delay, duration multiplied by repeat value, repeat delay multiplied
    * by repeat value.
    */
-  get totalDuration() {
+  get totalDuration(): number {
     const repeat = this._initialRepeat;
     return (
       this._delay +
@@ -140,14 +140,14 @@ export class Tween<T extends TweenProps = TweenProps> {
   /**
    * Returns the validator configured for a given property.
    */
-  getValidator(propName: string) {
+  getValidator(propName: string): ValidationFunction | undefined {
     return this._validators.get(propName);
   }
 
   /**
    * Returns the errors Map, mainly used by external validators.
    */
-  getErrors() {
+  getErrors(): Map<string, string> {
     return this._errors;
   }
 
@@ -158,7 +158,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @param overrideStart - If true, resets starting values even if already set
    * @returns this
    */
-  start(time = now(), overrideStart = false) {
+  start(time: number = now(), overrideStart: boolean = false): this {
     if (this._isPlaying) return this;
     if (this._pauseStart) return this.resume();
     if (!this.isValid) {
@@ -192,7 +192,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @param time - Optional explicit start time (defaults to `now()`)
    * @returns this
    */
-  startFromLast(time = now()) {
+  startFromLast(time: number = now()): this {
     return this.start(time, true);
   }
 
@@ -201,7 +201,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * Triggers `onStop` if set.
    * @returns this
    */
-  stop() {
+  stop(): this {
     if (!this._isPlaying) return this;
     removeFromQueue(this);
     this._isPlaying = false;
@@ -238,7 +238,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @param time - Time of pause
    * @returns this
    */
-  pause(time = now()): this {
+  pause(time: number = now()): this {
     if (!this._isPlaying) return this;
 
     this._pauseStart = time;
@@ -253,7 +253,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @param time - Time of pause
    * @returns this
    */
-  resume(time = now()): this {
+  resume(time: number = now()): this {
     if (!this._pauseStart) return this;
 
     this._startTime += time - this._pauseStart;
@@ -271,7 +271,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @param startValues - Partial object with starting values
    * @returns this
    */
-  from(startValues: Partial<T> | DeepPartial<T>) {
+  from(startValues: Partial<T> | DeepPartial<T>): this {
     if (!this.isValidState || this.isPlaying) return this;
 
     this._evaluate(startValues);
@@ -288,7 +288,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @param endValues - Partial object with target values
    * @returns this
    */
-  to(endValues: Partial<T> | DeepPartial<T>) {
+  to(endValues: Partial<T> | DeepPartial<T>): this {
     if (!this.isValidState || this.isPlaying) return this;
 
     this._evaluate(endValues);
@@ -307,7 +307,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @default 1 second
    * @returns this
    */
-  duration(seconds = 1) {
+  duration(seconds: number = 1): this {
     this._duration = seconds * 1000;
     return this;
   }
@@ -319,7 +319,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @default 0 seconds
    * @returns this
    */
-  delay(seconds = 0) {
+  delay(seconds: number = 0): this {
     this._delay = seconds * 1000;
     return this;
   }
@@ -330,7 +330,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @default 0 times
    * @returns this
    */
-  repeat(times = 0) {
+  repeat(times: number = 0): this {
     this._repeat = times;
     this._initialRepeat = times;
     return this;
@@ -343,7 +343,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @default 0 seconds
    * @returns this
    */
-  repeatDelay(seconds = 0) {
+  repeatDelay(seconds: number = 0): this {
     this._repeatDelay = seconds * 1000;
     return this;
   }
@@ -356,7 +356,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @default false
    * @returns this
    */
-  yoyo(yoyo = false) {
+  yoyo(yoyo: boolean = false): this {
     this._yoyo = yoyo;
     return this;
   }
@@ -367,7 +367,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @default linear
    * @returns this
    */
-  easing(easing: EasingFunction = (t: number) => t) {
+  easing(easing: EasingFunction = (t: number) => t): this {
     this._easing = easing;
     return this;
   }
@@ -377,7 +377,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @param callback - Receives state at start time
    * @returns this
    */
-  onStart(callback: TweenCallback<T>) {
+  onStart(callback: TweenCallback<T>): this {
     this._onStart = callback;
     return this;
   }
@@ -387,7 +387,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @param callback - Receives current state, elapsed (0–1)
    * @returns this
    */
-  onUpdate(callback?: TweenUpdateCallback<T>) {
+  onUpdate(callback?: TweenUpdateCallback<T>): this {
     this._onUpdate = callback;
     return this;
   }
@@ -397,7 +397,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @param callback - Receives final state
    * @returns this
    */
-  onComplete(callback: TweenCallback<T>) {
+  onComplete(callback: TweenCallback<T>): this {
     this._onComplete = callback;
     return this;
   }
@@ -407,7 +407,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @param callback - Receives state at stop time
    * @returns this
    */
-  onStop(callback: TweenCallback<T>) {
+  onStop(callback: TweenCallback<T>): this {
     this._onStop = callback;
     return this;
   }
@@ -415,7 +415,7 @@ export class Tween<T extends TweenProps = TweenProps> {
   /**
    * Registers a callback fired when `pause()` was called.
    */
-  onPause(cb: TweenCallback<T>) {
+  onPause(cb: TweenCallback<T>): this {
     this._onPause = cb;
     return this;
   }
@@ -423,7 +423,7 @@ export class Tween<T extends TweenProps = TweenProps> {
   /**
    * Registers a callback fired when `.resume()` was called.
    */
-  onResume(cb: TweenCallback<T>) {
+  onResume(cb: TweenCallback<T>): this {
     this._onResume = cb;
     return this;
   }
@@ -436,7 +436,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * This is different from `onComplete`, which only fires once at the
    * very end of the entire tween (after all repeats are finished).
    */
-  onRepeat(cb?: TweenCallback<T>) {
+  onRepeat(cb?: TweenCallback<T>): this {
     this._onRepeat = cb;
     return this;
   }
@@ -448,7 +448,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @returns `true` if the tween is still playing after the update, `false`
    * otherwise.
    */
-  update(time = now()) {
+  update(time: number = now()): boolean {
     // istanbul ignore else
     if (!this._isPlaying) return false;
 
@@ -561,7 +561,7 @@ export class Tween<T extends TweenProps = TweenProps> {
   /**
    * Reset starting values, end values and runtime.
    */
-  clear() {
+  clear(): this {
     this._propsStart = {} as T;
     this._propsEnd = {} as T;
     this._runtime.length = 0;

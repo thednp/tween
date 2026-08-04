@@ -19,7 +19,10 @@ import { isArray, isNumber } from "../Util.ts";
  * @param toMatrix An optional parameter to modify the function output
  * @returns The valid CSS transform string value
  */
-export const transformToString = (steps: TransformStep[], toMatrix = false) => {
+export const transformToString = (
+  steps: TransformStep[],
+  toMatrix: boolean = false,
+): string => {
   if (toMatrix) {
     const matrix = new DOMMatrix();
     const len = steps.length;

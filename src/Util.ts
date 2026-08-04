@@ -1,6 +1,6 @@
-import type { DeepObject, DeepPartial, TweenProps } from "./types.d.ts";
-import { type Tween } from "./Tween.ts";
-import { type Timeline } from "./Timeline.ts";
+import type { DeepObject, DeepPartial, TweenProps } from "./types.ts";
+import type { Tween } from "./Tween.ts";
+import type { Timeline } from "./Timeline.ts";
 
 // Util.ts
 export const isString = (value: unknown): value is string =>
@@ -65,7 +65,7 @@ const instanceMethods = [
 const dummyInstance: Record<string, typeof dummyMethod> = {};
 // istanbul ignore next @preserve
 // const dummyMethod = () => dummyInstance;
-function dummyMethod(this: typeof dummyInstance) {
+function dummyMethod(this: typeof dummyInstance): typeof dummyInstance {
   return this;
 }
 
@@ -75,8 +75,10 @@ for (let i = 0; i < instanceMethods.length; i++) {
 
 export { dummyInstance };
 
-export const objectHasProp = <T extends object>(obj: T, prop: keyof T) =>
-  Object.prototype.hasOwnProperty.call(obj, prop);
+export const objectHasProp = <T extends object>(
+  obj: T,
+  prop: keyof T,
+): boolean => Object.prototype.hasOwnProperty.call(obj, prop);
 
 const isUnsafeKey = (key: string): boolean =>
   key === "__proto__" || key === "constructor" || key === "prototype";

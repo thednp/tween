@@ -1,6 +1,6 @@
 {
   "name": "@thednp/tween",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "🌸 A Typescript sourced tweening engine with Tween and Timeline",
   "homepage": "https://github.com/thednp/tween",
   "author": "thednp",
@@ -13,6 +13,7 @@
     "dist",
     "package.json",
     "AGENTS.md",
+    "llms.txt",
     "CHANGELOG.md",
     "README.md",
     "LICENSE"
@@ -46,7 +47,8 @@
     "fix:ts": "deno lint src --fix",
     "build_": "tsdown && vite build",
     "build": "tsdown",
-    "prepublishOnly": "pnpm update --latest && pnpm format && pnpm lint && pnpm build",
+    "up:deno": "deno update --latest && deno run -A scripts/update-deno.js",
+    "prepublishOnly": "pnpm update --latest && pnpm up:deno && pnpm format && pnpm lint && pnpm build",
     "clean:playground": "rm -rf playground/**/node_modules playground/**/package-lock.json playground/**/pnpm-lock.yaml playground/**/bun.lockb playground/**/deno.lock",
     "clean:test": "rm -rf test/node_modules test/package-lock.json test/pnpm-lock.yaml test/bun.lockb test/deno.lock",
     "clean": "rm -rf node_modules && pnpm clean:playground && pnpm clean:test",
@@ -80,37 +82,33 @@
     "typescript"
   ],
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^7.0.0",
-    "@types/node": "^25.5.2",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitest/coverage-istanbul": "^4.1.2",
-    "@vitest/ui": "^4.1.2",
-    "happy-dom": "^20.8.9",
-    "react-dom": "^19.2.4",
+    "@sveltejs/vite-plugin-svelte": "^7.2.0",
+    "@types/node": "^26.1.2",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitest/coverage-istanbul": "^4.1.10",
+    "@vitest/ui": "^4.1.10",
+    "happy-dom": "^20.11.1",
+    "react-dom": "^19.2.8",
     "rollup-plugin-svelte": "^7.2.3",
-    "svelte-preprocess": "^6.0.3",
-    "tsdown": "^0.21.7",
-    "typescript": "^6.0.2",
+    "svelte-preprocess": "^6.0.5",
+    "tsdown": "^0.22.14",
+    "typescript": "^7.0.2",
     "vite-plugin-strip-comments": "^0.0.10",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.10"
   },
   "dependencies": {
-    "@thednp/dommatrix": "^3.0.4",
-    "preact": "^10.29.1",
-    "react": "^19.2.4",
-    "solid-js": "^1.9.12",
-    "svelte": "^5.55.1",
-    "svg-path-commander": "^2.2.1",
-    "vanjs-core": "^1.6.0",
-    "vue": "^3.5.32"
+    "@thednp/dommatrix": "^3.0.6",
+    "preact": "^10.29.8",
+    "react": "^19.2.8",
+    "solid-js": "^1.9.14",
+    "svelte": "^5.56.8",
+    "svg-path-commander": "^2.2.4",
+    "vanjs-core": "^1.6.1",
+    "vue": "^3.5.40"
   },
-  "packageManager": "pnpm@10.33.0",
-  "engines": {
-    "node": ">=20",
-    "pnpm": ">=8.6.0"
-  },
+  "packageManager": "pnpm@11.19.0",
   "inlinedDependencies": {
-    "svg-path-commander": "2.2.1"
+    "svg-path-commander": "2.2.4"
   }
 }

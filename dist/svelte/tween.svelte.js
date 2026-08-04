@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween utils for Svelte v0.1.0 (https://github.com/thednp/tween)
+* @thednp/tween utils for Svelte v0.1.1 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -55,12 +55,10 @@ function defineStateProxy(key, value, target) {
 		const arrayProxy = [];
 		const valLength = value.length;
 		let version = $state.raw(0);
-		const getVersion = () => version;
 		for (let i = 0; i < valLength; i++) defineArrayProxy(i, value[i], arrayProxy, valLength, () => {
 			version = 1 - version;
 		});
 		getter = () => {
-			getVersion();
 			return state;
 		};
 		state = arrayProxy;

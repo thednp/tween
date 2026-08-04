@@ -1,6 +1,6 @@
 // src/extend/array.ts
 import { isArray, isNumber } from "../Util.ts";
-import { InterpolatorFunction, ValidationResultEntry } from "../types.ts";
+import type { InterpolatorFunction, ValidationResultEntry } from "../types.ts";
 
 /**
  * Interpolates two `Array<number>` values.

@@ -1,12 +1,11 @@
 /*!
-* @thednp/tween  v0.1.0 (https://github.com/thednp/tween)
+* @thednp/tween  v0.1.1 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
 "use strict";
 
 import { equalizePaths, equalizeSegments, pathToString } from "svg-path-commander/util";
-
 //#region src/Tween.d.ts
 /**
  * Lightweight tween engine for interpolating values over time.
@@ -255,10 +254,7 @@ declare class Tween<T extends TweenProps = TweenProps> {
    * const tween = new Tween({ myProp: { x: 0, y: 0 } });
    * tween.use("myProp", objectConfig);
    */
-  use(property: string, {
-    interpolate,
-    validate
-  }: PropConfig): this;
+  use(property: string, { interpolate, validate }: PropConfig): this;
   /**
    * Internal method to reset state to initial values.
    * @internal
@@ -371,7 +367,7 @@ declare class Timeline<T extends TweenProps = TweenProps> {
   /**
    * Returns the errors Map, mainly used by external validators.
    */
-  getErrors(): Map<string, string>;
+  getErrors(): Map<string | "init", string>;
   /**
    * Starts or resumes playback from the beginning (or current time if resumed).
    * Triggers the `onStart` callback if set.
@@ -388,7 +384,7 @@ declare class Timeline<T extends TweenProps = TweenProps> {
   /**
    * Resumes from paused state (adjusts internal clock).
    * Triggers the `onResume` callback if set.
-      * @param time - Optional current timestamp (defaults to now)
+   * @param time - Optional current timestamp (defaults to now)
    * @returns this
    */
   resume(time?: number): this;
@@ -446,11 +442,7 @@ declare class Timeline<T extends TweenProps = TweenProps> {
    * @param position - Start offset: number, "+=0.5", "-=0.3", or label name
    * @returns this (chainable)
    */
-  to({
-    duration,
-    easing,
-    ...values
-  }: (Partial<T> | DeepPartial<T>) & TimelineEntryConfig, position?: Position): this;
+  to({ duration, easing, ...values }: (Partial<T> | DeepPartial<T>) & TimelineEntryConfig, position?: Position): this;
   /**
    * Registers a callback fired when playback begins.
    */
@@ -495,10 +487,7 @@ declare class Timeline<T extends TweenProps = TweenProps> {
    * const timeline = new Timeline({ myProp: { x: 0, y: 0 } });
    * timeline.use("myProp", objectConfig);
    */
-  use(property: string, {
-    interpolate,
-    validate
-  }: PropConfig): this;
+  use(property: string, { interpolate, validate }: PropConfig): this;
   /**
    * Manually advances the timeline to the given time.
    * @param time - Current absolute time (performance.now style)
@@ -557,7 +546,11 @@ type Position = number | string;
  * Extend Specific
  */
 type InterpolatorFunction<I extends TweenProps[never] = never> = <T extends I>(target: T, start: T, end: T, t: number) => T;
-type ValidationResultEntry = [true] | [/** prop name */false, /** reason */string];
+type ValidationResultEntry = [true] | [
+/** prop name */
+false,
+/** reason */
+string];
 type ValidationFunction<I extends Record<string, unknown> = never> = <T extends I[keyof I]>(propName: string, target: T, ref?: T) => ValidationResultEntry;
 type PropConfig = {
   validate: ValidationFunction;
@@ -567,30 +560,30 @@ type PropConfig = {
  * TIMELINE
  */
 interface TimelineEntryConfig {
-  duration?: number; // milliseconds (to match your Tween)
+  duration?: number;
   easing?: EasingFunction;
 }
 interface TimelineEntry<T extends TweenProps> {
   to: Partial<T> | DeepPartial<T>;
   from: Partial<T> | DeepPartial<T>;
-  startTime: number; // absolute time in milliseconds
-  duration: number; // absolute time in milliseconds
+  startTime: number;
+  duration: number;
   easing: EasingFunction;
   isActive?: boolean;
-  runtime: [propValue: T[keyof T], property: string | keyof T, interpolator: InterpolatorFunction, /*| null*/startVal: T[keyof T], endVal: T[keyof T]][];
+  runtime: [propValue: T[keyof T], property: string | keyof T, interpolator: InterpolatorFunction, startVal: T[keyof T], endVal: T[keyof T]][];
 }
-type TweenRuntime<T extends TweenProps> = [targetObject: T[keyof T], property: string | keyof T, interpolator: InterpolatorFunction, /*| null*/startVal: T[keyof T], endVal: T[keyof T]];
+type TweenRuntime<T extends TweenProps> = [targetObject: T[keyof T], property: string | keyof T, interpolator: InterpolatorFunction, startVal: T[keyof T], endVal: T[keyof T]];
 /**
  * Nested Objects
  */
 type DeepObject = Record<string, Record<string, unknown>>;
-type DeepPartial<T> = T extends Record<string, T[keyof T]> ? Partial<T> | { [P in keyof T]?: DeepPartial<T[P]> } : T;
+type DeepPartial<T> = T extends Record<string, T[keyof T]> ? Partial<T> | { [P in keyof T]?: DeepPartial<T[P]>; } : T;
 /**
  * Supported types
  */
 type ArrayVal = number[] | [string, ...number[]][];
 type BaseTweenProps = Record<string, number>;
-type TweenProps = Record<string, number | ArrayVal | BaseTweenProps | [string, ...(CubicValues | LineValues | QuadValues | Vec3)] /* MorphPathArray | TransformArray*/[]>;
+type TweenProps = Record<string, number | ArrayVal | BaseTweenProps | [string, ...(CubicValues | LineValues | QuadValues | Vec3)][]>;
 /**
  * PathArray specific
  */
@@ -619,22 +612,22 @@ type TransformLike = [TransformStep[0], ...number[]][];
 /**
  * The Ease class provides a collection of easing functions for use with tween.js.
  */
-declare const Easing: Readonly<{
-  Linear: Readonly<EasingFunctionGroup & {
+declare const Easing: {
+  Linear: EasingFunctionGroup & {
     None: EasingFunction;
-  }>;
-  Quadratic: Readonly<EasingFunctionGroup>;
-  Cubic: Readonly<EasingFunctionGroup>;
-  Quartic: Readonly<EasingFunctionGroup>;
-  Quintic: Readonly<EasingFunctionGroup>;
-  Sinusoidal: Readonly<EasingFunctionGroup>;
-  Exponential: Readonly<EasingFunctionGroup>;
-  Circular: Readonly<EasingFunctionGroup>;
-  Elastic: Readonly<EasingFunctionGroup>;
-  Back: Readonly<EasingFunctionGroup>;
-  Bounce: Readonly<EasingFunctionGroup>;
+  };
+  Quadratic: EasingFunctionGroup;
+  Cubic: EasingFunctionGroup;
+  Quartic: EasingFunctionGroup;
+  Quintic: EasingFunctionGroup;
+  Sinusoidal: EasingFunctionGroup;
+  Exponential: EasingFunctionGroup;
+  Circular: EasingFunctionGroup;
+  Elastic: EasingFunctionGroup;
+  Back: EasingFunctionGroup;
+  Bounce: EasingFunctionGroup;
   pow(power?: number): EasingFunctionGroup;
-}>;
+};
 //#endregion
 //#region src/Util.d.ts
 declare const isString: (value: unknown) => value is string;
@@ -654,7 +647,7 @@ declare const isServer: boolean;
  * - allow free-form configuration for signal based frameworks
  */
 declare const dummyInstance: Record<string, typeof dummyMethod>;
-declare function dummyMethod(this: typeof dummyInstance): Record<string, typeof dummyMethod>;
+declare function dummyMethod(this: typeof dummyInstance): typeof dummyInstance;
 declare const objectHasProp: <T extends object>(obj: T, prop: keyof T) => boolean;
 /**
  * A small utility to deep assign up to one level deep nested objects.
@@ -720,7 +713,7 @@ declare const validateArray: <T extends number[]>(propName: string, target: unkn
  */
 declare const arrayConfig: {
   interpolate: InterpolatorFunction<number[]>;
-  validate: <T extends number[]>(propName: string, target: unknown, ref?: T) => ValidationResultEntry;
+  validate: typeof validateArray;
 };
 //#endregion
 //#region src/extend/path.d.ts
@@ -789,7 +782,7 @@ declare const validatePath: <T extends MorphPathArray>(propName: string, target:
  */
 declare const pathArrayConfig: {
   interpolate: InterpolatorFunction<MorphPathSegment[]>;
-  validate: <T extends MorphPathArray>(propName: string, target: unknown, ref?: T) => ValidationResultEntry;
+  validate: typeof validatePath;
 };
 //#endregion
 //#region src/extend/object.d.ts
@@ -827,7 +820,7 @@ declare const validateObject: (propName: string, target: unknown, ref?: BaseTwee
  */
 declare const objectConfig: {
   interpolate: InterpolatorFunction<BaseTweenProps>;
-  validate: (propName: string, target: unknown, ref?: BaseTweenProps) => ValidationResultEntry;
+  validate: typeof validateObject;
 };
 //#endregion
 //#region src/extend/transform.d.ts
@@ -906,7 +899,7 @@ declare const validateTransform: (propName: string, target: unknown, ref?: Trans
  */
 declare const transformConfig: {
   interpolate: InterpolatorFunction<TransformStep[]>;
-  validate: (propName: string, target: unknown, ref?: TransformArray) => ValidationResultEntry;
+  validate: typeof validateTransform;
 };
 //#endregion
 //#region src/Now.d.ts
@@ -937,8 +930,8 @@ declare function addToQueue<T extends TweenProps>(newItem: AnimationItem<T>): vo
  */
 declare function removeFromQueue<T extends TweenProps>(removedItem: AnimationItem<T>): void;
 //#endregion
-//#region package.json.d.ts
-declare let version: string;
+//#region src/Version.d.ts
+declare const version = "0.1.1";
 //#endregion
-export { AnimationItem, ArrayVal, BaseTweenProps, CubicValues, DeepObject, DeepPartial, Easing, EasingFunction, EasingFunctionGroup, InterpolatorFunction, LineValues, MorphPathArray, MorphPathSegment, PathLike, Position, PropConfig, QuadValues, Queue, Rotate, RotateAxisAngle, RotateZ, Runtime, Scale, Timeline, TimelineCallback, TimelineEntry, TimelineEntryConfig, TransformArray, TransformLike, TransformStep, TransformStepInternal, Translate, Tween, TweenCallback, TweenProps, TweenRuntime, TweenUpdateCallback, ValidationFunction, ValidationResultEntry, Vec3, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, equalizePaths, equalizeSegments, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
+export { type AnimationItem, type ArrayVal, type BaseTweenProps, type CubicValues, type DeepObject, type DeepPartial, Easing, type EasingFunction, type EasingFunctionGroup, type InterpolatorFunction, type LineValues, type MorphPathArray, type MorphPathSegment, type PathLike, type Position, type PropConfig, type QuadValues, Queue, type Rotate, type RotateAxisAngle, type RotateZ, Runtime, type Scale, Timeline, type TimelineCallback, type TimelineEntry, type TimelineEntryConfig, type TransformArray, type TransformLike, type TransformStep, type TransformStepInternal, type Translate, Tween, type TweenCallback, type TweenProps, type TweenRuntime, type TweenUpdateCallback, type ValidationFunction, type ValidationResultEntry, type Vec3, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, equalizePaths, equalizeSegments, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
 //# sourceMappingURL=index.d.mts.map

@@ -131,7 +131,11 @@ function createMiniState<T extends TweenProps>(
   return parentReceiver as T;
 }
 
-export function miniStore<T extends TweenProps>(init: T) {
+export function miniStore<
+  T extends TweenProps,
+>(
+  init: T,
+): { readonly state: T; subscribe(listener: Listener<T>): () => void } {
   const listeners = new Set<Listener<T>>();
   const notifyListeners = () => {
     listeners.forEach((listener) => listener(store));
@@ -152,7 +156,9 @@ export function miniStore<T extends TweenProps>(init: T) {
   };
 }
 
-export function useMiniStore<T extends TweenProps>(initialValue: T) {
+export function useMiniStore<
+  T extends TweenProps,
+>(initialValue: T): T {
   const storeRef = useRef<ReturnType<typeof miniStore<T>>>(null);
   const [, setVersion] = useState(0);
 

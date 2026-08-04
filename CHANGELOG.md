@@ -2,7 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.0.6] - 2026-04-06
+## [0.1.1] - 2026-08-04
+
+### Added
+- Deno/JSR compatibility: `deno.json` with exports for core and all six framework subpaths, `imports` map, tasks (`check`, `test`, `lint`, `format`, `fix`) and `publish.include` for JSR publishing
+- `scripts/update-deno.js` to sync `deno.json` and `src/Version.ts` from `package.json`
+- Root `deno.lock` for reproducible Deno checks and tests
+- `pnpm up:deno` command and JSR publish step (commented out) in the publish workflow
+- `llms.txt` file for AI-assisted documentation discovery
+- JSR badge and `deno add jsr:@thednp/tween` install instructions in README
+
+### Changed
+- Migrated `src/types.d.ts` to `src/types.ts` and updated all imports
+- Added explicit types across the public API for JSR slow types compliance
+- `src/Version.ts` is now generated instead of importing `package.json`, fixing the dts build error
+- Replaced deprecated `deps.skipNodeModulesBundle` with `deps.neverBundle` in `tsdown.config.ts`
+- Fixed the UMD build warning about invalid `output.dir` by switching to a file-based `outputOptions` function
+- Updated `typescript` to `^7.0.2`
+- Updated test expectations for the latest `@thednp/dommatrix` output
+- Updated dependencies and playground configurations
+
+### Removed
+- Per-playground lockfiles
+
+## [0.1.0] - 2026-04-06
 
 ### Added
 - VanJS integration with `createTween` and `createTimeline` primitives

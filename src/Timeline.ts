@@ -9,7 +9,7 @@ import type {
   TimelineEntryConfig,
   TweenProps,
   ValidationFunction,
-} from "./types.d.ts";
+} from "./types.ts";
 import { addToQueue, removeFromQueue } from "./Runtime.ts";
 import {
   deepAssign,
@@ -88,14 +88,14 @@ export class Timeline<T extends TweenProps = TweenProps> {
   /**
    * Returns the current [0-1] progress value.
    */
-  get progress() {
+  get progress(): number {
     return this._progress;
   }
 
   /**
    * Returns the total duration in seconds.
    */
-  get duration() {
+  get duration(): number {
     return this._duration / 1000;
   }
 
@@ -103,7 +103,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
    * Returns the total duration in seconds, which is a sum of all entries duration
    * multiplied by repeat value and repeat delay multiplied by repeat value.
    */
-  get totalDuration() {
+  get totalDuration(): number {
     const repeat = this._initialRepeat;
     return (
       this._duration * (repeat + 1) +
@@ -142,14 +142,14 @@ export class Timeline<T extends TweenProps = TweenProps> {
   /**
    * Returns the validator configured for a given property.
    */
-  getValidator(propName: string) {
+  getValidator(propName: string): ValidationFunction | undefined {
     return this._validators.get(propName);
   }
 
   /**
    * Returns the errors Map, mainly used by external validators.
    */
-  getErrors() {
+  getErrors(): Map<string | "init", string> {
     return this._errors;
   }
 
@@ -159,7 +159,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
    * @param startTime - Optional explicit start timestamp (defaults to now)
    * @returns this
    */
-  play(time = now()): this {
+  play(time: number = now()): this {
     if (this._pauseTime) return this.resume();
     if (this._isPlaying) return this;
     if (!this.isValid) {
@@ -181,7 +181,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
    * Triggers the `onPause` callback if set.
    * @returns this
    */
-  pause(time = now()): this {
+  pause(time: number = now()): this {
     if (!this._isPlaying) return this;
     this._isPlaying = false;
     this._pauseTime = time;
@@ -196,7 +196,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
    * @param time - Optional current timestamp (defaults to now)
    * @returns this
    */
-  resume(time = now()): this {
+  resume(time: number = now()): this {
     if (this._isPlaying) return this;
     this._isPlaying = true;
     const dif = time - this._pauseTime;
@@ -274,7 +274,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
    * @default 0 seconds
    * @returns this
    */
-  repeatDelay(amount = 0) {
+  repeatDelay(amount: number = 0): this {
     this._repeatDelay = amount * 1000;
     return this;
   }
@@ -287,7 +287,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
    * @default false
    * @returns this
    */
-  yoyo(yoyo = false) {
+  yoyo(yoyo: boolean = false): this {
     this._yoyo = yoyo;
     return this;
   }
@@ -394,7 +394,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
   /**
    * Registers a callback fired when `.play()` / `.resume()` was called.
    */
-  onRepeat(cb?: TimelineCallback<T>) {
+  onRepeat(cb?: TimelineCallback<T>): this {
     this._onRepeat = cb;
     return this;
   }
@@ -434,7 +434,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
    * @returns `true` if the timeline is still playing after the update, `false`
    * otherwise.
    */
-  update(time = now()) {
+  update(time: number = now()): boolean {
     if (!this._isPlaying) return false;
 
     if (this._repeatDelayStart) {
@@ -555,7 +555,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
    * Public method to clear all entries, labels and reset timers to zero
    * or initial value (repeat).
    */
-  clear() {
+  clear(): this {
     this._entries.length = 0;
     this._duration = 0;
     this._labels.clear();
