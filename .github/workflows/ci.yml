@@ -50,6 +50,7 @@ jobs:
       - name: ViTest
         run: pnpm test
 
+      # Upload coverage
       - name: Upload coverage report to coveralls.io...
         uses: coverallsapp/github-action@master
         with:
