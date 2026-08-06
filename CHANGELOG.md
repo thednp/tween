@@ -2,11 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.3] - 2026-08-05
+
+### Added
+- `test/tween.bench.ts` — committed benchmark suite (`pnpm bench`) comparing the current source against the published `0.1.2` build (vendored as `test/fixtures/tween-0.1.2.mjs`): measured ~39x faster 500-entry `Timeline` updates (windowed binary search vs O(n) scan) and ~7.5x faster `transformToString` with matrix output (CSSMatrix vs native DOMMatrix); the object/transform/path interpolation scenarios are at parity or slightly faster
+
+### Changed
+- Performance: `transformToString` now uses `@thednp/dommatrix` (CSSMatrix) instead of native `DOMMatrix`, with a reused scratch matrix for perspective steps
+- Performance: the runtime queue in `Runtime.ts` now uses a `Set` for O(1) membership checks and swap-and-pop removal (O(1) unlink per finished tween instead of O(n))
+- Performance: the per-frame `typeof` check on tween end values is hoisted into the runtime tuples as a precomputed `isNumeric` flag (`Tween` and `Timeline`)
+- Performance: `interpolateObject` caches the `end` object key list in a `WeakMap` instead of calling `Object.keys` every frame
+- Performance: the `Timeline` update loop now processes only the active window of entries — `_entries` are sorted by `startTime` (cached while playing) and a binary search narrows each frame to overlapping candidates, skipping untouched entries entirely
+- Performance: `interpolateTransform` replaces per-frame command dispatch with a cached per-step parameter count table
+- Added `@module` docs to all seven JSR entrypoints (core, react, preact, solid, svelte, vue, vanjs) and reworded the main entrypoint module doc (it started with `@` which parsed as an unsupported tag and rendered empty) to fix the JSR score "module docs in all entrypoints" check
+- Updated `@thednp/dommatrix` to `^3.1.1` — `setMatrixValue()` now mutates in place and returns `this` (not used by this library, output unaffected)
+- Updated `svg-path-commander` to `^2.3.1` — bumps the bundled `@thednp/dommatrix` to the 3.1.x line and rebuilds its bundles; the 2D single-pass transform fast path is untouched
+- Rebuilt `dist`, synced `deno.json` and `deno.lock` (npm ranges `svg-path-commander@^2.3.1/util`, `vue@^3.5.41`) and `src/Version.ts` for the `0.1.3` release
+
 ## [0.1.2] - 2026-08-04
 
 ### Changed
 - Added full JSDoc coverage across the entire source: all types, interfaces, properties, classes, methods, functions, parameters and return values are now documented
-- Added `@module` docs to all seven JSR entrypoints (core, react, preact, solid, svelte, vue, vanjs) to fix the JSR score "module docs in all entrypoints" check
 
 ## [0.1.1] - 2026-08-04
 
