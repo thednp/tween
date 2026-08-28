@@ -1,6 +1,6 @@
 {
   "name": "@thednp/tween",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "license": "MIT",
   "description": "🌸 A Typescript sourced tweening engine with Tween and Timeline",
   "keywords": [

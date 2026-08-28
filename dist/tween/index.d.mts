@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween  v0.1.3 (https://github.com/thednp/tween)
+* @thednp/tween  v0.1.4 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -1272,7 +1272,7 @@ declare function addToQueue<T extends TweenProps>(newItem: AnimationItem<T>): vo
 declare function removeFromQueue<T extends TweenProps>(removedItem: AnimationItem<T>): void;
 //#endregion
 //#region src/Version.d.ts
-declare const version = "0.1.3";
+declare const version = "0.1.4";
 //#endregion
-export { type AnimationItem, type ArrayVal, type BaseTweenProps, type CubicValues, type DeepObject, type DeepPartial, Easing, type EasingFunction, type EasingFunctionGroup, type InterpolatorFunction, type LineValues, type PathLike, type Position, type PropConfig, type QuadValues, Queue, type Rotate, type RotateAxisAngle, type RotateZ, Runtime, type Scale, Timeline, type TimelineCallback, type TimelineEntry, type TimelineEntryConfig, type TransformArray, type TransformLike, type TransformStep, type TransformStepInternal, type Translate, Tween, type TweenCallback, type TweenProps, type TweenRuntime, type TweenUpdateCallback, type ValidationFunction, type ValidationResultEntry, type Vec3, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, equalizePaths, equalizeSegments, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
+export { type AnimationItem, type ArrayVal, type BaseTweenProps, type CubicValues, type DeepObject, type DeepPartial, Easing, type EasingFunction, type EasingFunctionGroup, type InterpolatorFunction, type LineValues, type MorphPathArray, type PathLike, type Position, type PropConfig, type QuadValues, Queue, type Rotate, type RotateAxisAngle, type RotateZ, Runtime, type Scale, Timeline, type TimelineCallback, type TimelineEntry, type TimelineEntryConfig, type TransformArray, type TransformLike, type TransformStep, type TransformStepInternal, type Translate, Tween, type TweenCallback, type TweenProps, type TweenRuntime, type TweenUpdateCallback, type ValidationFunction, type ValidationResultEntry, type Vec3, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, equalizePaths, equalizeSegments, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
 //# sourceMappingURL=index.d.mts.map

@@ -11,6 +11,8 @@ import type {
 } from "../types.ts";
 import { isArray, isNumber } from "../Util.ts";
 
+export type { TransformArray };
+
 /**
  * Returns a valid CSS transform string either with transform functions (Eg.: `translate(15px) rotate(25deg)`)
  * or `matrix(...)` / `matrix3d(...)`.

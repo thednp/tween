@@ -16,7 +16,7 @@ import type {
  * Re-exports the path utilities from `svg-path-commander/util`:
  * `equalizePaths`, `equalizeSegments` and `pathToString`.
  */
-export { equalizePaths, equalizeSegments, pathToString };
+export { equalizePaths, equalizeSegments, type MorphPathArray, pathToString };
 
 /**
  * Interpolate `PathArray` values.
