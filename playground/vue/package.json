@@ -9,15 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@thednp/tween": "^0.1.0",
-    "vue": "^3.5.32"
+    "@thednp/tween": "^0.1.2",
+    "vue": "^3.5.41"
   },
   "devDependencies": {
-    "@types/node": "^25.5.2",
-    "@vitejs/plugin-vue": "^6.0.5",
+    "@types/node": "^26.1.2",
+    "@vitejs/plugin-vue": "^6.0.8",
     "@vue/tsconfig": "^0.9.1",
-    "typescript": "~6.0.2",
-    "vite": "^8.0.5",
-    "vue-tsc": "^3.2.6"
+    "typescript": "~7.0.2",
+    "vite": "^8.2.0",
+    "vue-tsc": "^3.3.9"
   }
 }

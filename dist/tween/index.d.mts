@@ -1,11 +1,12 @@
 /*!
-* @thednp/tween  v0.1.2 (https://github.com/thednp/tween)
+* @thednp/tween  v0.1.3 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
 "use strict";
 
 import { equalizePaths, equalizeSegments, pathToString } from "svg-path-commander/util";
+import { MorphPathArray } from "svg-path-commander";
 //#region src/Tween.d.ts
 /**
  * Lightweight tween engine for interpolating values over time.
@@ -376,6 +377,14 @@ declare class Timeline<T extends TweenProps = TweenProps> {
   private _interpolators;
   /** The registered validators, keyed by property name */
   private _validators;
+  /**
+   * The animation entries sorted by `startTime`, rebuilt lazily on play.
+   * While the timeline is playing the entry list is frozen, so the sorted
+   * order only changes when more `.to()` calls are made.
+   */
+  private _sorted;
+  /** The longest entry duration, used to widen the active window bounds */
+  private _maxDuration;
   /** The `onStart` callback, fired when playback begins */
   private _onStart?;
   /** The `onStop` callback, fired when the timeline is stopped */
@@ -599,6 +608,20 @@ declare class Timeline<T extends TweenProps = TweenProps> {
    */
   private _resolvePosition;
   /**
+   * Internal method to build the sorted entry list, cached while playing.
+   * @internal
+   */
+  private _buildSortedEntries;
+  /**
+   * Internal method to compute the window of entries overlapping the
+   * playback-time span `[min(time, prevTime), max(time, prevTime)]`, so
+   * the update loop only processes active candidates. The bounds are a
+   * safe superset: every entry that is active, finishing or about to
+   * activate within the frame is guaranteed to be inside.
+   * @internal
+   */
+  private _activeWindow;
+  /**
    * Internal method to handle validation of initial values and entries values.
    * @internal
    */
@@ -748,17 +771,17 @@ interface TimelineEntry<T extends TweenProps> {
   isActive?: boolean;
   /**
    * The per-property runtime tuples used by the update loop:
-   * `[targetObject, property, interpolator, startVal, endVal]`
+   * `[targetObject, property, interpolator, startVal, endVal, isNumeric]`
    */
-  runtime: [propValue: T[keyof T], property: string | keyof T, interpolator: InterpolatorFunction, startVal: T[keyof T], endVal: T[keyof T]][];
+  runtime: [propValue: T[keyof T], property: string | keyof T, interpolator: InterpolatorFunction, startVal: T[keyof T], endVal: T[keyof T], isNumeric: boolean][];
 }
 /**
  * The per-property runtime tuple stored by the {@link Tween} engine and
- * by each {@link TimelineEntry}: `[targetObject, property, interpolator, startVal, endVal]`.
+ * by each {@link TimelineEntry}: `[targetObject, property, interpolator, startVal, endVal, isNumeric]`.
  *
  * @template T - The type of the animated state object
  */
-type TweenRuntime<T extends TweenProps> = [targetObject: T[keyof T], property: string | keyof T, interpolator: InterpolatorFunction, startVal: T[keyof T], endVal: T[keyof T]];
+type TweenRuntime<T extends TweenProps> = [targetObject: T[keyof T], property: string | keyof T, interpolator: InterpolatorFunction, startVal: T[keyof T], endVal: T[keyof T], isNumeric: boolean];
 /**
  * Nested Objects
  */
@@ -801,17 +824,8 @@ type LineValues = [number, number];
 type CubicValues = [number, number, number, number, number, number];
 /** A quadratic bezier segment values tuple `[x1, y1, x, y]` */
 type QuadValues = [number, number, number, number];
-/**
- * A single path segment of a morphable {@link MorphPathArray}:
- * `["M" | "L", x, y]`, `["C", x1, y1, x2, y2, x, y]` or `["Z"]`.
- */
-type MorphPathSegment = ["M" | "L", ...LineValues] | ["C", ...CubicValues] | ["Z"];
 /** The supported path commands used by {@link PathLike} */
 type PC = "M" | "m" | "L" | "l" | "C" | "c" | "Z" | "z";
-/**
- * An array of path segments in any supported SVG path command format.
- */
-type MorphPathArray = MorphPathSegment[];
 /**
  * A path-like value: an array of `[command, ...number[]]` tuples
  * with any of the supported path commands.
@@ -1038,7 +1052,7 @@ declare const arrayConfig: {
  * @param t - The progress value
  * @returns The interpolated PathArray value
  */
-declare const interpolatePath: InterpolatorFunction<MorphPathSegment[]>;
+declare const interpolatePath: InterpolatorFunction<MorphPathArray>;
 /**
  * Check if an array of arrays is potentially a PathArray
  * @param value The incoming value `constructor()` `from()` / `to()`
@@ -1092,7 +1106,7 @@ declare const validatePath: <T extends MorphPathArray>(propName: string, target:
  * Config for .use(propName, pathArrayConfig)
  */
 declare const pathArrayConfig: {
-  interpolate: InterpolatorFunction<MorphPathSegment[]>;
+  interpolate: InterpolatorFunction<MorphPathArray>;
   validate: typeof validatePath;
 };
 //#endregion
@@ -1138,7 +1152,7 @@ declare const objectConfig: {
 /**
  * Returns a valid CSS transform string either with transform functions (Eg.: `translate(15px) rotate(25deg)`)
  * or `matrix(...)` / `matrix3d(...)`.
- * When the `toMatrix` parameter is `true` it will create a DOMMatrix instance, apply transform
+ * When the `toMatrix` parameter is `true` it will create a CSSMatrix instance, apply transform
  * steps and return a `matrix(...)` or `matrix3d(...)` string value.
  * @param steps An array of TransformStep
  * @param toMatrix An optional parameter to modify the function output
@@ -1258,8 +1272,7 @@ declare function addToQueue<T extends TweenProps>(newItem: AnimationItem<T>): vo
 declare function removeFromQueue<T extends TweenProps>(removedItem: AnimationItem<T>): void;
 //#endregion
 //#region src/Version.d.ts
-/** The current version of the library, synced from package.json */
-declare const version = "0.1.2";
+declare const version = "0.1.3";
 //#endregion
-export { type AnimationItem, type ArrayVal, type BaseTweenProps, type CubicValues, type DeepObject, type DeepPartial, Easing, type EasingFunction, type EasingFunctionGroup, type InterpolatorFunction, type LineValues, type MorphPathArray, type MorphPathSegment, type PathLike, type Position, type PropConfig, type QuadValues, Queue, type Rotate, type RotateAxisAngle, type RotateZ, Runtime, type Scale, Timeline, type TimelineCallback, type TimelineEntry, type TimelineEntryConfig, type TransformArray, type TransformLike, type TransformStep, type TransformStepInternal, type Translate, Tween, type TweenCallback, type TweenProps, type TweenRuntime, type TweenUpdateCallback, type ValidationFunction, type ValidationResultEntry, type Vec3, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, equalizePaths, equalizeSegments, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
+export { type AnimationItem, type ArrayVal, type BaseTweenProps, type CubicValues, type DeepObject, type DeepPartial, Easing, type EasingFunction, type EasingFunctionGroup, type InterpolatorFunction, type LineValues, type PathLike, type Position, type PropConfig, type QuadValues, Queue, type Rotate, type RotateAxisAngle, type RotateZ, Runtime, type Scale, Timeline, type TimelineCallback, type TimelineEntry, type TimelineEntryConfig, type TransformArray, type TransformLike, type TransformStep, type TransformStepInternal, type Translate, Tween, type TweenCallback, type TweenProps, type TweenRuntime, type TweenUpdateCallback, type ValidationFunction, type ValidationResultEntry, type Vec3, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, equalizePaths, equalizeSegments, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
 //# sourceMappingURL=index.d.mts.map

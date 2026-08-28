@@ -1,4 +1,5 @@
 // src/extend/path.ts
+import type { MorphPathArray } from "svg-path-commander";
 import {
   equalizePaths,
   equalizeSegments,
@@ -8,12 +9,9 @@ import { isArray, isNumber } from "../Util.ts";
 
 import type {
   InterpolatorFunction,
-  MorphPathArray,
-  MorphPathSegment,
   PathLike,
   ValidationResultEntry,
 } from "../types.ts";
-
 /**
  * Re-exports the path utilities from `svg-path-commander/util`:
  * `equalizePaths`, `equalizeSegments` and `pathToString`.
@@ -30,8 +28,8 @@ export { equalizePaths, equalizeSegments, pathToString };
  * @param t - The progress value
  * @returns The interpolated PathArray value
  */
-export const interpolatePath: InterpolatorFunction<MorphPathSegment[]> = <
-  T extends MorphPathSegment[],
+export const interpolatePath: InterpolatorFunction<MorphPathArray> = <
+  T extends MorphPathArray,
 >(
   target: T,
   start: T,
@@ -93,8 +91,8 @@ export const isValidPath = (value: unknown): value is MorphPathArray =>
   value.every(isArray) &&
   value.every(
     ([cmd, ...values]) =>
-      supportedPathCommands.includes(cmd as MorphPathSegment[0]) &&
-      ((["M", "L"].includes(cmd as MorphPathSegment[0]) &&
+      supportedPathCommands.includes(cmd as MorphPathArray[0][0]) &&
+      ((["M", "L"].includes(cmd as MorphPathArray[0][0]) &&
         (values as number[]).length === 2 &&
         values.every(isNumber)) ||
         ("C" === cmd &&

@@ -164,7 +164,7 @@ export interface TimelineEntry<T extends TweenProps> {
   isActive?: boolean;
   /**
    * The per-property runtime tuples used by the update loop:
-   * `[targetObject, property, interpolator, startVal, endVal]`
+   * `[targetObject, property, interpolator, startVal, endVal, isNumeric]`
    */
   runtime: [
     propValue: T[keyof T],
@@ -172,12 +172,13 @@ export interface TimelineEntry<T extends TweenProps> {
     interpolator: InterpolatorFunction, /*| null*/
     startVal: T[keyof T],
     endVal: T[keyof T],
+    isNumeric: boolean,
   ][];
 }
 
 /**
  * The per-property runtime tuple stored by the {@link Tween} engine and
- * by each {@link TimelineEntry}: `[targetObject, property, interpolator, startVal, endVal]`.
+ * by each {@link TimelineEntry}: `[targetObject, property, interpolator, startVal, endVal, isNumeric]`.
  *
  * @template T - The type of the animated state object
  */
@@ -187,6 +188,7 @@ export type TweenRuntime<T extends TweenProps> = [
   interpolator: InterpolatorFunction, /*| null*/
   startVal: T[keyof T],
   endVal: T[keyof T],
+  isNumeric: boolean,
 ];
 
 /**
@@ -250,21 +252,9 @@ export type CubicValues = [number, number, number, number, number, number];
 /** A quadratic bezier segment values tuple `[x1, y1, x, y]` */
 export type QuadValues = [number, number, number, number];
 
-/**
- * A single path segment of a morphable {@link MorphPathArray}:
- * `["M" | "L", x, y]`, `["C", x1, y1, x2, y2, x, y]` or `["Z"]`.
- */
-export type MorphPathSegment =
-  | ["M" | "L", ...LineValues]
-  | ["C", ...CubicValues]
-  | ["Z"];
-
 /** The supported path commands used by {@link PathLike} */
 type PC = "M" | "m" | "L" | "l" | "C" | "c" | "Z" | "z";
-/**
- * An array of path segments in any supported SVG path command format.
- */
-export type MorphPathArray = MorphPathSegment[];
+
 /**
  * A path-like value: an array of `[command, ...number[]]` tuples
  * with any of the supported path commands.

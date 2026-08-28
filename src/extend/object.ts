@@ -7,6 +7,13 @@ import type {
 import { isNumber, isPlainObject } from "../Util.ts";
 
 /**
+ * Caches the key list of each interpolated object so it's computed once
+ * instead of every frame. The `end` object reference is stable for the
+ * lifetime of a tween configuration.
+ */
+const endKeysCache = new WeakMap<object, string[]>();
+
+/**
  * Single-level `Record<string, number>` object interpolate function.
  *
  * **NOTE**: values must be validated first!
@@ -33,8 +40,13 @@ export const interpolateObject: InterpolatorFunction<BaseTweenProps> = <
   end: T,
   t: number,
 ): T => {
-  // Iterate over end keys (we only interpolate what's in end)
-  const keys = Object.keys(end) as (keyof T)[];
+  // Iterate over end keys (we only interpolate what's in end),
+  // computing the key list once per end object reference
+  let keys = endKeysCache.get(end as object) as (keyof T)[] | undefined;
+  if (!keys) {
+    keys = Object.keys(end) as (keyof T)[];
+    endKeysCache.set(end as object, keys as string[]);
+  }
   let i = 0;
 
   while (i < keys.length) {

@@ -1,4 +1,5 @@
 // src/extend/transform.ts
+import CSSMatrix from "@thednp/dommatrix";
 import type {
   InterpolatorFunction,
   TransformArray,
@@ -13,7 +14,7 @@ import { isArray, isNumber } from "../Util.ts";
 /**
  * Returns a valid CSS transform string either with transform functions (Eg.: `translate(15px) rotate(25deg)`)
  * or `matrix(...)` / `matrix3d(...)`.
- * When the `toMatrix` parameter is `true` it will create a DOMMatrix instance, apply transform
+ * When the `toMatrix` parameter is `true` it will create a CSSMatrix instance, apply transform
  * steps and return a `matrix(...)` or `matrix3d(...)` string value.
  * @param steps An array of TransformStep
  * @param toMatrix An optional parameter to modify the function output
@@ -24,7 +25,9 @@ export const transformToString = (
   toMatrix: boolean = false,
 ): string => {
   if (toMatrix) {
-    const matrix = new DOMMatrix();
+    const matrix = new CSSMatrix();
+    // reused scratch matrix for the perspective step
+    const scratch = new CSSMatrix();
     const len = steps.length;
     let i = 0;
 
@@ -33,9 +36,8 @@ export const transformToString = (
 
       switch (step[0]) {
         case "perspective": {
-          const m2 = new DOMMatrix();
-          m2.m34 = -1 / step[1];
-          matrix.multiplySelf(m2);
+          scratch.m34 = -1 / step[1];
+          matrix.multiplySelf(scratch);
           break;
         }
         case "translate": {
@@ -198,6 +200,31 @@ const quaternionToAxisAngle = (
   return [x / len, y / len, z / len, angle];
 };
 
+/** Per-`end`-array cache of the number of interpolatable numeric params per step */
+const paramCountsCache = new WeakMap<object, Uint8Array>();
+
+/**
+ * Returns the number of interpolatable numeric parameters for each step of
+ * an `end` transform array, lazily computed and cached per array reference.
+ * The structure of validated transform arrays never changes between frames,
+ * so the dispatch work is hoisted out of the per-frame interpolation loop.
+ * @internal
+ */
+const getParamCounts = (end: TransformStep[]): Uint8Array => {
+  let counts = paramCountsCache.get(end);
+  if (!counts) {
+    const len = end.length;
+    counts = new Uint8Array(len);
+    let i = 0;
+    while (i < len) {
+      const sLen = end[i].length;
+      counts[i++] = sLen - 1;
+    }
+    paramCountsCache.set(end, counts);
+  }
+  return counts;
+};
+
 /**
  * Interpolates arrays of `TransformStep`s → returns interpolated `TransformStep`s.
  *
@@ -238,36 +265,26 @@ export const interpolateTransform: InterpolatorFunction<TransformStep[]> = <
   t: number,
 ): T => {
   const len = end.length;
+  const counts = getParamCounts(end as TransformStep[]);
   let i = 0;
 
   while (i < len) {
+    const count = counts[i];
     const targetStep = target[i];
     const startStep = start[i];
     const endStep = end[i];
 
-    switch (targetStep[0]) {
-      case "translate":
-      case "rotate":
-      case "scale":
-      case "rotateAxisAngle":
-        targetStep[1] = startStep[1] + (endStep[1] - startStep[1]) * t;
-
-        typeof endStep[2] === "number" &&
-          (targetStep[2] = startStep[2]! + (endStep[2]! - startStep[2]!) * t);
-
-        typeof endStep[3] === "number" &&
-          (targetStep[3] = startStep[3]! + (endStep[3]! - startStep[3]!) * t);
-
-        typeof endStep[4] === "number" &&
-          (targetStep[4] = startStep[4]! + (endStep[4]! - startStep[4]!) * t);
-
-        break;
-      case "skewX":
-      case "skewY":
-      case "perspective":
-        targetStep[1] = startStep[1] + (endStep[1] - startStep[1]) * t;
-
-        break;
+    if (count > 0) {
+      targetStep[1] = startStep[1] + (endStep[1] - startStep[1]) * t;
+    }
+    if (count > 1) {
+      targetStep[2] = startStep[2]! + (endStep[2]! - startStep[2]!) * t;
+    }
+    if (count > 2) {
+      targetStep[3] = startStep[3]! + (endStep[3]! - startStep[3]!) * t;
+    }
+    if (count > 3) {
+      targetStep[4] = startStep[4]! + (endStep[4]! - startStep[4]!) * t;
     }
     i++;
   }

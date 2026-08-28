@@ -10,7 +10,7 @@ export default defineConfig({
       // emitCss: false,
       compilerOptions: {
         dev: true, // better errors in tests
-        //   // hydratable: true,
+        // hydratable: true,
       },
     }),
   ],

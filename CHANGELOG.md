@@ -5,19 +5,21 @@ All notable changes to this project will be documented in this file.
 ## [0.1.3] - 2026-08-05
 
 ### Added
-- `test/tween.bench.ts` — committed benchmark suite (`pnpm bench`) comparing the current source against the published `0.1.2` build (vendored as `test/fixtures/tween-0.1.2.mjs`): measured ~39x faster 500-entry `Timeline` updates (windowed binary search vs O(n) scan) and ~7.5x faster `transformToString` with matrix output (CSSMatrix vs native DOMMatrix); the object/transform/path interpolation scenarios are at parity or slightly faster
+- `test/tween.bench.ts` — committed benchmark suite (`pnpm bench`, `vitest bench`) comparing the current source against the published `0.1.2` build (vendored as `test/fixtures/tween-0.1.2.mjs`): measured ~39x faster 500-entry `Timeline` updates (windowed binary search vs O(n) scan) and ~7.5x faster `transformToString` with matrix output (CSSMatrix vs native DOMMatrix); object (5/20 keys), transform (7 steps) and path interpolation scenarios at parity or slightly faster with DCE-safe checksums and JIT warmup
 
 ### Changed
 - Performance: `transformToString` now uses `@thednp/dommatrix` (CSSMatrix) instead of native `DOMMatrix`, with a reused scratch matrix for perspective steps
 - Performance: the runtime queue in `Runtime.ts` now uses a `Set` for O(1) membership checks and swap-and-pop removal (O(1) unlink per finished tween instead of O(n))
-- Performance: the per-frame `typeof` check on tween end values is hoisted into the runtime tuples as a precomputed `isNumeric` flag (`Tween` and `Timeline`)
+- Performance: the per-frame `typeof` check on tween end values is hoisted into the runtime tuples as a precomputed `isNumeric` flag (`Tween` and `Timeline`, `src/types.ts:164`)
 - Performance: `interpolateObject` caches the `end` object key list in a `WeakMap` instead of calling `Object.keys` every frame
 - Performance: the `Timeline` update loop now processes only the active window of entries — `_entries` are sorted by `startTime` (cached while playing) and a binary search narrows each frame to overlapping candidates, skipping untouched entries entirely
-- Performance: `interpolateTransform` replaces per-frame command dispatch with a cached per-step parameter count table
+- Performance: `interpolateTransform` replaces per-frame command dispatch with a cached per-step parameter count table (`getParamCounts` via `end[i].length - 1`)
 - Added `@module` docs to all seven JSR entrypoints (core, react, preact, solid, svelte, vue, vanjs) and reworded the main entrypoint module doc (it started with `@` which parsed as an unsupported tag and rendered empty) to fix the JSR score "module docs in all entrypoints" check
-- Updated `@thednp/dommatrix` to `^3.1.1` — `setMatrixValue()` now mutates in place and returns `this` (not used by this library, output unaffected)
-- Updated `svg-path-commander` to `^2.3.1` — bumps the bundled `@thednp/dommatrix` to the 3.1.x line and rebuilds its bundles; the 2D single-pass transform fast path is untouched
-- Rebuilt `dist`, synced `deno.json` and `deno.lock` (npm ranges `svg-path-commander@^2.3.1/util`, `vue@^3.5.41`) and `src/Version.ts` for the `0.1.3` release
+- Updated runtime deps: `@thednp/dommatrix` `^3.1.1` (`setMatrixValue()` now mutates in place, not used here), `svg-path-commander` `^2.3.1` (bumps bundled dommatrix), `solid-js` `^1.9.15`, `svelte` `^5.56.10`, `vue` `^3.5.42`
+- Updated dev deps: `@sveltejs/vite-plugin-svelte` `^7.3.0`, `@types/node` `^26.4.0`, `@types/react-dom` `^19.2.5`, `vitest` `^4.1.11`, `@vitest/coverage-istanbul`/`@vitest/ui` `^4.1.11`, `happy-dom` `^20.11.12`, `pnpm` `11.24.0`; synced `deno.json` imports and `deno.lock`
+- Tooling: added `scripts/update-playground.js` and `up:play` (`deno run -A scripts/update-playground.js`), updated `prepublishOnly` to run `up:play`; expanded `pnpm-workspace.yaml` `minimumReleaseAgeExclude` for dommatrix/svg-path-commander/vue/happy-dom; `tsdown.config.ts` now writes `src/Version.ts` header as `// src/Version.ts`
+- Tests: added branch coverage for empty `Timeline`, reversed skip, and zero-param transform step (`test/Timeline.spec.ts:171`, `test/Extend.spec.ts:293`)
+- Rebuilt `dist` (all entries), synced `deno.json`/`deno.lock`/`pnpm-lock.yaml`/`pnpm-workspace.yaml`/`src/Version.ts` (`0.1.3`) and playground `package.json` files for the release; `vitest.config.ts` comment cleanup
 
 ## [0.1.2] - 2026-08-04
 

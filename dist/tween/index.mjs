@@ -1,11 +1,12 @@
 /*!
-* @thednp/tween  v0.1.2 (https://github.com/thednp/tween)
+* @thednp/tween  v0.1.3 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
 "use strict";
 
 import { equalizePaths, equalizeSegments, pathToString } from "svg-path-commander/util";
+import CSSMatrix from "@thednp/dommatrix";
 //#region src/Easing.ts
 /**
 * A frozen collection of preset easing functions, grouped by name
@@ -611,6 +612,12 @@ const pathArrayConfig = {
 //#endregion
 //#region src/extend/object.ts
 /**
+* Caches the key list of each interpolated object so it's computed once
+* instead of every frame. The `end` object reference is stable for the
+* lifetime of a tween configuration.
+*/
+const endKeysCache = /* @__PURE__ */ new WeakMap();
+/**
 * Single-level `Record<string, number>` object interpolate function.
 *
 * **NOTE**: values must be validated first!
@@ -630,7 +637,11 @@ const pathArrayConfig = {
 * @returns The interpolated flat object with same structure.
 */
 const interpolateObject = (target, start, end, t) => {
-	const keys = Object.keys(end);
+	let keys = endKeysCache.get(end);
+	if (!keys) {
+		keys = Object.keys(end);
+		endKeysCache.set(end, keys);
+	}
 	let i = 0;
 	while (i < keys.length) {
 		const key = keys[i++];
@@ -676,7 +687,7 @@ const objectConfig = {
 /**
 * Returns a valid CSS transform string either with transform functions (Eg.: `translate(15px) rotate(25deg)`)
 * or `matrix(...)` / `matrix3d(...)`.
-* When the `toMatrix` parameter is `true` it will create a DOMMatrix instance, apply transform
+* When the `toMatrix` parameter is `true` it will create a CSSMatrix instance, apply transform
 * steps and return a `matrix(...)` or `matrix3d(...)` string value.
 * @param steps An array of TransformStep
 * @param toMatrix An optional parameter to modify the function output
@@ -684,18 +695,17 @@ const objectConfig = {
 */
 const transformToString = (steps, toMatrix = false) => {
 	if (toMatrix) {
-		const matrix = new DOMMatrix();
+		const matrix = new CSSMatrix();
+		const scratch = new CSSMatrix();
 		const len = steps.length;
 		let i = 0;
 		while (i < len) {
 			const step = steps[i++];
 			switch (step[0]) {
-				case "perspective": {
-					const m2 = new DOMMatrix();
-					m2.m34 = -1 / step[1];
-					matrix.multiplySelf(m2);
+				case "perspective":
+					scratch.m34 = -1 / step[1];
+					matrix.multiplySelf(scratch);
 					break;
-				}
 				case "translate":
 					matrix.translateSelf(step[1], step[2] || 0, step[3] || 0);
 					break;
@@ -809,6 +819,29 @@ const quaternionToAxisAngle = (q) => {
 		angle
 	];
 };
+/** Per-`end`-array cache of the number of interpolatable numeric params per step */
+const paramCountsCache = /* @__PURE__ */ new WeakMap();
+/**
+* Returns the number of interpolatable numeric parameters for each step of
+* an `end` transform array, lazily computed and cached per array reference.
+* The structure of validated transform arrays never changes between frames,
+* so the dispatch work is hoisted out of the per-frame interpolation loop.
+* @internal
+*/
+const getParamCounts = (end) => {
+	let counts = paramCountsCache.get(end);
+	if (!counts) {
+		const len = end.length;
+		counts = new Uint8Array(len);
+		let i = 0;
+		while (i < len) {
+			const sLen = end[i].length;
+			counts[i++] = sLen - 1;
+		}
+		paramCountsCache.set(end, counts);
+	}
+	return counts;
+};
 /**
 * Interpolates arrays of `TransformStep`s → returns interpolated `TransformStep`s.
 *
@@ -842,25 +875,17 @@ const quaternionToAxisAngle = (q) => {
 */
 const interpolateTransform = (target, start, end, t) => {
 	const len = end.length;
+	const counts = getParamCounts(end);
 	let i = 0;
 	while (i < len) {
+		const count = counts[i];
 		const targetStep = target[i];
 		const startStep = start[i];
 		const endStep = end[i];
-		switch (targetStep[0]) {
-			case "translate":
-			case "rotate":
-			case "scale":
-			case "rotateAxisAngle":
-				targetStep[1] = startStep[1] + (endStep[1] - startStep[1]) * t;
-				typeof endStep[2] === "number" && (targetStep[2] = startStep[2] + (endStep[2] - startStep[2]) * t);
-				typeof endStep[3] === "number" && (targetStep[3] = startStep[3] + (endStep[3] - startStep[3]) * t);
-				typeof endStep[4] === "number" && (targetStep[4] = startStep[4] + (endStep[4] - startStep[4]) * t);
-				break;
-			case "skewX":
-			case "skewY":
-			case "perspective": targetStep[1] = startStep[1] + (endStep[1] - startStep[1]) * t;
-		}
+		if (count > 0) targetStep[1] = startStep[1] + (endStep[1] - startStep[1]) * t;
+		if (count > 1) targetStep[2] = startStep[2] + (endStep[2] - startStep[2]) * t;
+		if (count > 2) targetStep[3] = startStep[3] + (endStep[3] - startStep[3]) * t;
+		if (count > 3) targetStep[4] = startStep[4] + (endStep[4] - startStep[4]) * t;
 		i++;
 	}
 	return target;
@@ -962,6 +987,8 @@ const Queue = new Array(0);
 let rafID = 0;
 /** The length of the {@link Queue}, kept in sync for micro-optimization */
 let queueLength = 0;
+/** O(1) membership lookup for the items in the {@link Queue} */
+const queuedItems = /* @__PURE__ */ new Set();
 /**
 * The hot update loop updates all items in the queue,
 * and stops automatically when there are no items left.
@@ -971,9 +998,11 @@ function Runtime(t = now()) {
 	let i = 0;
 	while (i < queueLength) if (Queue[i]?.update(t)) i += 1;
 	else {
-		Queue.splice(i, 1);
+		queuedItems.delete(Queue[i]);
+		Queue[i] = Queue[queueLength - 1];
 		queueLength--;
 	}
+	Queue.length = queueLength;
 	if (queueLength === 0) {
 		cancelAnimationFrame(rafID);
 		rafID = 0;
@@ -985,7 +1014,8 @@ function Runtime(t = now()) {
 * @param newItem - Tween / Timeline instance to add
 */
 function addToQueue(newItem) {
-	if (Queue.includes(newItem)) return;
+	if (queuedItems.has(newItem)) return;
+	queuedItems.add(newItem);
 	Queue[queueLength++] = newItem;
 	if (!rafID) Runtime();
 }
@@ -996,8 +1026,10 @@ function addToQueue(newItem) {
 function removeFromQueue(removedItem) {
 	const idx = Queue.indexOf(removedItem);
 	if (idx > -1) {
-		Queue.splice(idx, 1);
+		queuedItems.delete(removedItem);
+		Queue[idx] = Queue[queueLength - 1];
 		queueLength--;
+		Queue.length = queueLength;
 	}
 }
 //#endregion
@@ -1421,7 +1453,7 @@ var Tween = class {
 			const interpolator = prop[2];
 			const startVal = reversed ? prop[4] : prop[3];
 			const endVal = reversed ? prop[3] : prop[4];
-			if (typeof endVal === "number") state[property] = startVal + (endVal - startVal) * eased;
+			if (prop[5]) state[property] = startVal + (endVal - startVal) * eased;
 			else interpolator(targetObject, startVal, endVal, eased);
 		}
 		this._onUpdate?.(state, progress);
@@ -1497,15 +1529,20 @@ var Tween = class {
 		while (i < len) {
 			const property = endKeys[i++];
 			const objValue = obj[property];
-			if (typeof propsStart[property] === "undefined" || overrideStartingValues) if (isObject(objValue) || isArray(objValue)) propsStart[property] = deproxy(objValue);
-			else propsStart[property] = objValue;
+			if (typeof propsStart[property] === "undefined" || overrideStartingValues) {
+				if (isObject(objValue) || isArray(objValue)) propsStart[property] = deproxy(objValue);
+				else propsStart[property] = objValue;
+			}
 			const interpolator = this._interpolators.get(property) || null;
+			const endVal = propsEnd[property];
+			const isNumeric = typeof endVal === "number";
 			this._runtime[rtLen++] = [
 				objValue,
 				property,
 				interpolator,
 				propsStart[property],
-				propsEnd[property]
+				endVal,
+				isNumeric
 			];
 		}
 	}
@@ -1597,6 +1634,14 @@ var Timeline = class {
 	_interpolators = /* @__PURE__ */ new Map();
 	/** The registered validators, keyed by property name */
 	_validators = /* @__PURE__ */ new Map();
+	/**
+	* The animation entries sorted by `startTime`, rebuilt lazily on play.
+	* While the timeline is playing the entry list is frozen, so the sorted
+	* order only changes when more `.to()` calls are made.
+	*/
+	_sorted = null;
+	/** The longest entry duration, used to widen the active window bounds */
+	_maxDuration = 0;
 	/** The `onStart` callback, fired when playback begins */
 	_onStart;
 	/** The `onStop` callback, fired when the timeline is stopped */
@@ -1837,6 +1882,7 @@ var Timeline = class {
 			});
 			const endTime = startTime + entryDuration;
 			this._duration = Math.max(this._duration, endTime);
+			this._sorted = null;
 		}
 		return this;
 	}
@@ -1942,16 +1988,18 @@ var Timeline = class {
 			}
 			this._repeatDelayStart = 0;
 		}
+		const prevTime = this._time;
 		const delta = time - this._lastTime;
 		const reversed = this._reversed;
 		this._lastTime = time;
 		this._time += delta;
 		this._progress = this._time > this._duration ? 1 : this._time / this._duration;
-		const entries = this._entries;
+		if (!this._sorted) this._sorted = this._buildSortedEntries();
+		const entries = this._sorted;
 		const state = this.state;
-		const entriesLen = entries.length;
-		let i = 0;
-		while (i < entriesLen) {
+		const { startIndex, endIndex } = this._activeWindow(entries, reversed, prevTime);
+		let i = startIndex;
+		while (i < endIndex) {
 			const entry = entries[i++];
 			const startTime = !reversed ? entry.startTime : this._duration - entry.startTime - entry.duration;
 			let tweenElapsed = (this._time - startTime) / entry.duration;
@@ -1974,7 +2022,7 @@ var Timeline = class {
 					const interpolator = prop[2];
 					const startVal = reversed ? prop[4] : prop[3];
 					const endVal = reversed ? prop[3] : prop[4];
-					if (typeof endVal === "number") state[property] = startVal + (endVal - startVal) * easedValue;
+					if (prop[5]) state[property] = startVal + (endVal - startVal) * easedValue;
 					else interpolator(targetObject, startVal, endVal, easedValue);
 				}
 				if (tweenElapsed === 1) entry.isActive = false;
@@ -2007,6 +2055,7 @@ var Timeline = class {
 	*/
 	clear() {
 		this._entries.length = 0;
+		this._sorted = null;
 		this._duration = 0;
 		this._labels.clear();
 		this._time = 0;
@@ -2038,12 +2087,15 @@ var Timeline = class {
 			if (isObject(objValue) || isArray(objValue)) from[key] = deproxy(objValue);
 			else from[key] = objValue;
 			const interpolator = this._interpolators.get(key) || null;
+			const endVal = to[key];
+			const isNumeric = typeof endVal === "number";
 			entry.runtime[rtLen++] = [
 				objValue,
 				key,
 				interpolator,
 				from[key],
-				to[key]
+				endVal,
+				isNumeric
 			];
 		}
 	}
@@ -2080,6 +2132,61 @@ var Timeline = class {
 		return this._duration;
 	}
 	/**
+	* Internal method to build the sorted entry list, cached while playing.
+	* @internal
+	*/
+	_buildSortedEntries() {
+		const sorted = this._entries.slice().sort((a, b) => a.startTime - b.startTime);
+		let maxDuration = 0;
+		const len = sorted.length;
+		let i = 0;
+		while (i < len) {
+			const duration = sorted[i++].duration;
+			if (duration > maxDuration) maxDuration = duration;
+		}
+		this._maxDuration = maxDuration;
+		return sorted;
+	}
+	/**
+	* Internal method to compute the window of entries overlapping the
+	* playback-time span `[min(time, prevTime), max(time, prevTime)]`, so
+	* the update loop only processes active candidates. The bounds are a
+	* safe superset: every entry that is active, finishing or about to
+	* activate within the frame is guaranteed to be inside.
+	* @internal
+	*/
+	_activeWindow(entries, reversed, prevTime) {
+		const len = entries.length;
+		if (len === 0) return {
+			startIndex: 0,
+			endIndex: 0
+		};
+		const time = this._time;
+		const loTime = Math.min(time, prevTime);
+		const hiTime = Math.max(time, prevTime);
+		const lower = reversed ? this._duration - hiTime - this._maxDuration : loTime - this._maxDuration;
+		const upper = reversed ? this._duration - loTime : hiTime;
+		let lo = 0;
+		let hi = len;
+		while (lo < hi) {
+			const mid = lo + hi >> 1;
+			if (entries[mid].startTime < lower) lo = mid + 1;
+			else hi = mid;
+		}
+		const startIndex = lo;
+		lo = 0;
+		hi = len;
+		while (lo < hi) {
+			const mid = lo + hi >> 1;
+			if (entries[mid].startTime <= upper) lo = mid + 1;
+			else hi = mid;
+		}
+		return {
+			startIndex,
+			endIndex: lo
+		};
+	}
+	/**
 	* Internal method to handle validation of initial values and entries values.
 	* @internal
 	*/
@@ -2108,8 +2215,7 @@ var Timeline = class {
 };
 //#endregion
 //#region src/Version.ts
-/** The current version of the library, synced from package.json */
-const version = "0.1.2";
+const version = "0.1.3";
 //#endregion
 export { Easing, Queue, Runtime, Timeline, Tween, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, equalizePaths, equalizeSegments, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
 

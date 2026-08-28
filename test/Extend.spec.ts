@@ -290,6 +290,15 @@ describe("Extend", () => {
     expect(interpolate(target, a1, a2, 1)).to.deep.equal(a2);
   });
 
+  it("interpolates transform steps with no numeric params", () => {
+    const { interpolate } = transformConfig;
+    const target: TransformArray = [["rotate"]];
+    const start: TransformArray = [["rotate"]];
+    const end: TransformArray = [["rotate"]];
+
+    expect(interpolate(target, start, end, 0.5)).to.deep.equal([["rotate"]]);
+  });
+
   it("converts euler rotation to axis angle", () => {
     const euler = [15,45,60] as [number, number, number];
     expect(eulerToAxisAngle(...euler)).to.deep.equal([

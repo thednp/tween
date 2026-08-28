@@ -12,6 +12,8 @@ export const Queue: AnimationItem[] = new Array(0);
 let rafID = 0;
 /** The length of the {@link Queue}, kept in sync for micro-optimization */
 let queueLength = 0;
+/** O(1) membership lookup for the items in the {@link Queue} */
+const queuedItems = new Set<AnimationItem>();
 
 /**
  * The hot update loop updates all items in the queue,
@@ -20,15 +22,19 @@ let queueLength = 0;
  */
 export function Runtime(t: number = now()) {
   let i = 0;
-  // queueLength = Queue.length;
   while (i < queueLength) {
     if (Queue[i]?.update(t)) {
       i += 1;
     } else {
-      Queue.splice(i, 1);
+      // swap-and-pop: O(1) removal, order in the queue is irrelevant
+      queuedItems.delete(Queue[i] as AnimationItem);
+      Queue[i] = Queue[queueLength - 1];
       queueLength--;
     }
   }
+
+  // keep the public queue length in sync with the internal counter
+  Queue.length = queueLength;
 
   if (queueLength === 0) {
     cancelAnimationFrame(rafID);
@@ -45,9 +51,10 @@ export function addToQueue<T extends TweenProps>(
   newItem: AnimationItem<T>,
 ): void {
   // istanbul ignore else @preserve
-  if (Queue.includes(newItem as AnimationItem<never>)) return;
+  if (queuedItems.has(newItem as AnimationItem)) return;
+  queuedItems.add(newItem as AnimationItem);
   // Queue.push(item);
-  Queue[queueLength++] = newItem as AnimationItem<never>;
+  Queue[queueLength++] = newItem as AnimationItem;
   // istanbul ignore else @preserve
   if (!rafID) Runtime();
 }
@@ -59,10 +66,12 @@ export function addToQueue<T extends TweenProps>(
 export function removeFromQueue<T extends TweenProps>(
   removedItem: AnimationItem<T>,
 ): void {
-  const idx = Queue.indexOf(removedItem as AnimationItem<never>);
+  const idx = Queue.indexOf(removedItem as AnimationItem);
   // istanbul ignore else @preserve
   if (idx > -1) {
-    Queue.splice(idx, 1);
+    queuedItems.delete(removedItem as AnimationItem);
+    Queue[idx] = Queue[queueLength - 1];
     queueLength--;
+    Queue.length = queueLength;
   }
 }

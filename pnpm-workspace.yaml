@@ -1,5 +1,20 @@
+peerDependencyRules:
+  allowAny:
+    - typescript
 allowBuilds:
   svelte-preprocess: true
 minimumReleaseAgeExclude:
-  - '@thednp/dommatrix@3.0.6'
-  - svg-path-commander@2.2.4
+  - '@thednp/dommatrix@3.0.6 || 3.1.0 || 3.1.1'
+  - svg-path-commander@2.2.4 || 2.3.0 || 2.3.1
+  - '@thednp/tween@0.1.2'
+  - '@vue/compiler-core@3.5.41'
+  - '@vue/compiler-dom@3.5.41'
+  - '@vue/compiler-sfc@3.5.41'
+  - '@vue/compiler-ssr@3.5.41'
+  - '@vue/reactivity@3.5.41'
+  - '@vue/runtime-core@3.5.41'
+  - '@vue/runtime-dom@3.5.41'
+  - '@vue/server-renderer@3.5.41'
+  - '@vue/shared@3.5.41'
+  - vue@3.5.41
+  - happy-dom@20.11.12

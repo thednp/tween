@@ -518,11 +518,10 @@ export class Tween<T extends TweenProps = TweenProps> {
       const startVal = reversed ? prop[4] : prop[3];
       const endVal = reversed ? prop[3] : prop[4];
 
-      if (typeof endVal === "number") {
+      if (prop[5]) {
         state[property as keyof T] =
-          ((startVal as number) + (endVal - (startVal as number)) * eased) as T[
-            keyof T
-          ];
+          ((startVal as number) + ((endVal as number) - (startVal as number)) *
+              eased) as T[keyof T];
       } else {
         interpolator(
           targetObject as never,
@@ -644,6 +643,10 @@ export class Tween<T extends TweenProps = TweenProps> {
       // Pre-register interpolator
       const interpolator = this._interpolators.get(property) || null;
 
+      // Hoist the numeric/value-type check out of the per-frame loop
+      const endVal = propsEnd[property] as T[keyof T];
+      const isNumeric = typeof endVal === "number";
+
       // Store all values needed for interpolation
       // regardless if propsStart[property] is set or not
       this._runtime[rtLen++] = [
@@ -651,7 +654,8 @@ export class Tween<T extends TweenProps = TweenProps> {
         property,
         interpolator,
         propsStart[property] as T[keyof T],
-        propsEnd[property] as T[keyof T],
+        endVal,
+        isNumeric,
       ] as TweenRuntime<T>;
     }
   }

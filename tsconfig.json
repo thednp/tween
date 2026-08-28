@@ -19,6 +19,7 @@
     "removeComments": false,
     "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
     "noEmit": true,
     "checkJs": true,
   },

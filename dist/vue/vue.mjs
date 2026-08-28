@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween composables for Vue v0.1.2 (https://github.com/thednp/tween)
+* @thednp/tween composables for Vue v0.1.3 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -129,6 +129,15 @@ function miniStore(init) {
 }
 //#endregion
 //#region src/vue/index.ts
+/**
+* Vue integration for {@link @thednp/tween}.
+*
+* Provides `useTween` and `useTimeline` hooks backed by a reactive
+* miniStore, plus re-exports of the core {@link Tween} / {@link Timeline}
+* classes and the {@link miniStore} helper.
+*
+* @module
+*/
 /**
 * Vue composable for updating values with Tween.
 *

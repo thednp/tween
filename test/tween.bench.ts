@@ -38,14 +38,14 @@ describe("Tween bench: current src vs 0.1.2 (DOMMatrix, no perf work)", () => {
   const numericTween = (lib: Lib) => {
     const tweens: InstanceType<typeof lib.Tween>[] = [];
     for (let i = 0; i < 100; i++) {
-      tweens.push(new lib.Tween({ x: 0 }).to({ x: 100 }).duration(1).start(0));
+      tweens.push(new lib.Tween({ x: 0 }).to({ x: 100 }).duration(1).start(0) as never);
     }
     return () => {
       let checksum = 0;
       for (let f = 0; f < 60; f++) {
         for (let i = 0; i < 100; i++) {
-          checksum += tweens[i].update(f * 16);
-          checksum += tweens[i].state.x | 0;
+          checksum += tweens[i].update(f * 16) as never;
+          checksum += tweens[i].state.x as never | 0;
         }
       }
       return checksum;
@@ -61,7 +61,7 @@ describe("Tween bench: current src vs 0.1.2 (DOMMatrix, no perf work)", () => {
     tl.play(0);
     return () => {
       let checksum = 0;
-      for (let f = 0; f < 240; f++) checksum += tl.update(f * 16);
+      for (let f = 0; f < 240; f++) checksum += tl.update(f * 16) as never;
       return checksum;
     };
   };
@@ -165,7 +165,7 @@ describe("Tween bench: current src vs 0.1.2 (DOMMatrix, no perf work)", () => {
         ["rotate", 0],
         ["scale", 1],
       ],
-    };
+    } as New.TweenProps;
     const tween = new lib.Tween(state);
     tween.use("transform", lib.transformConfig);
     tween
@@ -181,8 +181,8 @@ describe("Tween bench: current src vs 0.1.2 (DOMMatrix, no perf work)", () => {
     return () => {
       let checksum = 0;
       for (let f = 0; f < 60; f++) {
-        checksum += tween.update(f * 16);
-        checksum += sumValues(state.transform);
+        checksum += tween.update(f * 16) as never;
+        checksum += sumValues(state.transform as never);
       }
       return checksum;
     };
@@ -210,7 +210,7 @@ describe("Tween bench: current src vs 0.1.2 (DOMMatrix, no perf work)", () => {
       oldFn();
       newFn();
     }
-    bench(`old 0.1.2 — ${name}`, oldFn, { time: 200 });
-    bench(`new src     — ${name}`, newFn, { time: 200 });
+    bench(`0.1.2 — ${name}`, oldFn as never, { time: 200 });
+    bench(`0.1.3 — ${name}`, newFn as never, { time: 200 });
   });
 });

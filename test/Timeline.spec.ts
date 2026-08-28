@@ -171,6 +171,30 @@ describe("Timeline", () => {
     expect(tl.state.x).toBe(0);
   });
 
+  it("should complete immediately with no entries", () => {
+    const tl = new Timeline(target).play();
+    expect(tl.isPlaying).toBe(true);
+
+    tl.update(1000);
+    expect(tl.isPlaying).toBe(false);
+  });
+
+  it("should skip not-yet-started entries in reversed playback", () => {
+    const tl = new Timeline(target)
+      .to({ x: 100, duration: 0.1 })
+      .to({ y: 100, duration: 0.2 })
+      .repeat(1)
+      .yoyo(true)
+      .play(0);
+
+    tl.update(300); // first cycle done, reversed repeat starts
+    expect(tl.isPlaying).toBe(true);
+
+    tl.update(400); // reversed time 100: y entry active, x not started yet
+    expect(tl.state.y).toBe(50);
+    expect(tl.state.x).toBe(0);
+  });
+
   it("should repeat once and reset state", () => {
     const tl = new Timeline(target)
       .to({ x: 100, duration: 1 })

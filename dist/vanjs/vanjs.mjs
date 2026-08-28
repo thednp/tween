@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween primitives for VanJS v0.1.2 (https://github.com/thednp/tween)
+* @thednp/tween primitives for VanJS v0.1.3 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */
@@ -263,6 +263,16 @@ function miniStore(init) {
 }
 //#endregion
 //#region src/vanjs/index.ts
+/**
+* VanJS integration for {@link @thednp/tween}.
+*
+* Provides `createTween` and `createTimeline` primitives backed by a
+* reactive miniStore with automatic DOM cleanup, plus re-exports of the
+* core {@link Tween} / {@link Timeline} classes and the {@link miniStore}
+* helper.
+*
+* @module
+*/
 /**
 * VanJS primitive for updating values with Tween.
 *

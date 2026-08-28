@@ -79,6 +79,14 @@ export class Timeline<T extends TweenProps = TweenProps> {
   private _interpolators = new Map<string | keyof T, InterpolatorFunction>();
   /** The registered validators, keyed by property name */
   private _validators = new Map<string | keyof T, ValidationFunction>();
+  /**
+   * The animation entries sorted by `startTime`, rebuilt lazily on play.
+   * While the timeline is playing the entry list is frozen, so the sorted
+   * order only changes when more `.to()` calls are made.
+   */
+  private _sorted: TimelineEntry<T>[] | null = null;
+  /** The longest entry duration, used to widen the active window bounds */
+  private _maxDuration = 0;
   /** The `onStart` callback, fired when playback begins */
   private _onStart?: TimelineCallback<T>;
   /** The `onStop` callback, fired when the timeline is stopped */
@@ -368,6 +376,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
 
       const endTime = startTime + entryDuration;
       this._duration = Math.max(this._duration, endTime);
+      this._sorted = null;
     }
     return this;
   }
@@ -490,6 +499,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
       this._repeatDelayStart = 0;
     }
 
+    const prevTime = this._time;
     const delta = time - this._lastTime;
     const reversed = this._reversed;
     this._lastTime = time;
@@ -499,12 +509,21 @@ export class Timeline<T extends TweenProps = TweenProps> {
       ? 1
       : this._time / this._duration;
 
-    const entries = this._entries;
-    const state = this.state;
-    const entriesLen = entries.length;
-    let i = 0;
+    // Binary search the sorted entries to only process the active window:
+    // entries overlapping the current time. Since the entry list is frozen
+    // while playing, the sorted order is cached and only rebuilt on change.
+    if (!this._sorted) this._sorted = this._buildSortedEntries();
 
-    while (i < entriesLen) {
+    const entries = this._sorted;
+    const state = this.state;
+    const { startIndex, endIndex } = this._activeWindow(
+      entries,
+      reversed,
+      prevTime,
+    );
+    let i = startIndex;
+
+    while (i < endIndex) {
       const entry = entries[i++];
 
       // reverse start time
@@ -548,9 +567,11 @@ export class Timeline<T extends TweenProps = TweenProps> {
           const startVal = reversed ? prop[4] : prop[3];
           const endVal = reversed ? prop[3] : prop[4];
 
-          if (typeof endVal === "number") {
+          if (prop[5]) {
             state[property as keyof T] = ((startVal as number) +
-              (endVal - (startVal as number)) * easedValue) as T[keyof T];
+              ((endVal as number) - (startVal as number)) * easedValue) as T[
+                keyof T
+              ];
           } else {
             interpolator(
               targetObject as never,
@@ -602,6 +623,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
    */
   clear(): this {
     this._entries.length = 0;
+    this._sorted = null;
     this._duration = 0;
     this._labels.clear();
     this._time = 0;
@@ -643,13 +665,18 @@ export class Timeline<T extends TweenProps = TweenProps> {
 
       const interpolator = this._interpolators.get(key) || null;
 
+      // Hoist the numeric/value-type check out of the per-frame loop
+      const endVal = to[key] as T[keyof T];
+      const isNumeric = typeof endVal === "number";
+
       // Push tuple
       entry.runtime[rtLen++] = [
         objValue,
         key,
         interpolator,
         from[key] as T[keyof T],
-        to[key] as T[keyof T],
+        endVal,
+        isNumeric,
       ] as TimelineEntry<T>["runtime"][0];
     }
   }
@@ -700,6 +727,77 @@ export class Timeline<T extends TweenProps = TweenProps> {
 
     // Fallback to current duration
     return this._duration;
+  }
+
+  /**
+   * Internal method to build the sorted entry list, cached while playing.
+   * @internal
+   */
+  private _buildSortedEntries(): TimelineEntry<T>[] {
+    const sorted = this._entries.slice().sort(
+      (a, b) => a.startTime - b.startTime,
+    );
+    let maxDuration = 0;
+    const len = sorted.length;
+    let i = 0;
+    while (i < len) {
+      const duration = sorted[i++].duration;
+      if (duration > maxDuration) maxDuration = duration;
+    }
+    this._maxDuration = maxDuration;
+    return sorted;
+  }
+
+  /**
+   * Internal method to compute the window of entries overlapping the
+   * playback-time span `[min(time, prevTime), max(time, prevTime)]`, so
+   * the update loop only processes active candidates. The bounds are a
+   * safe superset: every entry that is active, finishing or about to
+   * activate within the frame is guaranteed to be inside.
+   * @internal
+   */
+  private _activeWindow(
+    entries: TimelineEntry<T>[],
+    reversed: boolean,
+    prevTime: number,
+  ): { startIndex: number; endIndex: number } {
+    const len = entries.length;
+    if (len === 0) return { startIndex: 0, endIndex: 0 };
+
+    const time = this._time;
+    const loTime = Math.min(time, prevTime);
+    const hiTime = Math.max(time, prevTime);
+    // safe lower bound of the entry start times that could be in play:
+    // - forward:  startTime >= loTime - maxDuration
+    // - reversed: startTime >= duration - hiTime - maxDuration
+    const lower = reversed
+      ? this._duration - hiTime - this._maxDuration
+      : loTime - this._maxDuration;
+    // safe upper bound of the entry start times that could be in play:
+    // - forward:  startTime <= hiTime
+    // - reversed: startTime <= duration - loTime
+    const upper = reversed ? this._duration - loTime : hiTime;
+
+    // binary search the first entry with startTime >= lower
+    let lo = 0;
+    let hi = len;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (entries[mid].startTime < lower) lo = mid + 1;
+      else hi = mid;
+    }
+    const startIndex = lo;
+
+    // binary search the first entry with startTime > upper
+    lo = 0;
+    hi = len;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (entries[mid].startTime <= upper) lo = mid + 1;
+      else hi = mid;
+    }
+
+    return { startIndex, endIndex: lo };
   }
 
   /**
