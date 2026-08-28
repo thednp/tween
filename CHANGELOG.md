@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.1.3] - 2026-08-05
+## [0.1.3] - 2026-08-28
 
 ### Added
 - `test/tween.bench.ts` — committed benchmark suite (`pnpm bench`, `vitest bench`) comparing the current source against the published `0.1.2` build (vendored as `test/fixtures/tween-0.1.2.mjs`): measured ~39x faster 500-entry `Timeline` updates (windowed binary search vs O(n) scan) and ~7.5x faster `transformToString` with matrix output (CSSMatrix vs native DOMMatrix); object (5/20 keys), transform (7 steps) and path interpolation scenarios at parity or slightly faster with DCE-safe checksums and JIT warmup
