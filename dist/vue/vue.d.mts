@@ -1,5 +1,5 @@
 /*!
-* @thednp/tween composables for Vue v0.1.4 (https://github.com/thednp/tween)
+* @thednp/tween composables for Vue v0.1.5 (https://github.com/thednp/tween)
 * Copyright 2026 © thednp
 * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
 */

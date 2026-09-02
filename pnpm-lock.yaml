@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@thednp/dommatrix':
-        specifier: ^3.1.1
-        version: 3.1.1
+        specifier: ^3.1.2
+        version: 3.1.2
       preact:
         specifier: ^10.29.8
         version: 10.29.8
@@ -21,11 +21,11 @@ importers:
         specifier: ^1.9.15
         version: 1.9.15
       svelte:
-        specifier: ^5.56.10
-        version: 5.56.10
+        specifier: ^5.57.0
+        version: 5.57.0
       svg-path-commander:
-        specifier: ^2.3.1
-        version: 2.3.1
+        specifier: ^2.3.2
+        version: 2.3.2
       vanjs-core:
         specifier: ^1.6.1
         version: 1.6.1
@@ -35,10 +35,10 @@ importers:
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^7.3.0
-        version: 7.3.0(svelte@5.56.10)(vite@8.2.2(@types/node@26.4.0))
+        version: 7.3.0(svelte@5.57.0)(vite@8.2.2(@types/node@26.4.1))
       '@types/node':
-        specifier: ^26.4.0
-        version: 26.4.0
+        specifier: ^26.4.1
+        version: 26.4.1
       '@types/react':
         specifier: ^19.2.18
         version: 19.2.18
@@ -52,17 +52,17 @@ importers:
         specifier: ^4.1.11
         version: 4.1.11(vitest@4.1.11)
       happy-dom:
-        specifier: ^20.11.12
-        version: 20.11.12
+        specifier: ^20.12.2
+        version: 20.12.2
       react-dom:
         specifier: ^19.2.8
         version: 19.2.8(react@19.2.8)
       rollup-plugin-svelte:
         specifier: ^7.2.3
-        version: 7.2.3(rollup@4.63.0)(svelte@5.56.10)
+        version: 7.2.3(rollup@4.63.0)(svelte@5.57.0)
       svelte-preprocess:
         specifier: ^6.0.5
-        version: 6.0.5(@babel/core@7.29.7(supports-color@7.2.0))(postcss@8.5.26)(svelte@5.56.10)(typescript@7.0.2)
+        version: 6.0.5(@babel/core@7.29.7(supports-color@7.2.0))(postcss@8.5.26)(svelte@5.57.0)(typescript@7.0.2)
       tsdown:
         specifier: ^0.22.14
         version: 0.22.14(typescript@7.0.2)
@@ -74,7 +74,7 @@ importers:
         version: 0.0.10
       vitest:
         specifier: ^4.1.11
-        version: 4.1.11(@types/node@26.4.0)(@vitest/coverage-istanbul@4.1.11)(@vitest/ui@4.1.11)(happy-dom@20.11.12)(vite@8.2.2(@types/node@26.4.0))
+        version: 4.1.11(@types/node@26.4.1)(@vitest/coverage-istanbul@4.1.11)(@vitest/ui@4.1.11)(happy-dom@20.12.2)(vite@8.2.2(@types/node@26.4.1))
 
 packages:
 
@@ -159,8 +159,8 @@ packages:
     resolution: {integrity: sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==}
     engines: {node: '>=6.0.0'}
 
-  '@jridgewell/sourcemap-codec@1.5.5':
-    resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
+  '@jridgewell/sourcemap-codec@1.6.0':
+    resolution: {integrity: sha512-T7jf+5zgsZHwNJ4lvQ7/aezbyk0nNX+zJVWpmHA7VYsEx7a7qr5Rg5IbtJFqkgze5Y2sruq1RUY8Q837Od7iFw==}
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
@@ -437,8 +437,8 @@ packages:
       svelte: ^5.46.4
       vite: ^8.0.0-beta.7 || ^8.0.0
 
-  '@thednp/dommatrix@3.1.1':
-    resolution: {integrity: sha512-LQw9A56KeDYN9aPFGjad2xTpGNnsIsvq98k1l28HNsvi+SuRFY6M5ET3f0SFrtssOKOcvgqmObztR0/dc6kSZQ==}
+  '@thednp/dommatrix@3.1.2':
+    resolution: {integrity: sha512-wxRH2/Qdqd+JxFpjb5vw+ZMaij8Hqa/9Hgl41n2Jb+3WNRhdemrosK0FxEo/yEvhvHGW8D1tZ3oPH9N0m1QG+A==}
 
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
@@ -449,8 +449,8 @@ packages:
   '@types/estree@1.0.9':
     resolution: {integrity: sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg==}
 
-  '@types/node@26.4.0':
-    resolution: {integrity: sha512-faiGnoIrLH/V8cibOMEAZ8pMw6oXqSukl29ra4mN8GdaB2ZewzeaLj+INpV5N+Z1eKWzY+IzaIZH2EIR6YZRNQ==}
+  '@types/node@26.4.1':
+    resolution: {integrity: sha512-k97ENvZWtvA6yqz5/FS6a7duDgOPEeOQOc2iKS/nY6mX6qJUKtLnWzQS+Xj6tXweyj6ZcTAK2Qecetnvi9nCLA==}
 
   '@types/react-dom@19.2.5':
     resolution: {integrity: sha512-fMPwH9v7r/pp43yUd2/Mbiex5KouJwwR3dzHkhLREUC6764VyDsqxhAxv6OFEYR1RhjOyD1naqba8ECDBe7ZQg==}
@@ -459,9 +459,6 @@ packages:
 
   '@types/react@19.2.18':
     resolution: {integrity: sha512-AnzbBERsrLKtk2XSfTbYRLjQPdy116Sty4q+T+Bp3IC4l6jNBvreVPAHmpq9qhXQM7CXZPjLVmGMw9sy+hxQ3w==}
-
-  '@types/trusted-types@2.0.7':
-    resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
 
   '@types/whatwg-mimetype@3.0.2':
     resolution: {integrity: sha512-c2AKvDT8ToxLIOUlN51gTiHXflsfIFisS4pO7pDPoKouJCESkhZnEy623gwP9laCy5lnLDAw1vAzu2vM2YLOrA==}
@@ -866,8 +863,8 @@ packages:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
     engines: {node: '>=8'}
 
-  devalue@5.9.1:
-    resolution: {integrity: sha512-+17vil3EVQRzvtDJSFuTWEb8XJRvXqAiV3qZyQWD398QeXUa6CxsUyMdD1fxzEhUrd4FojitFz7lhIHBTlV4fw==}
+  devalue@5.9.2:
+    resolution: {integrity: sha512-po4PAY5c53tw5XMocSnf8A/5OHhbbUftpr93aEN6BBoAdntUmK7vu7wOATqvt7cXO7m1Cl4gMVn6p7n6n4mj0w==}
 
   dts-resolver@3.0.0:
     resolution: {integrity: sha512-1T1f+z+4tl9XD+m+0HBgWoL/nm0bOIffyWaUuUSBlFg/86IWvfx+wjNaO/ybU0AJzG9/Mi5hBUgGV6zCmWEN7Q==}
@@ -945,8 +942,8 @@ packages:
     resolution: {integrity: sha512-/6gFNr0N04nob252sTQxyFLi3eKFRqIg1I87YcqAMT1i6SQrSF6KujUEQrtrjMV0H/eejTCltLdDSTEMzHbnsQ==}
     engines: {node: '>=20.20.0'}
 
-  happy-dom@20.11.12:
-    resolution: {integrity: sha512-7+mrTTD+6fOG3dx0URrDLrCX8QDTE+YujSOQD4VPZcYze/yJ0vVhRKaIBTjqlk+R4NetxVz21odnevHYIjIJ+g==}
+  happy-dom@20.12.2:
+    resolution: {integrity: sha512-vCIoyoKQ7vxLb9zRiTc7uKryHDG3YY6tXK96D6MuugFnV9xTbmiPGM/GYFn1q+fWoIBv53q4rBEgydDkQwnDZw==}
     engines: {node: '>=20.0.0'}
 
   has-flag@4.0.0:
@@ -1268,12 +1265,12 @@ packages:
       typescript:
         optional: true
 
-  svelte@5.56.10:
-    resolution: {integrity: sha512-Lcxbj8I/KAbpY+VjtY4ENQBV0dDCipfGAhqb51XQZ67CIQqXgsv/8dPkbILaj4Fb6/b6JAEM/PIVbILXgDQy2g==}
+  svelte@5.57.0:
+    resolution: {integrity: sha512-NdbDn7fl4be1ViUG0oq/lvG6OZy3oENolV2ONjiqqsfVoeAfzaQAKUcEX3MrQod/Bebv1PgwET9rfXhgn9s4Kg==}
     engines: {node: '>=18'}
 
-  svg-path-commander@2.3.1:
-    resolution: {integrity: sha512-2xrujvzC1qiJYHnLvfe04287sgjEnsMTJd3IeEh+qexdV/MrAzgOF6/Ze39g1wbg9d+Lzq8IFi2hv/Vu27m0zQ==}
+  svg-path-commander@2.3.2:
+    resolution: {integrity: sha512-6unmlif4fw855a4fl80BMJkRVtMlnit3v1/s5+XGO7xQr3vyhXfF7qTHxNSR0klIIuCIQo0wPIbJqD2GpwbbVQ==}
 
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
@@ -1602,7 +1599,7 @@ snapshots:
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.5
+      '@jridgewell/sourcemap-codec': 1.6.0
       '@jridgewell/trace-mapping': 0.3.31
 
   '@jridgewell/remapping@2.3.5':
@@ -1612,12 +1609,12 @@ snapshots:
 
   '@jridgewell/resolve-uri@3.1.2': {}
 
-  '@jridgewell/sourcemap-codec@1.5.5': {}
+  '@jridgewell/sourcemap-codec@1.6.0': {}
 
   '@jridgewell/trace-mapping@0.3.31':
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
-      '@jridgewell/sourcemap-codec': 1.5.5
+      '@jridgewell/sourcemap-codec': 1.6.0
 
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
     optional: true
@@ -1763,16 +1760,16 @@ snapshots:
     dependencies:
       acorn: 8.18.0
 
-  '@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.56.10)(vite@8.2.2(@types/node@26.4.0))':
+  '@sveltejs/vite-plugin-svelte@7.3.0(svelte@5.57.0)(vite@8.2.2(@types/node@26.4.1))':
     dependencies:
       deepmerge: 4.3.1
       magic-string: 1.2.3
       obug: 2.1.4
-      svelte: 5.56.10
-      vite: 8.2.2(@types/node@26.4.0)
-      vitefu: 1.1.3(vite@8.2.2(@types/node@26.4.0))
+      svelte: 5.57.0
+      vite: 8.2.2(@types/node@26.4.1)
+      vitefu: 1.1.3(vite@8.2.2(@types/node@26.4.1))
 
-  '@thednp/dommatrix@3.1.1': {}
+  '@thednp/dommatrix@3.1.2': {}
 
   '@types/chai@5.2.3':
     dependencies:
@@ -1783,7 +1780,7 @@ snapshots:
 
   '@types/estree@1.0.9': {}
 
-  '@types/node@26.4.0':
+  '@types/node@26.4.1':
     dependencies:
       undici-types: 8.3.0
 
@@ -1795,13 +1792,11 @@ snapshots:
     dependencies:
       csstype: 3.2.3
 
-  '@types/trusted-types@2.0.7': {}
-
   '@types/whatwg-mimetype@3.0.2': {}
 
   '@types/ws@8.18.1':
     dependencies:
-      '@types/node': 26.4.0
+      '@types/node': 26.4.1
 
   '@typescript/typescript-aix-ppc64@7.0.2':
     optional: true
@@ -1875,7 +1870,7 @@ snapshots:
       magicast: 0.5.4
       obug: 2.1.4
       tinyrainbow: 3.1.1
-      vitest: 4.1.11(@types/node@26.4.0)(@vitest/coverage-istanbul@4.1.11)(@vitest/ui@4.1.11)(happy-dom@20.11.12)(vite@8.2.2(@types/node@26.4.0))
+      vitest: 4.1.11(@types/node@26.4.1)(@vitest/coverage-istanbul@4.1.11)(@vitest/ui@4.1.11)(happy-dom@20.12.2)(vite@8.2.2(@types/node@26.4.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -1888,13 +1883,13 @@ snapshots:
       chai: 6.2.2
       tinyrainbow: 3.1.1
 
-  '@vitest/mocker@4.1.11(vite@8.2.2(@types/node@26.4.0))':
+  '@vitest/mocker@4.1.11(vite@8.2.2(@types/node@26.4.1))':
     dependencies:
       '@vitest/spy': 4.1.11
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 8.2.2(@types/node@26.4.0)
+      vite: 8.2.2(@types/node@26.4.1)
 
   '@vitest/pretty-format@4.1.11':
     dependencies:
@@ -1923,7 +1918,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.17
       tinyrainbow: 3.1.1
-      vitest: 4.1.11(@types/node@26.4.0)(@vitest/coverage-istanbul@4.1.11)(@vitest/ui@4.1.11)(happy-dom@20.11.12)(vite@8.2.2(@types/node@26.4.0))
+      vitest: 4.1.11(@types/node@26.4.1)(@vitest/coverage-istanbul@4.1.11)(@vitest/ui@4.1.11)(happy-dom@20.12.2)(vite@8.2.2(@types/node@26.4.1))
 
   '@vitest/utils@4.1.11':
     dependencies:
@@ -2081,7 +2076,7 @@ snapshots:
 
   buffer-image-size@0.6.4:
     dependencies:
-      '@types/node': 26.4.0
+      '@types/node': 26.4.1
 
   cac@7.0.0: {}
 
@@ -2107,7 +2102,7 @@ snapshots:
 
   detect-libc@2.1.2: {}
 
-  devalue@5.9.1: {}
+  devalue@5.9.2: {}
 
   dts-resolver@3.0.0: {}
 
@@ -2125,7 +2120,7 @@ snapshots:
 
   esrap@2.3.6:
     dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.5
+      '@jridgewell/sourcemap-codec': 1.6.0
 
   estree-walker@2.0.2: {}
 
@@ -2152,9 +2147,9 @@ snapshots:
     dependencies:
       resolve-pkg-maps: 1.0.0
 
-  happy-dom@20.11.12:
+  happy-dom@20.12.2:
     dependencies:
-      '@types/node': 26.4.0
+      '@types/node': 26.4.1
       '@types/whatwg-mimetype': 3.0.2
       '@types/ws': 8.18.1
       buffer-image-size: 0.6.4
@@ -2253,11 +2248,11 @@ snapshots:
 
   magic-string@0.30.21:
     dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.5
+      '@jridgewell/sourcemap-codec': 1.6.0
 
   magic-string@1.2.3:
     dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.5
+      '@jridgewell/sourcemap-codec': 1.6.0
 
   magicast@0.5.4:
     dependencies:
@@ -2343,12 +2338,12 @@ snapshots:
       '@rolldown/binding-win32-arm64-msvc': 1.2.6
       '@rolldown/binding-win32-x64-msvc': 1.2.6
 
-  rollup-plugin-svelte@7.2.3(rollup@4.63.0)(svelte@5.56.10):
+  rollup-plugin-svelte@7.2.3(rollup@4.63.0)(svelte@5.57.0):
     dependencies:
       '@rollup/pluginutils': 4.2.1
       resolve.exports: 2.0.3
       rollup: 4.63.0
-      svelte: 5.56.10
+      svelte: 5.57.0
 
   rollup@4.63.0:
     dependencies:
@@ -2418,26 +2413,25 @@ snapshots:
     dependencies:
       has-flag: 4.0.0
 
-  svelte-preprocess@6.0.5(@babel/core@7.29.7(supports-color@7.2.0))(postcss@8.5.26)(svelte@5.56.10)(typescript@7.0.2):
+  svelte-preprocess@6.0.5(@babel/core@7.29.7(supports-color@7.2.0))(postcss@8.5.26)(svelte@5.57.0)(typescript@7.0.2):
     dependencies:
-      svelte: 5.56.10
+      svelte: 5.57.0
     optionalDependencies:
       '@babel/core': 7.29.7(supports-color@7.2.0)
       postcss: 8.5.26
       typescript: 7.0.2
 
-  svelte@5.56.10:
+  svelte@5.57.0:
     dependencies:
       '@jridgewell/remapping': 2.3.5
-      '@jridgewell/sourcemap-codec': 1.5.5
+      '@jridgewell/sourcemap-codec': 1.6.0
       '@sveltejs/acorn-typescript': 1.0.13(acorn@8.18.0)
       '@types/estree': 1.0.9
-      '@types/trusted-types': 2.0.7
       acorn: 8.18.0
       aria-query: 5.3.1
       axobject-query: 4.1.0
       clsx: 2.1.1
-      devalue: 5.9.1
+      devalue: 5.9.2
       esm-env: 1.2.2
       esrap: 2.3.6
       is-reference: 3.0.3
@@ -2447,9 +2441,9 @@ snapshots:
     transitivePeerDependencies:
       - '@typescript-eslint/types'
 
-  svg-path-commander@2.3.1:
+  svg-path-commander@2.3.2:
     dependencies:
-      '@thednp/dommatrix': 3.1.1
+      '@thednp/dommatrix': 3.1.2
 
   tinybench@2.9.0: {}
 
@@ -2533,7 +2527,7 @@ snapshots:
 
   vite-plugin-strip-comments@0.0.10: {}
 
-  vite@8.2.2(@types/node@26.4.0):
+  vite@8.2.2(@types/node@26.4.1):
     dependencies:
       lightningcss: 1.33.0
       picomatch: 4.0.7
@@ -2541,17 +2535,17 @@ snapshots:
       rolldown: 1.2.6
       tinyglobby: 0.2.17
     optionalDependencies:
-      '@types/node': 26.4.0
+      '@types/node': 26.4.1
       fsevents: 2.3.3
 
-  vitefu@1.1.3(vite@8.2.2(@types/node@26.4.0)):
+  vitefu@1.1.3(vite@8.2.2(@types/node@26.4.1)):
     optionalDependencies:
-      vite: 8.2.2(@types/node@26.4.0)
+      vite: 8.2.2(@types/node@26.4.1)
 
-  vitest@4.1.11(@types/node@26.4.0)(@vitest/coverage-istanbul@4.1.11)(@vitest/ui@4.1.11)(happy-dom@20.11.12)(vite@8.2.2(@types/node@26.4.0)):
+  vitest@4.1.11(@types/node@26.4.1)(@vitest/coverage-istanbul@4.1.11)(@vitest/ui@4.1.11)(happy-dom@20.12.2)(vite@8.2.2(@types/node@26.4.1)):
     dependencies:
       '@vitest/expect': 4.1.11
-      '@vitest/mocker': 4.1.11(vite@8.2.2(@types/node@26.4.0))
+      '@vitest/mocker': 4.1.11(vite@8.2.2(@types/node@26.4.1))
       '@vitest/pretty-format': 4.1.11
       '@vitest/runner': 4.1.11
       '@vitest/snapshot': 4.1.11
@@ -2568,13 +2562,13 @@ snapshots:
       tinyexec: 1.3.0
       tinyglobby: 0.2.17
       tinyrainbow: 3.1.1
-      vite: 8.2.2(@types/node@26.4.0)
+      vite: 8.2.2(@types/node@26.4.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 26.4.0
+      '@types/node': 26.4.1
       '@vitest/coverage-istanbul': 4.1.11(supports-color@7.2.0)(vitest@4.1.11)
       '@vitest/ui': 4.1.11(vitest@4.1.11)
-      happy-dom: 20.11.12
+      happy-dom: 20.12.2
     transitivePeerDependencies:
       - msw
 

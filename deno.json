@@ -1,6 +1,6 @@
 {
   "name": "@thednp/tween",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "license": "MIT",
   "description": "🌸 A Typescript sourced tweening engine with Tween and Timeline",
   "keywords": [
@@ -40,13 +40,13 @@
     "@sveltejs/vite-plugin-svelte": "npm:@sveltejs/vite-plugin-svelte@^7.3.0",
     "@vitest/coverage-istanbul": "npm:@vitest/coverage-istanbul@^4.1.11",
     "@vitest/ui": "npm:@vitest/ui@^4.1.11",
-    "happy-dom": "npm:happy-dom@^20.11.12",
+    "happy-dom": "npm:happy-dom@^20.12.2",
     "preact": "npm:preact@^10.29.8",
     "react": "npm:react@^19.2.8",
     "solid-js": "npm:solid-js@^1.9.15",
-    "svelte": "npm:svelte@^5.56.10",
+    "svelte": "npm:svelte@^5.57.0",
     "svelte-preprocess": "npm:svelte-preprocess@^6.0.5",
-    "svg-path-commander/util": "npm:svg-path-commander@^2.3.1/util",
+    "svg-path-commander/util": "npm:svg-path-commander@^2.3.2/util",
     "vanjs-core": "npm:vanjs-core@^1.6.1",
     "vitest": "npm:vitest@^4.1.11",
     "vue": "npm:vue@^3.5.42"

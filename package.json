@@ -1,6 +1,6 @@
 {
   "name": "@thednp/tween",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "🌸 A Typescript sourced tweening engine with Tween and Timeline",
   "homepage": "https://github.com/thednp/tween",
   "author": "thednp",
@@ -91,12 +91,12 @@
   ],
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
-    "@types/node": "^26.4.0",
+    "@types/node": "^26.4.1",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "@vitest/coverage-istanbul": "^4.1.11",
     "@vitest/ui": "^4.1.11",
-    "happy-dom": "^20.11.12",
+    "happy-dom": "^20.12.2",
     "react-dom": "^19.2.8",
     "rollup-plugin-svelte": "^7.2.3",
     "svelte-preprocess": "^6.0.5",
@@ -106,18 +106,18 @@
     "vitest": "^4.1.11"
   },
   "dependencies": {
-    "@thednp/dommatrix": "^3.1.1",
+    "@thednp/dommatrix": "^3.1.2",
     "preact": "^10.29.8",
     "react": "^19.2.8",
     "solid-js": "^1.9.15",
-    "svelte": "^5.56.10",
-    "svg-path-commander": "^2.3.1",
+    "svelte": "^5.57.0",
+    "svg-path-commander": "^2.3.2",
     "vanjs-core": "^1.6.1",
     "vue": "^3.5.42"
   },
   "packageManager": "pnpm@11.24.0+sha512.bd27e345e976dcb0be0b7a1228217b049a817e21b1f355c90dbe7dc46671895a8bc1e6d06c24554505ea93ea0b45f489a27ec1bfbc8de6a9659fca0f16fa0000",
   "inlinedDependencies": {
-    "@thednp/dommatrix": "3.1.1",
-    "svg-path-commander": "2.3.1"
+    "@thednp/dommatrix": "3.1.2",
+    "svg-path-commander": "2.3.2"
   }
 }

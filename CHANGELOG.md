@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.5] - 2026-09-02
+
+### Changed
+- Scheduled dependency update: `@thednp/dommatrix` `^3.1.1` → `^3.1.2`, `svg-path-commander` `^2.3.1` → `^2.3.2`, `svelte` `^5.56.10` → `^5.57.0`, `@types/node` `^26.4.0` → `^26.4.1`, `happy-dom` `^20.11.12` → `^20.12.2`; synced `inlinedDependencies` (`3.1.2`/`2.3.2`), `deno.json` imports, `deno.lock`, `pnpm-lock.yaml`, rebuilt `dist` and `src/Version.ts` (`0.1.5`)
+
+## [0.1.4] - 2026-08-28
+
+### Changed
+- Docs: `transformToString` JSDoc `DOMMatrix` → `CSSMatrix` and `src/extend/path.ts` type docs
+- Updated playground dependencies: `@thednp/tween` `^0.1.2` → `^0.1.3` in all 6 playgrounds
+- Rebuilt `dist`, synced `deno.json`/`src/Version.ts` (`0.1.4`)
+
 ## [0.1.3] - 2026-08-28
 
 ### Added
