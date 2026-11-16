@@ -1,4 +1,4 @@
-import { defineConfig } from "vite-plus";
+import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
 
 // https://vite.dev/config/

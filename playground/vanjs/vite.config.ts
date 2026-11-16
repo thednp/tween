@@ -1,3 +1,3 @@
-import { defineConfig } from "vite-plus";
+import { defineConfig } from "vite";
 
 export default defineConfig({});
