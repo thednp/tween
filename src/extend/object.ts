@@ -1,9 +1,5 @@
 // src/extend/object.ts
-import type {
-  BaseTweenProps,
-  InterpolatorFunction,
-  ValidationResultEntry,
-} from "../types.ts";
+import type { BaseTweenProps, InterpolatorFunction, ValidationResultEntry } from "../types.ts";
 import { isNumber, isPlainObject } from "../Util.ts";
 
 /**
@@ -32,9 +28,7 @@ const endKeysCache = new WeakMap<object, string[]>();
  * @param t The progress value
  * @returns The interpolated flat object with same structure.
  */
-export const interpolateObject: InterpolatorFunction<BaseTweenProps> = <
-  T extends BaseTweenProps,
->(
+export const interpolateObject: InterpolatorFunction<BaseTweenProps> = <T extends BaseTweenProps>(
   target: T,
   start: T,
   end: T,
@@ -86,10 +80,7 @@ export const validateObject = (
     const value = target[key];
 
     if (value === null || value === undefined) {
-      return [
-        false,
-        `Property "${key}" from "${propName}" is null/undefined.`,
-      ];
+      return [false, `Property "${key}" from "${propName}" is null/undefined.`];
     }
 
     // We never want to go down that route
@@ -99,20 +90,17 @@ export const validateObject = (
       return [
         false,
         `Property "${key}" from "${propName}" must be a number.` +
-        `${
-          isPlainObject(value)
-            ? " Deeper nested objects are not supported."
-            : ` Unsupported value: "${typeof value}".`
-        }`,
+          `${
+            isPlainObject(value)
+              ? " Deeper nested objects are not supported."
+              : ` Unsupported value: "${typeof value}".`
+          }`,
       ];
     }
 
     if (ref) {
       if (ref[key] === undefined) {
-        return [
-          false,
-          `Property "${key}" in "${propName}" doesn't exist in the reference object.`,
-        ];
+        return [false, `Property "${key}" in "${propName}" doesn't exist in the reference object.`];
       }
     }
   }

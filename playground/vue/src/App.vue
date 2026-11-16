@@ -5,10 +5,7 @@ import { useTween, useTimeline } from "@thednp/tween/vue";
 const [twState, tween] = useTween({ x: 0 });
 const [tlState, timeline] = useTimeline({ x: 0, y: 0 });
 
-tween
-  .to({ x: 150 })
-  .easing(Easing.Circular.InOut)
-  .duration(1.5);
+tween.to({ x: 150 }).easing(Easing.Circular.InOut).duration(1.5);
 
 timeline
   .to({ x: 250, duration: 2, easing: Easing.Quadratic.Out })
@@ -21,18 +18,28 @@ console.log(tween, timeline);
 <template>
   <div :style="{ translate: `${tlState.x}px ${tlState.y}px`, display: 'inline-block' }">
     <img src="/vite.svg" class="logo" alt="Vite logo" :style="{ translate: `${twState.x}px` }" />
-    <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" :style="{ translate: `${-twState.x}px` }" />
+    <img
+      src="./assets/vue.svg"
+      class="logo vue"
+      alt="Vue logo"
+      :style="{ translate: `${-twState.x}px` }"
+    />
   </div>
   <h1>Tween + Vue</h1>
 
   <div class="card">
     <h2>Tween</h2>
 
-    <button type="button" @click="() => {
-      tween
-        .to({ x: twState.x === 150 ? 0 : 150 })
-        .startFromLast();
-    }">Start</button>
+    <button
+      type="button"
+      @click="
+        () => {
+          tween.to({ x: twState.x === 150 ? 0 : 150 }).startFromLast();
+        }
+      "
+    >
+      Start
+    </button>
     <button type="button" @click="() => tween.pause()">Pause</button>
     <button type="button" @click="() => tween.reverse()">Reverse</button>
     <button type="button" @click="() => tween.stop()">Stop</button>
@@ -49,9 +56,7 @@ console.log(tween, timeline);
   </div>
 
   <div class="card">
-    <p>
-      Edit <code>App.vue</code> to test HMR
-    </p>
+    <p>Edit <code>App.vue</code> to test HMR</p>
   </div>
 </template>
 
@@ -63,8 +68,8 @@ console.log(tween, timeline);
   transition: filter 300ms;
 }
 
-button+button {
-  margin-left: 1rem
+button + button {
+  margin-left: 1rem;
 }
 
 .logo:hover {

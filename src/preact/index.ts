@@ -8,13 +8,7 @@
  * @module
  */
 import { useEffect, useRef } from "preact/hooks";
-import {
-  dummyInstance,
-  isServer,
-  Timeline,
-  Tween,
-  type TweenProps,
-} from "@thednp/tween";
+import { dummyInstance, isServer, Timeline, Tween, type TweenProps } from "@thednp/tween";
 import { useMiniStore } from "./miniStore.ts";
 
 /**
@@ -44,16 +38,14 @@ export { Timeline, Tween, useMiniStore };
  *    );
  * }
  */
-export function useTween<
-  T extends TweenProps,
->(initialValues: T): readonly [T, Tween<T>] {
+export function useTween<T extends TweenProps>(initialValues: T): readonly [T, Tween<T>] {
   if (isServer) {
     return [initialValues, dummyInstance as unknown as Tween<T>] as const;
   }
   const store = useMiniStore(initialValues);
   const tweenRef = useRef<Tween<T>>(null);
 
-  // istanbul ignore else @preserve
+  // istanbul ignore else
   if (!tweenRef.current) {
     tweenRef.current = new Tween(store);
   }
@@ -89,16 +81,14 @@ export function useTween<
  *    );
  * }
  */
-export function useTimeline<
-  T extends TweenProps,
->(initialValues: T): readonly [T, Timeline<T>] {
+export function useTimeline<T extends TweenProps>(initialValues: T): readonly [T, Timeline<T>] {
   if (isServer) {
     return [initialValues, dummyInstance as unknown as Timeline<T>] as const;
   }
   const store = useMiniStore(initialValues);
   const timelineRef = useRef<Timeline<T>>(null);
 
-  // istanbul ignore else @preserve
+  // istanbul ignore else
   if (!timelineRef.current) {
     timelineRef.current = new Timeline(store);
   }

@@ -1,5 +1,5 @@
 // Preact.spec.ts
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { Timeline, Tween, useTimeline, useTween } from "../src/preact/index";
 import { objectConfig, TransformStep, TweenProps } from "../src/index";
 import { miniStore } from "../src/preact/miniStore";
@@ -16,9 +16,7 @@ describe("Preact", () => {
 
   describe("useTween", () => {
     it("updates store reactively during animation", async () => {
-      const [[styles, tween], unmount] = await withHook(() =>
-        useTween({ x: 0 })
-      );
+      const [[styles, tween], unmount] = await withHook(() => useTween({ x: 0 }));
 
       expect(styles.x).toBe(0);
       tween.to({ x: 100 }).duration(1).start();
@@ -44,8 +42,8 @@ describe("Preact", () => {
 
   describe("useTimeline", () => {
     it("runs sequence and updates store", async () => {
-      const [[pos, timeline], unmount] = await withHook(
-        () => useTimeline({ x: 0, y: 0, translate: { x: 0 } }),
+      const [[pos, timeline], unmount] = await withHook(() =>
+        useTimeline({ x: 0, y: 0, translate: { x: 0 } }),
       );
 
       timeline
@@ -70,9 +68,7 @@ describe("Preact", () => {
 
     it("stops on cleanup", async () => {
       const stopSpy = vi.spyOn(Timeline.prototype, "stop");
-      const [[, timeline], unmount] = await withHook(
-        () => useTimeline({ x: 0 }),
-      );
+      const [[, timeline], unmount] = await withHook(() => useTimeline({ x: 0 }));
 
       timeline.to({ x: 500 }).play();
 
@@ -86,8 +82,14 @@ describe("Preact", () => {
       x: 0,
       deep: { r: 0, g: 0, b: 0 },
       rgb: [0, 0, 0],
-      path: [["M", 0, 0], ["L", 0, 0]],
-      transform: [["rotate", 0, 0], ["translate", 0, 0]] as TransformStep[],
+      path: [
+        ["M", 0, 0],
+        ["L", 0, 0],
+      ],
+      transform: [
+        ["rotate", 0, 0],
+        ["translate", 0, 0],
+      ] as TransformStep[],
     } satisfies TweenProps;
     const store = miniStore(initialValues).state;
     miniStore(store); // coverage
@@ -104,14 +106,16 @@ describe("Preact", () => {
 
     store.path[0][1] = 5;
     store.path[1][2] = 5;
-    expect(store.path).to.deep.equal([["M", 5, 0], ["L", 0, 5]]);
+    expect(store.path).to.deep.equal([
+      ["M", 5, 0],
+      ["L", 0, 5],
+    ]);
 
     store.transform[0][1] = 5;
     store.transform[1][2] = 5;
-    expect(store.transform).to.deep.equal([["rotate", 5, 0], [
-      "translate",
-      0,
-      5,
-    ]]);
+    expect(store.transform).to.deep.equal([
+      ["rotate", 5, 0],
+      ["translate", 0, 5],
+    ]);
   });
 });

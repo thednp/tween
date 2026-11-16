@@ -1,13 +1,13 @@
 /*!
-* @thednp/tween hooks for React v0.1.5 (https://github.com/thednp/tween)
-* Copyright 2026 © thednp
-* Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
-*/
+ * @thednp/tween hooks for React v0.1.6 (https://github.com/thednp/tween)
+ * Copyright 2026 © thednp
+ * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
+ */
 "use strict";
 
 import { useEffect, useRef, useState } from "react";
 import { Timeline, Tween, dummyInstance, isArray, isPlainObject, isServer, objectHasProp } from "@thednp/tween";
-//#region src/react/miniStore.ts
+// src/react/miniStore.ts
 /** The marker property name used to flag already-proxied values */
 const STATE_PROXY = "_proxy";
 /** The descriptor used for the non-enumerable `_proxy` marker property */
@@ -153,12 +153,12 @@ function miniStore(init) {
 function useMiniStore(initialValue) {
 	const storeRef = useRef(null);
 	const [, setVersion] = useState(0);
+	// istanbul ignore else
 	if (!storeRef.current) storeRef.current = miniStore(initialValue);
 	useEffect(() => storeRef.current.subscribe(() => setVersion((v) => (v + 1) % 3)), []);
 	return storeRef.current.state;
 }
-//#endregion
-//#region src/react/index.ts
+// src/react/index.ts
 /**
 * React integration for {@link @thednp/tween}.
 *
@@ -194,6 +194,7 @@ const useTween = (initialValues) => {
 	if (isServer) return [initialValues, dummyInstance];
 	const tweenRef = useRef(null);
 	const state = useMiniStore(initialValues);
+	// istanbul ignore else
 	if (!tweenRef.current) tweenRef.current = new Tween(state);
 	useEffect(() => {
 		return () => {
@@ -229,6 +230,7 @@ function useTimeline(initialValues) {
 	if (isServer) return [initialValues, dummyInstance];
 	const timelineRef = useRef(null);
 	const state = useMiniStore(initialValues);
+	// istanbul ignore else
 	if (!timelineRef.current) timelineRef.current = new Timeline(state);
 	useEffect(() => {
 		return () => {
@@ -238,7 +240,6 @@ function useTimeline(initialValues) {
 	}, []);
 	return [state, timelineRef.current];
 }
-//#endregion
 export { Timeline, Tween, useMiniStore, useTimeline, useTween };
 
 //# sourceMappingURL=react.mjs.map

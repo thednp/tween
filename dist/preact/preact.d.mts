@@ -1,12 +1,11 @@
 /*!
-* @thednp/tween hooks for Preact v0.1.5 (https://github.com/thednp/tween)
-* Copyright 2026 © thednp
-* Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
-*/
+ * @thednp/tween hooks for Preact v0.1.6 (https://github.com/thednp/tween)
+ * Copyright 2026 © thednp
+ * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
+ */
 "use strict";
 
 import { Timeline, Tween, TweenProps } from "@thednp/tween";
-//#region src/preact/miniStore.d.ts
 /**
  * A hook that creates (once per component) a reactive store for the
  * given initial values and subscribes the component to its changes,
@@ -16,9 +15,7 @@ import { Timeline, Tween, TweenProps } from "@thednp/tween";
  * @param initialValue - The initial values object
  * @returns The reactive state object
  */
-declare function useMiniStore<T extends TweenProps>(initialValue: T): T;
-//#endregion
-//#region src/preact/index.d.ts
+export declare function useMiniStore<T extends TweenProps>(initialValue: T): T;
 /**
  * Hook for updating values with Tween.
  *
@@ -41,7 +38,7 @@ declare function useMiniStore<T extends TweenProps>(initialValue: T): T;
  *    );
  * }
  */
-declare function useTween<T extends TweenProps>(initialValues: T): readonly [T, Tween<T>];
+export declare function useTween<T extends TweenProps>(initialValues: T): readonly [T, Tween<T>];
 /**
  * Hook for sequencing values update with Timeline.
  *
@@ -64,7 +61,6 @@ declare function useTween<T extends TweenProps>(initialValues: T): readonly [T, 
  *    );
  * }
  */
-declare function useTimeline<T extends TweenProps>(initialValues: T): readonly [T, Timeline<T>];
-//#endregion
-export { Timeline, Tween, useMiniStore, useTimeline, useTween };
+export declare function useTimeline<T extends TweenProps>(initialValues: T): readonly [T, Timeline<T>];
+export { Timeline, Tween };
 //# sourceMappingURL=preact.d.mts.map

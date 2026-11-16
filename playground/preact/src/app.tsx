@@ -10,27 +10,20 @@ export function App() {
   const [tlState, timeline] = useTimeline({ x: 0, y: 0 });
 
   useEffect(() => {
-    tween
-    .to({ x: 150 })
-    .easing(Easing.Quadratic.InOut).duration(1.5);
+    tween.to({ x: 150 }).easing(Easing.Quadratic.InOut).duration(1.5);
 
     timeline
       .to({ x: 150, duration: 2, easing: Easing.Quadratic.Out })
       .to({ y: 150, duration: 2, easing: Easing.Bounce.Out }, "-=1")
       .to({ x: 0, y: 0, duration: 1, easing: Easing.Back.InOut }, "+=1");
-    
+
     console.log({ tween, timeline });
   }, []);
 
   return (
     <>
       <div style={`translate: ${tlState.x}px ${tlState.y}px; display: inline-block`}>
-        <img
-          src={viteLogo}
-          className="logo"
-          alt="Vite logo"
-          style={`translate: ${twState.x}px`}
-        />
+        <img src={viteLogo} className="logo" alt="Vite logo" style={`translate: ${twState.x}px`} />
         <img
           src={preactLogo}
           className="logo preact"

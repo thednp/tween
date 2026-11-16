@@ -9,8 +9,7 @@ import type { Timeline } from "./Timeline.ts";
  * @param value - The value to check
  * @returns `true` when the value is a `string`
  */
-export const isString = (value: unknown): value is string =>
-  typeof value === "string";
+export const isString = (value: unknown): value is string => typeof value === "string";
 
 /**
  * Checks if a value is a `number`.
@@ -18,8 +17,7 @@ export const isString = (value: unknown): value is string =>
  * @param value - The value to check
  * @returns `true` when the value is a `number`
  */
-export const isNumber = (value: unknown): value is number =>
-  typeof value === "number";
+export const isNumber = (value: unknown): value is number => typeof value === "number";
 
 /**
  * Checks if a value is an `Array`.
@@ -27,8 +25,7 @@ export const isNumber = (value: unknown): value is number =>
  * @param value - The value to check
  * @returns `true` when the value is an `Array`
  */
-export const isArray = (value: unknown): value is Array<unknown> =>
-  Array.isArray(value);
+export const isArray = (value: unknown): value is Array<unknown> => Array.isArray(value);
 
 /**
  * Checks if a value is a `function`.
@@ -36,8 +33,7 @@ export const isArray = (value: unknown): value is Array<unknown> =>
  * @param value - The value to check
  * @returns `true` when the value is a `function`
  */
-export const isFunction = (value: unknown): value is () => unknown =>
-  typeof value === "function";
+export const isFunction = (value: unknown): value is () => unknown => typeof value === "function";
 
 /**
  * Checks if a value is a plain object (an object whose prototype
@@ -115,7 +111,7 @@ const instanceMethods = [
  * - allow free-form configuration for signal based frameworks
  */
 const dummyInstance: Record<string, typeof dummyMethod> = {};
-// istanbul ignore next @preserve
+// istanbul ignore next
 // const dummyMethod = () => dummyInstance;
 /**
  * A no-op method that returns the calling instance, used to stub
@@ -140,10 +136,8 @@ export { dummyInstance };
  * @param prop - The property name to look for
  * @returns `true` when the object has the property
  */
-export const objectHasProp = <T extends object>(
-  obj: T,
-  prop: keyof T,
-): boolean => Object.prototype.hasOwnProperty.call(obj, prop);
+export const objectHasProp = <T extends object>(obj: T, prop: keyof T): boolean =>
+  Object.prototype.hasOwnProperty.call(obj, prop);
 
 /**
  * Checks if a key is unsafe for assignment, to prevent prototype pollution.
@@ -171,7 +165,7 @@ export function deepAssign<T extends TweenProps>(target: T, source: T): void {
   while (i < len) {
     const key = keys[i++];
     // prevent prototype pollution
-    // istanbul ignore next @preserve
+    // istanbul ignore next
     if (isUnsafeKey(key as string) || !objectHasProp(source, key)) {
       continue;
     }
@@ -232,7 +226,7 @@ export const deproxy = <T>(value: T): T => {
   if (isPlainObject(value)) {
     const result: Record<string, unknown> = {};
     for (const key in value) {
-      // istanbul ignore else @preserve
+      // istanbul ignore else
       if (objectHasProp(value, key)) {
         result[key] = deproxy(value[key]);
       }
@@ -306,7 +300,7 @@ export function validateValues<T extends TweenProps>(
     }
 
     if (reference && isNumber(refValue)) {
-      // istanbul ignore else @preserve
+      // istanbul ignore else
       if (!isNumber(value)) {
         errors.set(key, `Property "${key}" is not a number.`);
       }

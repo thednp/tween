@@ -1,24 +1,23 @@
 ## Vue composables for @thednp/tween
 
-Leverage Vue fine-grained reactivity with `Tween` and `Timeline` through easy to use composables.  
+Leverage Vue fine-grained reactivity with `Tween` and `Timeline` through easy to use composables.
 
 **NOTE**: These composables use a lightweight internal `miniStore` optimized for low GC presure and high-performance update system powered by the `ref()` core state factory.
 
-
 ### Server-side Rendering (SSR)
 
-  - Both `Tween` and `Timeline` classes are SSR-safe as long as you don't access instance methods (`tween.start` or `timeline.play`).
-  - The hooks use safe guards for server side rendering (**SSR**) and always provide `initialValues` to the rendering engine.
-  - The Tween/Timeline configuration (validation of tween values, creation of `miniStore` instance, registering extensions) never happens during server rendering and this is to speed up the overall rendering runtime.
-  - **IMPORTANT** - while we do provide the `initialValues` to make sure your server rendered HTML is consistent, that only depends on actual validity of the values you provide, so make sure your values have been validated beforehand.
-
+- Both `Tween` and `Timeline` classes are SSR-safe as long as you don't access instance methods (`tween.start` or `timeline.play`).
+- The hooks use safe guards for server side rendering (**SSR**) and always provide `initialValues` to the rendering engine.
+- The Tween/Timeline configuration (validation of tween values, creation of `miniStore` instance, registering extensions) never happens during server rendering and this is to speed up the overall rendering runtime.
+- **IMPORTANT** - while we do provide the `initialValues` to make sure your server rendered HTML is consistent, that only depends on actual validity of the values you provide, so make sure your values have been validated beforehand.
 
 ### Prerequisites
-* [Tween.md](wiki/Tween.md) - our official `Tween` guide
-* [Timeline.md](wiki/Timeline.md) - our official `Timeline` guide
-* [Extend.md](wiki/Extend.md) - a complete guide on extending beyond original prototype
-* [Easing.md](wiki/Easing.md) - an extensive guide on easing functions.
-* Don't forget to install.
+
+- [Tween.md](wiki/Tween.md) - our official `Tween` guide
+- [Timeline.md](wiki/Timeline.md) - our official `Timeline` guide
+- [Extend.md](wiki/Extend.md) - a complete guide on extending beyond original prototype
+- [Easing.md](wiki/Easing.md) - an extensive guide on easing functions.
+- Don't forget to install.
   ```
   npm install @thednp/tween
   # or pnpm/yarn/bun/deno
@@ -53,22 +52,22 @@ Creates a [`store`, `tween`] tuple that has your `miniStore` instance (your stat
 </script>
 
 <template>
-    <div
-      :style="{
+  <div
+    :style="{
         translate: `${styles.x}px`,
         opacity: styles.opacity,
       }"
-    >
-      This is a sample div
-    </div>
-    <button @click="startTween">Click to animate</button>
+  >
+    This is a sample div
+  </div>
+  <button @click="startTween">Click to animate</button>
 </template>
 ```
 
-**NOTES** 
+**NOTES**
+
 - Direct mutations are tracked automatically — no manual `onUpdate` or copying needed
 - Automatically stops on component unmount (via `tween.stop()`).
-
 
 ### useTimeline
 

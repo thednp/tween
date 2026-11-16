@@ -6,21 +6,20 @@ Unlike other framework integrations, VanJS has no component lifecycle hooks (`on
 
 **NOTE**: These primitives use a lightweight internal `miniStore` optimized for low GC pressure and high-performance updates powered by the `van.state()` core primitive.
 
-
 ### Server-side Rendering (SSR)
 
-  - Both `Tween` and `Timeline` classes are SSR-safe as long as you don't access instance methods (`tween.start` or `timeline.play`).
-  - The primitives use safe guards for server side rendering (**SSR**) and always provide `initialValues` to the rendering engine.
-  - The Tween/Timeline configuration (validation of tween values, creation of `miniStore` instance, registering extensions) never happens during server rendering and this is to speed up the overall rendering runtime.
-  - **IMPORTANT** - while we do provide the `initialValues` to make sure your server rendered HTML is consistent, that only depends on actual validity of the values you provide, so make sure your values have been validated beforehand.
-
+- Both `Tween` and `Timeline` classes are SSR-safe as long as you don't access instance methods (`tween.start` or `timeline.play`).
+- The primitives use safe guards for server side rendering (**SSR**) and always provide `initialValues` to the rendering engine.
+- The Tween/Timeline configuration (validation of tween values, creation of `miniStore` instance, registering extensions) never happens during server rendering and this is to speed up the overall rendering runtime.
+- **IMPORTANT** - while we do provide the `initialValues` to make sure your server rendered HTML is consistent, that only depends on actual validity of the values you provide, so make sure your values have been validated beforehand.
 
 ### Prerequisites
-* [Tween.md](Tween.md) - our official `Tween` guide
-* [Timeline.md](Timeline.md) - our official `Timeline` guide
-* [Extend.md](Extend.md) - a complete guide on extending beyond original prototype
-* [Easing.md](Easing.md) - an extensive guide on easing functions.
-* Don't forget to install.
+
+- [Tween.md](Tween.md) - our official `Tween` guide
+- [Timeline.md](Timeline.md) - our official `Timeline` guide
+- [Extend.md](Extend.md) - a complete guide on extending beyond original prototype
+- [Easing.md](Easing.md) - an extensive guide on easing functions.
+- Don't forget to install.
   ```
   npm install @thednp/tween
   # or pnpm/yarn/bun/deno
@@ -56,22 +55,24 @@ function AnimatedBox() {
       .start();
   };
 
-  return div(
-    {
-      style: () => `translate: ${styles.x}px; opacity: ${styles.opacity}`,
-    },
-    "Sample div"
-  ),
-  button({ onclick: startTween }, "Click to play");
+  return (
+    div(
+      {
+        style: () => `translate: ${styles.x}px; opacity: ${styles.opacity}`,
+      },
+      "Sample div",
+    ),
+    button({ onclick: startTween }, "Click to play")
+  );
 }
 
 van.add(document.getElementById("root"), AnimatedBox());
 ```
 
 **NOTES**
+
 - Direct mutations are tracked automatically — no manual `onUpdate` or copying needed
 - Automatically stops when all bound DOM nodes are removed (via a global `MutationObserver`).
-
 
 ### createTimeline
 
@@ -102,11 +103,10 @@ function AnimatedSequence() {
     timeline.play();
   };
 
-  return div(
-    { style: () => `translate: ${pos.x}px ${pos.y}px` },
-    "Sample div"
-  ),
-  button({ onclick: playAnim }, "Click to play");
+  return (
+    div({ style: () => `translate: ${pos.x}px ${pos.y}px` }, "Sample div"),
+    button({ onclick: playAnim }, "Click to play")
+  );
 }
 
 van.add(document.getElementById("root"), AnimatedSequence());
@@ -114,16 +114,15 @@ van.add(document.getElementById("root"), AnimatedSequence());
 
 Same behavior applies to `Timeline` in terms of cleanup and mutations.
 
-
 ### Automatic Cleanup via MutationObserver
 
 VanJS has no component lifecycle hooks, so we can't use `onCleanup` or `onUnmounted`. Instead, `createTween` and `createTimeline` register a global `MutationObserver` that watches for DOM removals. When all DOM nodes bound to a tween's state signals are removed from the document, the tween stops automatically.
 
 This means:
+
 - No manual cleanup needed — just bind state values to your DOM and walk away
 - Multiple tweens share a single observer instance (lazy-initialized on first use)
 - Stopped or completed tweens are automatically removed from tracking
-
 
 ### miniStore
 
@@ -146,7 +145,7 @@ const store = miniStore({
   color: [255, 0, 0],
 });
 
-store.pos.x = 50;     // reactive
+store.pos.x = 50; // reactive
 store.color[0] = 128; // reactive
 ```
 

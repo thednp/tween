@@ -1,7 +1,7 @@
 {
   "name": "tween-vanjs",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@thednp/tween": "^0.1.4",
+    "@thednp/tween": "^0.1.5",
     "vanjs-core": "^1.6.1"
   },
   "devDependencies": {

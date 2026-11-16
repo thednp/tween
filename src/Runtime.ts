@@ -6,7 +6,7 @@ import { now } from "./Now.ts";
  * The runtime queue holding all active {@link AnimationItem} instances
  * (Tween / Timeline) that are updated by the RAF loop.
  */
-export const Queue: AnimationItem[] = new Array(0);
+export const Queue: AnimationItem[] = [];
 
 /** The current `requestAnimationFrame` id, `0` when the loop is stopped */
 let rafID = 0;
@@ -47,15 +47,13 @@ export function Runtime(t: number = now()) {
  * If it's the first item, it will also start the update loop.
  * @param newItem - Tween / Timeline instance to add
  */
-export function addToQueue<T extends TweenProps>(
-  newItem: AnimationItem<T>,
-): void {
-  // istanbul ignore else @preserve
+export function addToQueue<T extends TweenProps>(newItem: AnimationItem<T>): void {
+  // istanbul ignore else
   if (queuedItems.has(newItem as AnimationItem)) return;
   queuedItems.add(newItem as AnimationItem);
   // Queue.push(item);
   Queue[queueLength++] = newItem as AnimationItem;
-  // istanbul ignore else @preserve
+  // istanbul ignore else
   if (!rafID) Runtime();
 }
 
@@ -63,11 +61,9 @@ export function addToQueue<T extends TweenProps>(
  * Remove item from the update loop.
  * @param removedItem - Tween / Timeline instance to remove
  */
-export function removeFromQueue<T extends TweenProps>(
-  removedItem: AnimationItem<T>,
-): void {
+export function removeFromQueue<T extends TweenProps>(removedItem: AnimationItem<T>): void {
   const idx = Queue.indexOf(removedItem as AnimationItem);
-  // istanbul ignore else @preserve
+  // istanbul ignore else
   if (idx > -1) {
     queuedItems.delete(removedItem as AnimationItem);
     Queue[idx] = Queue[queueLength - 1];

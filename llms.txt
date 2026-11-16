@@ -22,9 +22,9 @@
 - supports **reverse playback** via inverted easing (no `reverseEasing` option or start-value reassignment);
 - is **extensible** through per-property validators and interpolators registered with `.use('propName', config)`, with built-in extensions for arrays, objects, SVG paths and CSS transforms;
 - provides **SSR-compatible framework hooks** (`useTween` / `useTimeline` / `createTween` / `createTimeline`) that skip initialization on the server and render initial values;
-- is written in TypeScript, type-checked by Deno (`deno check`), and built with [tsdown](https://tsdown.dev) into ESM + UMD bundles in `dist/`;
+- is written in TypeScript, type-checked by Deno (`deno check`) and by `vp check` (tsc), and built with [vite-plus](https://viteplus.dev) (`vp pack`, tsdown/rolldown-based, configured in the `pack` block of `vite.config.ts`) into ESM + UMD bundles in `dist/`;
 - is published to **npm** (`@thednp/tween`) and **JSR** (`jsr:@thednp/tween`, raw TypeScript source, with subpath exports for each framework integration);
-- is verified by a Vitest suite (happy-dom + Svelte plugin) with 100% coverage, runnable via `deno task test`.
+- is verified by a Vitest 5 suite via vite-plus (`vp test`, imports from `vite-plus/test`, happy-dom + Svelte plugin) with 100% coverage, also runnable via `deno task test`; benchmarks live in `test/tween.bench.ts` (`vp test bench`).
 
 ## Usage
 
@@ -75,4 +75,4 @@ const timeline = new Timeline({ x: 0, y: 0 })
 
 ## JSR / Deno
 
-The package is published to JSR with raw TypeScript source; the core entry is `jsr:@thednp/tween` and each framework integration is a subpath export (`jsr:@thednp/tween/react`, `.../preact`, `.../solid`, `.../svelte`, `.../vue`, `.../vanjs`). Development tasks run through Deno: `deno task check`, `deno task lint`, `deno task test` (Vitest via npm imports), `deno task format`, `deno task fix`, `deno task up:deno` (syncs `deno.json` and `src/Version.ts` from `package.json`).
+The package is published to JSR with raw TypeScript source; the core entry is `jsr:@thednp/tween` and each framework integration is a subpath export (`jsr:@thednp/tween/react`, `.../preact`, `.../solid`, `.../svelte`, `.../vue`, `.../vanjs`). Development runs on [vite-plus](https://viteplus.dev): `vp install`, `vp check` (format + lint + types), `vp test`, `vp test bench`, `vp pack` (library build into `dist/`, also regenerates `src/Version.ts`). The Deno pipeline remains for JSR and cross-runtime checks: `deno task check`, `deno task lint`, `deno task test` (Vitest via npm imports), `deno task up:deno` (syncs `deno.json` and `src/Version.ts` from `package.json`), and `deno publish --dry-run` must pass before releasing.

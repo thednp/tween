@@ -11,13 +11,7 @@ import type {
   ValidationFunction,
 } from "./types.ts";
 import { addToQueue, removeFromQueue } from "./Runtime.ts";
-import {
-  deepAssign,
-  deproxy,
-  isArray,
-  isObject,
-  validateValues,
-} from "./Util.ts";
+import { deepAssign, deproxy, isArray, isObject, validateValues } from "./Util.ts";
 import { now } from "./Now.ts";
 
 /**
@@ -74,7 +68,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
   /** The number of repeats set by the user */
   private _initialRepeat = 0;
   /** The validation errors map, keyed by property name or `"init"` */
-  private _errors = new Map<string | "init", string>();
+  private _errors = new Map<string, string>();
   /** The registered interpolators, keyed by property name */
   private _interpolators = new Map<string | keyof T, InterpolatorFunction>();
   /** The registered validators, keyed by property name */
@@ -142,10 +136,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
    */
   get totalDuration(): number {
     const repeat = this._initialRepeat;
-    return (
-      this._duration * (repeat + 1) +
-      this._repeatDelay * repeat
-    ) / 1000;
+    return (this._duration * (repeat + 1) + this._repeatDelay * repeat) / 1000;
   }
 
   /**
@@ -186,7 +177,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
   /**
    * Returns the errors Map, mainly used by external validators.
    */
-  getErrors(): Map<string | "init", string> {
+  getErrors(): Map<string, string> {
     return this._errors;
   }
 
@@ -255,7 +246,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
     this._reversed = !this._reversed;
     this._time = this._duration - this._time;
 
-    // istanbul ignore else @preserve
+    // istanbul ignore else
     if (this._initialRepeat > 0) {
       this._repeat = this._initialRepeat - this._repeat;
     }
@@ -505,9 +496,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
     this._lastTime = time;
     this._time += delta;
 
-    this._progress = this._time > this._duration
-      ? 1
-      : this._time / this._duration;
+    this._progress = this._time > this._duration ? 1 : this._time / this._duration;
 
     // Binary search the sorted entries to only process the active window:
     // entries overlapping the current time. Since the entry list is frozen
@@ -516,11 +505,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
 
     const entries = this._sorted;
     const state = this.state;
-    const { startIndex, endIndex } = this._activeWindow(
-      entries,
-      reversed,
-      prevTime,
-    );
+    const { startIndex, endIndex } = this._activeWindow(entries, reversed, prevTime);
     let i = startIndex;
 
     while (i < endIndex) {
@@ -541,19 +526,17 @@ export class Timeline<T extends TweenProps = TweenProps> {
 
       // Only build runtime once on first activation
       if (!entry.isActive && tweenElapsed > 0 && tweenElapsed < 1) {
-        // istanbul ignore else @preserve
+        // istanbul ignore else
         if (entry.runtime.length === 0) {
           this._setEntry(entry, state);
         }
         entry.isActive = true;
       }
 
-      // istanbul ignore else @preserve
+      // istanbul ignore else
       if (entry.isActive) {
         // super cheap yoyo
-        let easedValue = entry.easing(
-          reversed ? 1 - tweenElapsed : tweenElapsed,
-        );
+        let easedValue = entry.easing(reversed ? 1 - tweenElapsed : tweenElapsed);
         easedValue = reversed ? 1 - easedValue : easedValue;
         const runtime = entry.runtime;
 
@@ -569,16 +552,9 @@ export class Timeline<T extends TweenProps = TweenProps> {
 
           if (prop[5]) {
             state[property as keyof T] = ((startVal as number) +
-              ((endVal as number) - (startVal as number)) * easedValue) as T[
-                keyof T
-              ];
+              ((endVal as number) - (startVal as number)) * easedValue) as T[keyof T];
           } else {
-            interpolator(
-              targetObject as never,
-              startVal as never,
-              endVal as never,
-              easedValue,
-            );
+            interpolator(targetObject as never, startVal as never, endVal as never, easedValue);
           }
         }
         if (tweenElapsed === 1) entry.isActive = false;
@@ -600,7 +576,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
         return false;
       }
 
-      // istanbul ignore else @preserve
+      // istanbul ignore else
       if (this._repeat !== Infinity) this._repeat--;
       if (this._yoyo) this._reversed = !reversed;
 
@@ -647,7 +623,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
     const to = entry.to as Partial<T>;
     const keysTo = Object.keys(to) as (keyof T)[];
     const keyLen = keysTo.length;
-    entry.runtime = new Array(keyLen);
+    entry.runtime = [] as TimelineEntry<T>["runtime"];
     let rtLen = 0;
     let j = 0;
 
@@ -707,14 +683,14 @@ export class Timeline<T extends TweenProps = TweenProps> {
       return Math.min(this._duration, Math.max(0, pos * 1000));
     }
 
-    // istanbul ignore else @preserve
+    // istanbul ignore else
     if (typeof pos === "string") {
       // First try label
       const labelTime = this._labels.get(pos);
       if (labelTime !== undefined) return labelTime;
 
       // Then relative
-      // istanbul ignore else @preserve
+      // istanbul ignore else
       if (pos.startsWith("+=") || pos.startsWith("-=")) {
         let offset = parseFloat(pos.slice(2));
         if (isNaN(offset)) offset = 0;
@@ -734,9 +710,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
    * @internal
    */
   private _buildSortedEntries(): TimelineEntry<T>[] {
-    const sorted = this._entries.slice().sort(
-      (a, b) => a.startTime - b.startTime,
-    );
+    const sorted = this._entries.slice().sort((a, b) => a.startTime - b.startTime);
     let maxDuration = 0;
     const len = sorted.length;
     let i = 0;
@@ -806,11 +780,11 @@ export class Timeline<T extends TweenProps = TweenProps> {
    */
   private _evaluate(newObj?: Partial<T> | DeepPartial<T>) {
     // the reference of the initialization state is stored here
-    // istanbul ignore else @preserve
+    // istanbul ignore else
     if (!this.isValidState) {
       const temp = this._state;
       validateValues.call(this as Timeline, temp);
-      // istanbul ignore else @preserve
+      // istanbul ignore else
       if (this.isValid) {
         this.state = temp;
         this._state = deproxy(temp);
@@ -826,7 +800,7 @@ export class Timeline<T extends TweenProps = TweenProps> {
    * @internal
    */
   private _report() {
-    // istanbul ignore else @preserve
+    // istanbul ignore else
     if (!this.isValid) {
       const message = [
         "[Timeline] failed validation:",

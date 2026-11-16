@@ -115,7 +115,7 @@ function defineStateProxy<T extends Omit<TweenProps, "_proxy">>(
 
     state = arrayProxy;
   } else {
-    setter = (newVal: typeof value) => state = newVal;
+    setter = (newVal: typeof value) => (state = newVal);
     state = value;
   }
 
@@ -165,8 +165,6 @@ function createMiniState<T extends TweenProps>(
  * @param init - The initial values object
  * @returns The reactive state object
  */
-export function miniStore<
-  T extends TweenProps,
->(init: T): T {
+export function miniStore<T extends TweenProps>(init: T): T {
   return createMiniState(init, {}) as T;
 }

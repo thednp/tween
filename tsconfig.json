@@ -21,8 +21,8 @@
     "allowImportingTsExtensions": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "checkJs": true,
+    "checkJs": true
   },
   "include": ["src", "playground"],
-  "exclude": ["node_modules", "experiments", "coverage", "dist"],
+  "exclude": ["node_modules", "experiments", "coverage", "dist"]
 }

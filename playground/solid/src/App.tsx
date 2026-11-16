@@ -8,9 +8,7 @@ function App() {
   const [twState, tween] = createTween({ x: 0 });
   const [tlState, timeline] = createTimeline({ x: 0, y: 0 });
 
-  tween
-    .to({ x: 150 })
-    .easing(Easing.Quadratic.InOut).duration(1.5);
+  tween.to({ x: 150 }).easing(Easing.Quadratic.InOut).duration(1.5);
 
   timeline
     .to({ x: 150, duration: 2, easing: Easing.Quadratic.Out })
@@ -22,12 +20,7 @@ function App() {
   return (
     <>
       <div style={{ translate: `${tlState.x}px ${tlState.y}px`, display: "inline-block" }}>
-        <img
-          src={viteLogo}
-          class="logo"
-          alt="Vite logo"
-          style={{ translate: twState.x + "px" }}
-        />
+        <img src={viteLogo} class="logo" alt="Vite logo" style={{ translate: twState.x + "px" }} />
         <img
           src={solidLogo}
           class="logo solid"

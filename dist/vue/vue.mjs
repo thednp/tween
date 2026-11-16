@@ -1,13 +1,13 @@
 /*!
-* @thednp/tween composables for Vue v0.1.5 (https://github.com/thednp/tween)
-* Copyright 2026 © thednp
-* Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
-*/
+ * @thednp/tween composables for Vue v0.1.6 (https://github.com/thednp/tween)
+ * Copyright 2026 © thednp
+ * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
+ */
 "use strict";
 
 import { Timeline, Tween, dummyInstance, isArray, isPlainObject, isServer, objectHasProp } from "@thednp/tween";
 import { onUnmounted, ref } from "vue";
-//#region src/vue/miniStore.ts
+// src/vue/miniStore.ts
 /** The marker property name used to flag already-proxied values */
 const STATE_PROXY = "_proxy";
 /** The descriptor used for the non-enumerable `_proxy` marker property */
@@ -127,8 +127,7 @@ function createMiniState(obj, parentReceiver) {
 function miniStore(init) {
 	return createMiniState(init, {});
 }
-//#endregion
-//#region src/vue/index.ts
+// src/vue/index.ts
 /**
 * Vue integration for {@link @thednp/tween}.
 *
@@ -201,7 +200,6 @@ function useTimeline(initialValues) {
 	});
 	return [store, timeline];
 }
-//#endregion
 export { Timeline, Tween, miniStore, useTimeline, useTween };
 
 //# sourceMappingURL=vue.mjs.map

@@ -1,7 +1,7 @@
 {
   "name": "svelte-tween",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,7 @@
     "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
   },
   "dependencies": {
-    "@thednp/tween": "^0.1.4",
+    "@thednp/tween": "^0.1.5",
     "svelte": "^5.56.8"
   },
   "devDependencies": {

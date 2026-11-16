@@ -1,12 +1,11 @@
 /*!
-* @thednp/tween composables for Vue v0.1.5 (https://github.com/thednp/tween)
-* Copyright 2026 © thednp
-* Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
-*/
+ * @thednp/tween composables for Vue v0.1.6 (https://github.com/thednp/tween)
+ * Copyright 2026 © thednp
+ * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
+ */
 "use strict";
 
 import { Timeline, Tween, TweenProps } from "@thednp/tween";
-//#region src/vue/miniStore.d.ts
 /**
  * Creates a reactive store for the given initial values, where every
  * property is backed by a Vue `ref`. Reading a property inside a
@@ -17,9 +16,7 @@ import { Timeline, Tween, TweenProps } from "@thednp/tween";
  * @param init - The initial values object
  * @returns The reactive state object
  */
-declare function miniStore<T extends TweenProps>(init: T): T;
-//#endregion
-//#region src/vue/index.d.ts
+export declare function miniStore<T extends TweenProps>(init: T): T;
 /**
  * Vue composable for updating values with Tween.
  *
@@ -41,7 +38,7 @@ declare function miniStore<T extends TweenProps>(init: T): T;
  *  <div :style="{ translate: `${state.x}px ${state.y}px` }" />
  * </template>
  */
-declare function useTween<T extends TweenProps>(initialValues: T): readonly [T, Tween<T>];
+export declare function useTween<T extends TweenProps>(initialValues: T): readonly [T, Tween<T>];
 /**
  * Vue composable for sequencing values update with Timeline.
  *
@@ -64,7 +61,6 @@ declare function useTween<T extends TweenProps>(initialValues: T): readonly [T, 
  *  <div :style="{ translate: `${state.x}px ${state.y}px` }" />
  * </template>
  */
-declare function useTimeline<T extends TweenProps>(initialValues: T): readonly [T, Timeline<T>];
-//#endregion
-export { Timeline, Tween, miniStore, useTimeline, useTween };
+export declare function useTimeline<T extends TweenProps>(initialValues: T): readonly [T, Timeline<T>];
+export { Timeline, Tween };
 //# sourceMappingURL=vue.d.mts.map

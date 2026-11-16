@@ -1,7 +1,7 @@
 {
   "name": "tween-preact",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@thednp/tween": "^0.1.4",
+    "@thednp/tween": "^0.1.5",
     "preact": "^10.29.8"
   },
   "devDependencies": {

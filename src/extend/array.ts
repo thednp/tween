@@ -13,9 +13,7 @@ import type { InterpolatorFunction, ValidationResultEntry } from "../types.ts";
  * @param t The progress value
  * @returns The interpolated `Array<number>` value.
  */
-export const interpolateArray: InterpolatorFunction<number[]> = <
-  T extends number[],
->(
+export const interpolateArray: InterpolatorFunction<number[]> = <T extends number[]>(
   target: T,
   start: T,
   end: T,
@@ -37,9 +35,8 @@ export const interpolateArray: InterpolatorFunction<number[]> = <
  * @param target The array to check
  * @returns `true` is value is array and all elements are numbers
  */
-export const isValidArray = <T extends number[]>(
-  target: unknown,
-): target is T => isArray(target) && target.every(isNumber);
+export const isValidArray = <T extends number[]>(target: unknown): target is T =>
+  isArray(target) && target.every(isNumber);
 
 /**
  * Check if an `Array<number>` is valid and compatible with a reference.
@@ -54,24 +51,19 @@ export const validateArray = <T extends number[]>(
   target: unknown,
   ref?: T,
 ): ValidationResultEntry => {
-  // istanbul ignore if @preserve
+  // istanbul ignore if
   if (!isArray(target)) {
     return [false, `Property "${String(propName)}" is not Array.`];
   }
-  // istanbul ignore if @preserve
+  // istanbul ignore if
   if (!isValidArray(target)) {
-    return [
-      false,
-      `Property "${String(propName)}" is not a valid Array<number>.`,
-    ];
+    return [false, `Property "${String(propName)}" is not a valid Array<number>.`];
   }
 
   if (ref && ref.length !== target.length) {
     return [
       false,
-      `Property "${
-        String(propName)
-      }" is expecting an array of ${ref.length} numbers.`,
+      `Property "${String(propName)}" is expecting an array of ${ref.length} numbers.`,
     ];
   }
 

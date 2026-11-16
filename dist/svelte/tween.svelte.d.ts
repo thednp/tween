@@ -1,12 +1,10 @@
 /*!
-* @thednp/tween utils for Svelte v0.1.5 (https://github.com/thednp/tween)
-* Copyright 2026 © thednp
-* Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
-*/
-"use strict";
+ * @thednp/tween utils for Svelte v0.1.6 (https://github.com/thednp/tween)
+ * Copyright 2026 © thednp
+ * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
+ */
 
 import { Timeline, Tween, TweenProps } from "@thednp/tween";
-//#region src/svelte/miniStore.svelte.d.ts
 /**
  * Creates a reactive store for the given initial values, where every
  * property is backed by a Svelte 5 `$state` primitive. Reading a property
@@ -17,9 +15,7 @@ import { Timeline, Tween, TweenProps } from "@thednp/tween";
  * @param init - The initial values object
  * @returns The reactive state object
  */
-declare function miniStore<T extends TweenProps>(init: T): T;
-//#endregion
-//#region src/svelte/index.svelte.d.ts
+export declare function miniStore<T extends TweenProps>(init: T): T;
 /**
  * Svelte hook for updating values with Tween.
  *
@@ -40,7 +36,7 @@ declare function miniStore<T extends TweenProps>(init: T): T;
  *
  * <div style={{ translate: `${state.x}px ${state.y}px` }} />
  */
-declare function createTween<T extends TweenProps>(initialValues: T): readonly [T, Tween<T>];
+export declare function createTween<T extends TweenProps>(initialValues: T): readonly [T, Tween<T>];
 /**
  * Svelte hook for sequencing values update with Timeline.
  *
@@ -61,7 +57,6 @@ declare function createTween<T extends TweenProps>(initialValues: T): readonly [
  *
  * <div style={{ translate: `${state.x}px ${state.y}px` }} />
  */
-declare function createTimeline<T extends TweenProps>(initialValues: T): readonly [T, Timeline<T>];
-//#endregion
-export { Timeline, Tween, createTimeline, createTween, miniStore };
+export declare function createTimeline<T extends TweenProps>(initialValues: T): readonly [T, Timeline<T>];
+export { Timeline, Tween };
 //# sourceMappingURL=svelte.d.mts.map

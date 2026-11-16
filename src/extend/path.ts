@@ -1,17 +1,9 @@
 // src/extend/path.ts
 import type { MorphPathArray } from "svg-path-commander";
-import {
-  equalizePaths,
-  equalizeSegments,
-  pathToString,
-} from "svg-path-commander/util";
+import { equalizePaths, equalizeSegments, pathToString } from "svg-path-commander/util";
 import { isArray, isNumber } from "../Util.ts";
 
-import type {
-  InterpolatorFunction,
-  PathLike,
-  ValidationResultEntry,
-} from "../types.ts";
+import type { InterpolatorFunction, PathLike, ValidationResultEntry } from "../types.ts";
 /**
  * Re-exports the path utilities from `svg-path-commander/util`:
  * `equalizePaths`, `equalizeSegments` and `pathToString`.
@@ -28,9 +20,7 @@ export { equalizePaths, equalizeSegments, type MorphPathArray, pathToString };
  * @param t - The progress value
  * @returns The interpolated PathArray value
  */
-export const interpolatePath: InterpolatorFunction<MorphPathArray> = <
-  T extends MorphPathArray,
->(
+export const interpolatePath: InterpolatorFunction<MorphPathArray> = <T extends MorphPathArray>(
   target: T,
   start: T,
   end: T,
@@ -45,9 +35,7 @@ export const interpolatePath: InterpolatorFunction<MorphPathArray> = <
     const endSeg = end[i];
 
     if (targetSeg[0] === "Z") {
-      // force update when Z is used
-      // Z has no params
-      targetSeg[0] === "Z";
+      // Z has no params to interpolate
     } else if (targetSeg[0] === "C") {
       targetSeg[1] = startSeg[1]! + (endSeg[1]! - startSeg[1]!) * t;
       targetSeg[2] = startSeg[2]! + (endSeg[2]! - startSeg[2]!) * t;
@@ -76,9 +64,7 @@ const supportedPathCommands = ["M", "L", "C", "Z"] as const;
  */
 export const isPathLike = (value: unknown): value is PathLike =>
   isArray(value) &&
-  value.some(
-    (seg) => isArray(seg) && supportedPathCommands.includes(seg[0] as never),
-  );
+  value.some((seg) => isArray(seg) && supportedPathCommands.includes(seg[0] as never));
 
 /**
  * Check if an array of arrays is a valid PathArray for interpolation
@@ -95,9 +81,7 @@ export const isValidPath = (value: unknown): value is MorphPathArray =>
       ((["M", "L"].includes(cmd as MorphPathArray[0][0]) &&
         (values as number[]).length === 2 &&
         values.every(isNumber)) ||
-        ("C" === cmd &&
-          (values as number[]).length === 6 &&
-          values.every(isNumber)) ||
+        ("C" === cmd && (values as number[]).length === 6 && values.every(isNumber)) ||
         ("Z" === cmd && (values as number[]).length === 0)),
   );
 
@@ -169,9 +153,9 @@ export const validatePath = <T extends MorphPathArray>(
         return [
           false,
           `Property "${propName}" mismatch at index ${i}. ` +
-          `Segments don't match:\n` +
-          `> segment: "[${targetCmd}, ${targetSeg.slice(1)}]"\n` +
-          `> reference: "[${refCmd}, ${refSeg.slice(1)}]"`,
+            `Segments don't match:\n` +
+            `> segment: "[${targetCmd}, ${targetSeg.slice(1).join(",")}]"\n` +
+            `> reference: "[${refCmd}, ${refSeg.slice(1).join(",")}]"`,
         ];
       }
       i++;

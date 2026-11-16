@@ -1,27 +1,26 @@
 ## Svelte Integration for @thednp/tween
 
-Use `Tween` and `Timeline` with Svelte's runes.  
+Use `Tween` and `Timeline` with Svelte's runes.
 
 Unlike the [React hooks](React.md), the Svelte version of these "hooks" require no additional instrumentation, configuration is free-form, just like with SolidJS.
 
 **NOTE**: These "hooks" use a lightweight internal `miniStore` optimized for low GC presure and high-performance update system powered by Svelte's `$state.raw` rune.
 
-
 ### Server-side Rendering (SSR)
 
-  - Both `Tween` and `Timeline` classes are SSR-safe as long as you don't access instance methods (`tween.start` or `timeline.play`).
-  - The hooks use safe guards for server side rendering (**SSR**) and always provide `initialValues` to the rendering engine.
-  - The Tween/Timeline configuration (validation of tween values, creation of `miniStore` instance, registering extensions) never happens during server rendering and this is to speed up the overall rendering runtime.
-  - **IMPORTANT** - while we do provide the `initialValues` to make sure your server rendered HTML is consistent, that only depends on actual validity of the values you provide, so make sure your values have been validated beforehand.
-
+- Both `Tween` and `Timeline` classes are SSR-safe as long as you don't access instance methods (`tween.start` or `timeline.play`).
+- The hooks use safe guards for server side rendering (**SSR**) and always provide `initialValues` to the rendering engine.
+- The Tween/Timeline configuration (validation of tween values, creation of `miniStore` instance, registering extensions) never happens during server rendering and this is to speed up the overall rendering runtime.
+- **IMPORTANT** - while we do provide the `initialValues` to make sure your server rendered HTML is consistent, that only depends on actual validity of the values you provide, so make sure your values have been validated beforehand.
 
 ### Prerequisites
-* [Tween.md](Tween.md) - our official `Tween` guide
-* [Timeline.md](Timeline.md) - our official `Timeline` guide
-* [Extend.md](Extend.md) - a complete guide on extending beyond original prototype
-* [Easing.md](Easing.md) - an extensive guide on easing functions.
-* [Ministore.md](Ministore.md) - an inside look at `miniStore`.
-* Don't forget to install.
+
+- [Tween.md](Tween.md) - our official `Tween` guide
+- [Timeline.md](Timeline.md) - our official `Timeline` guide
+- [Extend.md](Extend.md) - a complete guide on extending beyond original prototype
+- [Easing.md](Easing.md) - an extensive guide on easing functions.
+- [Ministore.md](Ministore.md) - an inside look at `miniStore`.
+- Don't forget to install.
   ```
   npm install @thednp/tween
   # or pnpm/yarn/bun/deno
@@ -35,18 +34,18 @@ For TypeScript support, update the configuration (tsconfig.json) as shown below:
     "types": [
       "svelte",
       "vite/client",
-      "@thednp/tween"  // ← important for tween / timeline types
+      "@thednp/tween" // ← important for tween / timeline types
     ]
   }
 }
 ```
 
-
 ### createTween
 
 Creates a [`state`, `tween`] tuple that consists of:
-* `state` is a `miniStore` instance that updates on every frame.
-* `tween` is your `Tween` instance which provides controls (`start()`, `pause()`, etc.).
+
+- `state` is a `miniStore` instance that updates on every frame.
+- `tween` is your `Tween` instance which provides controls (`start()`, `pause()`, etc.).
 
 ```html
 <script>
@@ -57,10 +56,7 @@ Creates a [`state`, `tween`] tuple that consists of:
   const [box, tween] = createTween({ x: 0, opacity: 1 });
 
   // Configure on the fly
-  tween
-    .to({ x: 300, opacity: 0.5 })
-    .duration(1.5)
-    .easing(Easing.Elastic.Out);
+  tween.to({ x: 300, opacity: 0.5 }).duration(1.5).easing(Easing.Elastic.Out);
 
   function startBox() {
     tween.start();
@@ -68,26 +64,22 @@ Creates a [`state`, `tween`] tuple that consists of:
 </script>
 
 <div>
-  <div
-    style:translate=`${box.x}px`
-    style:opacity=`${box.opacity}`
-  >
-    Sample div
-  </div>
-  <button onClick={startBox}>Click to start</button>
+  <div style:translate="`${box.x}px`" style:opacity="`${box.opacity}`">Sample div</div>
+  <button onClick="{startBox}">Click to start</button>
 </div>
 ```
 
 **Notes**
+
 - Direct mutations are tracked automatically — no manual `onUpdate` or copying needed
 - Automatically stops on component unmount (via `tween.stop()`).
-
 
 ### createTimeline
 
 Creates a [`state`, `timeline`] tuple that consists of:
-* `state` is a `miniStore` instance that updates on every frame.
-* `timeline` is your `Timeline` instance which provides controls (`play()`, `pause()`, etc.).
+
+- `state` is a `miniStore` instance that updates on every frame.
+- `timeline` is your `Timeline` instance which provides controls (`play()`, `pause()`, etc.).
 
 ```html
 <script>
@@ -107,12 +99,11 @@ Creates a [`state`, `timeline`] tuple that consists of:
 </script>
 
 <div>
-  <div style:translate=`${pos.x}px ${pos.y}px`>
-    Sample div
-  </div>
-  <button onClick={playSequence}>Click to play</button>
+  <div style:translate="`${pos.x}px" ${pos.y}px`>Sample div</div>
+  <button onClick="{playSequence}">Click to play</button>
 </div>
 ```
+
 Same cleanup and mutation behavior applies to `Timeline`.
 
 😊 Happy tweening!

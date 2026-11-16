@@ -18,28 +18,27 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22" # Or 'lts/*'
-          registry-url: "https://registry.npmjs.org" # Optional if using trusted publishing
+          node-version: 26 # Or 'lts/*'
 
-      - name: PNPM setup
-        uses: pnpm/action-setup@v3
+      # Sets up Vite+, the Node.js runtime, the package manager and the
+      # dependency cache; `vp install` runs as part of the setup.
+      - name: Vite+ Setup
+        uses: voidzero-dev/setup-vp@v1.21.2
+        with:
+          node-version: 26
+          cache: true
+          run-install: '{"args":["--frozen-lockfile"]}'
 
       - name: Deno Setup
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
 
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-
-      # - name: Build (not needed, it's included in prepublishOnly)
-      #   run: pnpm build # Optional
-
       - name: Test
-        run: pnpm test
+        run: vpr test
 
       - name: Publish to npm
-        run: pnpm publish --provenance --access public --no-git-checks # --access public for new/public packages
+        run: vp pm publish --provenance --access public --no-git-checks # --access public for new/public packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }} # Only needed if NOT using trusted publishing
 

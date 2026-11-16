@@ -1,5 +1,5 @@
 // Vue.spec.ts
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { withSetup } from "./fixtures/vue.setup.ts";
 
 import { Timeline, Tween, useTimeline, useTween } from "../src/vue/index.ts";
@@ -31,9 +31,7 @@ describe("Vue", () => {
   });
 
   it("Tween updates deeper store", () => {
-    const [[styles, tween]] = withSetup(() =>
-      useTween({ translate: { x: 0 } })
-    );
+    const [[styles, tween]] = withSetup(() => useTween({ translate: { x: 0 } }));
 
     tween
       .use("translate", objectConfig)
@@ -67,31 +65,32 @@ describe("Vue", () => {
   });
 
   it("Timeline runs chained sequence and updates store", () => {
-    const [[pos, timeline], app] = withSetup(() => useTimeline({
-      x: 0,
-      y: 0,
-      translate: { x: 0 },
-    }));
+    const [[pos, timeline], _app] = withSetup(() =>
+      useTimeline({
+        x: 0,
+        y: 0,
+        translate: { x: 0 },
+      }),
+    );
 
+    timeline
+      .use("translate", objectConfig)
+      .to({ x: 200, translate: { x: 50 }, duration: 0.1 })
+      .to({ y: 150, duration: 0.1 })
+      .play();
 
-      timeline
-        .use("translate", objectConfig)
-        .to({ x: 200, translate: { x: 50 }, duration: 0.1 })
-        .to({ y: 150, duration: 0.1 })
-        .play();
+    vi.advanceTimersByTime(1);
+    timeline.update();
+    vi.advanceTimersByTime(100);
+    timeline.update();
+    vi.advanceTimersByTime(101);
+    timeline.update();
 
-      vi.advanceTimersByTime(1);
-      timeline.update();
-      vi.advanceTimersByTime(100);
-      timeline.update();
-      vi.advanceTimersByTime(101);
-      timeline.update();
+    expect(pos.x).toBe(200);
+    expect(pos.y).toBe(150);
+    expect(pos.translate.x).toBe(50);
 
-      expect(pos.x).toBe(200);
-      expect(pos.y).toBe(150);
-      expect(pos.translate.x).toBe(50);
-
-      // const [posx, timeline1] = createTimeline({ x: 0, y: 0 }); // coverage
+    // const [posx, timeline1] = createTimeline({ x: 0, y: 0 }); // coverage
   });
 
   it("Tween stops on cleanup", () => {
@@ -124,8 +123,14 @@ describe("Vue", () => {
       x: 0,
       deep: { r: 0, g: 0, b: 0 },
       rgb: [0, 0, 0],
-      path: [["M", 0, 0], ["L", 0, 0]],
-      transform: [["rotate", 0, 0], ["translate", 0, 0]] as TransformStep[],
+      path: [
+        ["M", 0, 0],
+        ["L", 0, 0],
+      ],
+      transform: [
+        ["rotate", 0, 0],
+        ["translate", 0, 0],
+      ] as TransformStep[],
     } satisfies TweenProps;
     const store = miniStore(initialValues);
 
@@ -141,14 +146,16 @@ describe("Vue", () => {
 
     store.path[0][1] = 5;
     store.path[1][2] = 5;
-    expect(store.path).to.deep.equal([["M", 5, 0], ["L", 0, 5]]);
+    expect(store.path).to.deep.equal([
+      ["M", 5, 0],
+      ["L", 0, 5],
+    ]);
 
     store.transform[0][1] = 5;
     store.transform[1][2] = 5;
-    expect(store.transform).to.deep.equal([["rotate", 5, 0], [
-      "translate",
-      0,
-      5,
-    ]]);
+    expect(store.transform).to.deep.equal([
+      ["rotate", 5, 0],
+      ["translate", 0, 5],
+    ]);
   });
 });

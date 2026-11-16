@@ -1,13 +1,13 @@
 /*!
-* @thednp/tween  v0.1.5 (https://github.com/thednp/tween)
-* Copyright 2026 © thednp
-* Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
-*/
+ * @thednp/tween  v0.1.6 (https://github.com/thednp/tween)
+ * Copyright 2026 © thednp
+ * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
+ */
 "use strict";
 
 import { equalizePaths, equalizeSegments, pathToString } from "svg-path-commander/util";
 import CSSMatrix from "@thednp/dommatrix";
-//#region src/Easing.ts
+// src/Easing.ts
 /**
 * A frozen collection of preset easing functions, grouped by name
 * (`Linear`, `Quadratic`, `Cubic`, `Quartic`, `Quintic`, `Sinusoidal`,
@@ -221,8 +221,7 @@ const Easing = Object.freeze({
 		};
 	}
 });
-//#endregion
-//#region src/Util.ts
+// src/Util.ts
 /**
 * Checks if a value is a `string`.
 *
@@ -316,6 +315,7 @@ const instanceMethods = [
 * - allow free-form configuration for signal based frameworks
 */
 const dummyInstance = {};
+// istanbul ignore next
 /**
 * A no-op method that returns the calling instance, used to stub
 * {@link Tween} / {@link Timeline} methods in SSR environments.
@@ -356,6 +356,7 @@ function deepAssign(target, source) {
 	const len = keys.length;
 	while (i < len) {
 		const key = keys[i++];
+		// istanbul ignore next
 		if (isUnsafeKey(key) || !objectHasProp(source, key)) continue;
 		const targetVal = target[key];
 		const sourceVal = source[key];
@@ -393,7 +394,9 @@ const deproxy = (value) => {
 	if (isArray(value)) return value.map(deproxy);
 	if (isPlainObject(value)) {
 		const result = {};
-		for (const key in value) if (objectHasProp(value, key)) result[key] = deproxy(value[key]);
+		for (const key in value)
+ // istanbul ignore else
+		if (objectHasProp(value, key)) result[key] = deproxy(value[key]);
 		return result;
 	}
 	return value;
@@ -437,6 +440,7 @@ function validateValues(target, reference) {
 			continue;
 		}
 		if (reference && isNumber(refValue)) {
+			// istanbul ignore else
 			if (!isNumber(value)) errors.set(key, `Property "${key}" is not a number.`);
 			continue;
 		}
@@ -444,8 +448,7 @@ function validateValues(target, reference) {
 	}
 	errors.delete("init");
 }
-//#endregion
-//#region src/extend/array.ts
+// src/extend/array.ts
 /**
 * Interpolates two `Array<number>` values.
 *
@@ -481,7 +484,9 @@ const isValidArray = (target) => isArray(target) && target.every(isNumber);
 * if not valid, a reason why it's not valid
 */
 const validateArray = (propName, target, ref) => {
+	// istanbul ignore if
 	if (!isArray(target)) return [false, `Property "${String(propName)}" is not Array.`];
+	// istanbul ignore if
 	if (!isValidArray(target)) return [false, `Property "${String(propName)}" is not a valid Array<number>.`];
 	if (ref && ref.length !== target.length) return [false, `Property "${String(propName)}" is expecting an array of ${ref.length} numbers.`];
 	return [true];
@@ -493,8 +498,7 @@ const arrayConfig = {
 	interpolate: interpolateArray,
 	validate: validateArray
 };
-//#endregion
-//#region src/extend/path.ts
+// src/extend/path.ts
 /**
 * Interpolate `PathArray` values.
 *
@@ -512,8 +516,7 @@ const interpolatePath = (target, start, end, t) => {
 		const targetSeg = target[i];
 		const startSeg = start[i];
 		const endSeg = end[i];
-		if (targetSeg[0] === "Z") targetSeg[0];
-		else if (targetSeg[0] === "C") {
+		if (targetSeg[0] === "Z") {} else if (targetSeg[0] === "C") {
 			targetSeg[1] = startSeg[1] + (endSeg[1] - startSeg[1]) * t;
 			targetSeg[2] = startSeg[2] + (endSeg[2] - startSeg[2]) * t;
 			targetSeg[3] = startSeg[3] + (endSeg[3] - startSeg[3]) * t;
@@ -596,7 +599,7 @@ const validatePath = (propName, target, ref) => {
 			const targetCmd = targetSeg[0];
 			const refLen = refSeg.length;
 			const targetLen = targetSeg.length;
-			if (refCmd !== targetCmd || refLen !== targetLen) return [false, `Property "${propName}" mismatch at index ${i}. Segments don't match:\n> segment: "[${targetCmd}, ${targetSeg.slice(1)}]"\n> reference: "[${refCmd}, ${refSeg.slice(1)}]"`];
+			if (refCmd !== targetCmd || refLen !== targetLen) return [false, `Property "${propName}" mismatch at index ${i}. Segments don't match:\n> segment: "[${targetCmd}, ${targetSeg.slice(1).join(",")}]"\n> reference: "[${refCmd}, ${refSeg.slice(1).join(",")}]"`];
 			i++;
 		}
 	}
@@ -609,8 +612,7 @@ const pathArrayConfig = {
 	interpolate: interpolatePath,
 	validate: validatePath
 };
-//#endregion
-//#region src/extend/object.ts
+// src/extend/object.ts
 /**
 * Caches the key list of each interpolated object so it's computed once
 * instead of every frame. The `end` object reference is stable for the
@@ -682,8 +684,7 @@ const objectConfig = {
 	interpolate: interpolateObject,
 	validate: validateObject
 };
-//#endregion
-//#region src/extend/transform.ts
+// src/extend/transform.ts
 /**
 * Returns a valid CSS transform string either with transform functions (Eg.: `translate(15px) rotate(25deg)`)
 * or `matrix(...)` / `matrix3d(...)`.
@@ -743,7 +744,9 @@ const transformToString = (steps, toMatrix = false) => {
 				if (typeof rx === "number" && ry === void 0 && rz === void 0) stringOutput += ` rotate(${step[1]}deg)`;
 				else {
 					stringOutput += ` rotateX(${step[1]}deg)`;
+					// istanbul ignore else
 					if (step[2] !== void 0) stringOutput += ` rotateY(${step[2]}deg)`;
+					// istanbul ignore else
 					if (step[3] !== void 0) stringOutput += ` rotateZ(${step[3]}deg)`;
 				}
 				break;
@@ -936,8 +939,9 @@ const validateTransform = (propName, target, ref) => {
 			const refStep = ref[i];
 			const fn = step[0];
 			const fnRef = refStep[0];
+			// istanbul ignore else
 			if (refStep) {
-				if (fnRef !== fn || refStep.length !== step.length) return [false, `Property "${propName}" mismatch at index ${i}":\n> step: ["${fn}", ${step.slice(1)}]\n> reference: ["${fnRef}", ${refStep.slice(1)}]`];
+				if (fnRef !== fn || refStep.length !== step.length) return [false, `Property "${propName}" mismatch at index ${i}":\n> step: ["${fn}", ${step.slice(1).join(",")}]\n> reference: ["${fnRef}", ${refStep.slice(1).join(",")}]`];
 			}
 			i++;
 		}
@@ -951,8 +955,7 @@ const transformConfig = {
 	interpolate: interpolateTransform,
 	validate: validateTransform
 };
-//#endregion
-//#region src/Now.ts
+// src/Now.ts
 /**
 * The current time function used by the engine, defaults to
 * `globalThis.performance.now()`. Can be replaced with {@link setNow}
@@ -976,13 +979,12 @@ const now = () => {
 function setNow(nowFunction) {
 	_nowFunc = nowFunction;
 }
-//#endregion
-//#region src/Runtime.ts
+// src/Runtime.ts
 /**
 * The runtime queue holding all active {@link AnimationItem} instances
 * (Tween / Timeline) that are updated by the RAF loop.
 */
-const Queue = new Array(0);
+const Queue = [];
 /** The current `requestAnimationFrame` id, `0` when the loop is stopped */
 let rafID = 0;
 /** The length of the {@link Queue}, kept in sync for micro-optimization */
@@ -1014,9 +1016,11 @@ function Runtime(t = now()) {
 * @param newItem - Tween / Timeline instance to add
 */
 function addToQueue(newItem) {
+	// istanbul ignore else
 	if (queuedItems.has(newItem)) return;
 	queuedItems.add(newItem);
 	Queue[queueLength++] = newItem;
+	// istanbul ignore else
 	if (!rafID) Runtime();
 }
 /**
@@ -1025,6 +1029,7 @@ function addToQueue(newItem) {
 */
 function removeFromQueue(removedItem) {
 	const idx = Queue.indexOf(removedItem);
+	// istanbul ignore else
 	if (idx > -1) {
 		queuedItems.delete(removedItem);
 		Queue[idx] = Queue[queueLength - 1];
@@ -1032,8 +1037,7 @@ function removeFromQueue(removedItem) {
 		Queue.length = queueLength;
 	}
 }
-//#endregion
-//#region src/Tween.ts
+// src/Tween.ts
 /**
 * Lightweight tween engine for interpolating values over time.
 * Supports numbers and via extensions it enxtends to arrays
@@ -1192,7 +1196,8 @@ var Tween = class {
 			return this;
 		}
 		if (this._startTime && !overrideStart) this._resetState();
-		if (!this._startIsSet || overrideStart) {
+		// istanbul ignore else
+		if (!this._startIsSet || /* istanbul ignore next */ overrideStart) {
 			this._startIsSet = true;
 			this._setProps(this.state, this._propsStart, this._propsEnd, overrideStart);
 		}
@@ -1229,11 +1234,13 @@ var Tween = class {
 	* @returns this
 	*/
 	reverse() {
+		// istanbul ignore next
 		if (!this._isPlaying) return this;
 		const currentTime = now();
 		const elapsed = currentTime - this._startTime;
 		this._startTime = currentTime - (this._duration - elapsed);
 		this._reversed = !this._reversed;
+		// istanbul ignore else
 		if (this._initialRepeat > 0) this._repeat = this._initialRepeat - this._repeat;
 		return this;
 	}
@@ -1431,8 +1438,11 @@ var Tween = class {
 	* otherwise.
 	*/
 	update(time = now()) {
+		// istanbul ignore else
 		if (!this._isPlaying) return false;
+		// istanbul ignore else
 		if (time < this._startTime) return true;
+		// istanbul ignore else
 		if (!this._startFired) {
 			this._onStart?.(this.state);
 			this._startFired = true;
@@ -1457,6 +1467,7 @@ var Tween = class {
 			else interpolator(targetObject, startVal, endVal, eased);
 		}
 		this._onUpdate?.(state, progress);
+		// istanbul ignore else
 		if (progress === 1) {
 			if (this._repeat === 0) {
 				this._isPlaying = false;
@@ -1465,7 +1476,9 @@ var Tween = class {
 				this._onComplete?.(state);
 				return false;
 			}
+			// istanbul ignore else
 			if (this._repeat !== Infinity) this._repeat--;
+			// istanbul ignore else
 			if (this._yoyo) this._reversed = !reversed;
 			this._startTime = time;
 			this._startTime += this._repeatDelay;
@@ -1491,6 +1504,7 @@ var Tween = class {
 	* tween.use("myProp", objectConfig);
 	*/
 	use(property, { interpolate, validate }) {
+		// istanbul ignore else
 		if (interpolate && !this._interpolators.has(property)) this._interpolators.set(property, interpolate);
 		if (validate && !this._validators.has(property)) this._validators.set(property, validate);
 		this._evaluate();
@@ -1529,6 +1543,7 @@ var Tween = class {
 		while (i < len) {
 			const property = endKeys[i++];
 			const objValue = obj[property];
+			// istanbul ignore else
 			if (typeof propsStart[property] === "undefined" || overrideStartingValues) {
 				if (isObject(objValue) || isArray(objValue)) propsStart[property] = deproxy(objValue);
 				else propsStart[property] = objValue;
@@ -1551,9 +1566,11 @@ var Tween = class {
 	* @internal
 	*/
 	_evaluate(newObj) {
+		// istanbul ignore else
 		if (!this.isValidState) {
 			const temp = this._state;
 			validateValues.call(this, temp);
+			// istanbul ignore else
 			if (this.isValid) {
 				this.state = temp;
 				this._state = deproxy(temp);
@@ -1566,6 +1583,7 @@ var Tween = class {
 	* @internal
 	*/
 	_report() {
+		// istanbul ignore else
 		if (!this.isValid) {
 			const message = ["[Tween] failed validation:", "- " + Array.from(this._errors.values()).join("\n- ")];
 			console.warn(message.join("\n"));
@@ -1573,8 +1591,7 @@ var Tween = class {
 		return this;
 	}
 };
-//#endregion
-//#region src/Timeline.ts
+// src/Timeline.ts
 /**
 * Timeline orchestrates multiple tweens with scheduling, overlaps, labels and repeat.
 * Supports numbers and via extensions it enxtends to arrays
@@ -1784,6 +1801,7 @@ var Timeline = class {
 		if (!this._isPlaying) return this;
 		this._reversed = !this._reversed;
 		this._time = this._duration - this._time;
+		// istanbul ignore else
 		if (this._initialRepeat > 0) this._repeat = this._initialRepeat - this._repeat;
 		return this;
 	}
@@ -1967,6 +1985,7 @@ var Timeline = class {
 	* timeline.use("myProp", objectConfig);
 	*/
 	use(property, { interpolate, validate }) {
+		// istanbul ignore else
 		if (interpolate && !this._interpolators.has(property)) this._interpolators.set(property, interpolate);
 		if (validate && !this._validators.has(property)) this._validators.set(property, validate);
 		this._evaluate();
@@ -2006,9 +2025,11 @@ var Timeline = class {
 			if (tweenElapsed > 1) tweenElapsed = 1;
 			if (tweenElapsed < 0) tweenElapsed = 0;
 			if (!entry.isActive && tweenElapsed > 0 && tweenElapsed < 1) {
+				// istanbul ignore else
 				if (entry.runtime.length === 0) this._setEntry(entry, state);
 				entry.isActive = true;
 			}
+			// istanbul ignore else
 			if (entry.isActive) {
 				let easedValue = entry.easing(reversed ? 1 - tweenElapsed : tweenElapsed);
 				easedValue = reversed ? 1 - easedValue : easedValue;
@@ -2029,7 +2050,9 @@ var Timeline = class {
 			}
 		}
 		this._onUpdate?.(state, this._progress);
+		// istanbul ignore else
 		if (this._progress === 1) {
+			// istanbul ignore else
 			if (this._repeat === 0) {
 				this._isPlaying = false;
 				this._repeat = this._initialRepeat;
@@ -2038,6 +2061,7 @@ var Timeline = class {
 				this._resetState(true);
 				return false;
 			}
+			// istanbul ignore else
 			if (this._repeat !== Infinity) this._repeat--;
 			if (this._yoyo) this._reversed = !reversed;
 			this._time = 0;
@@ -2078,7 +2102,7 @@ var Timeline = class {
 		const to = entry.to;
 		const keysTo = Object.keys(to);
 		const keyLen = keysTo.length;
-		entry.runtime = new Array(keyLen);
+		entry.runtime = [];
 		let rtLen = 0;
 		let j = 0;
 		while (j < keyLen) {
@@ -2119,9 +2143,11 @@ var Timeline = class {
 	*/
 	_resolvePosition(pos) {
 		if (typeof pos === "number") return Math.min(this._duration, Math.max(0, pos * 1e3));
+		// istanbul ignore else
 		if (typeof pos === "string") {
 			const labelTime = this._labels.get(pos);
 			if (labelTime !== void 0) return labelTime;
+			// istanbul ignore else
 			if (pos.startsWith("+=") || pos.startsWith("-=")) {
 				let offset = parseFloat(pos.slice(2));
 				if (isNaN(offset)) offset = 0;
@@ -2191,9 +2217,11 @@ var Timeline = class {
 	* @internal
 	*/
 	_evaluate(newObj) {
+		// istanbul ignore else
 		if (!this.isValidState) {
 			const temp = this._state;
 			validateValues.call(this, temp);
+			// istanbul ignore else
 			if (this.isValid) {
 				this.state = temp;
 				this._state = deproxy(temp);
@@ -2206,6 +2234,7 @@ var Timeline = class {
 	* @internal
 	*/
 	_report() {
+		// istanbul ignore else
 		if (!this.isValid) {
 			const message = ["[Timeline] failed validation:", "- " + Array.from(this._errors.values()).join("\n- ")].join("\n");
 			console.warn(message);
@@ -2213,10 +2242,8 @@ var Timeline = class {
 		return this;
 	}
 };
-//#endregion
-//#region src/Version.ts
-const version = "0.1.5";
-//#endregion
+// src/Version.ts
+const version = "0.1.6";
 export { Easing, Queue, Runtime, Timeline, Tween, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, equalizePaths, equalizeSegments, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
 
 //# sourceMappingURL=index.mjs.map

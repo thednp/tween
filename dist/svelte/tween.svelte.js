@@ -1,13 +1,13 @@
 /*!
-* @thednp/tween utils for Svelte v0.1.5 (https://github.com/thednp/tween)
-* Copyright 2026 © thednp
-* Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
-*/
+ * @thednp/tween utils for Svelte v0.1.6 (https://github.com/thednp/tween)
+ * Copyright 2026 © thednp
+ * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
+ */
 "use strict";
 
 import { Timeline, Tween, dummyInstance, isArray, isPlainObject, isServer, objectHasProp } from "@thednp/tween";
 import { onDestroy } from "svelte";
-//#region src/svelte/miniStore.svelte.ts
+// src/svelte/miniStore.svelte.ts
 /** The marker property name used to flag already-proxied values */
 const STATE_PROXY = "_proxy";
 /** The descriptor used for the non-enumerable `_proxy` marker property */
@@ -128,8 +128,7 @@ function createMiniState(obj, parentReceiver) {
 function miniStore(init) {
 	return createMiniState(init, {});
 }
-//#endregion
-//#region src/svelte/index.svelte.ts
+// src/svelte/index.svelte.ts
 /**
 * Svelte integration for {@link @thednp/tween}.
 *
@@ -199,7 +198,6 @@ function createTimeline(initialValues) {
 	});
 	return [store, timeline];
 }
-//#endregion
 export { Timeline, Tween, createTimeline, createTween, miniStore };
 
 //# sourceMappingURL=svelte.mjs.map

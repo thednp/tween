@@ -1,16 +1,7 @@
 // Vanjs.spec.ts
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import {
-  createTween,
-  createTimeline,
-  Tween,
-  Timeline,
-} from "../src/vanjs/index.ts";
-import {
-  objectConfig,
-  TransformStep,
-  TweenProps,
-} from "../src/index.ts";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vite-plus/test";
+import { createTween, createTimeline, Tween, Timeline } from "../src/vanjs/index.ts";
+import { objectConfig, TransformStep, TweenProps } from "../src/index.ts";
 
 import { miniStore } from "../src/vanjs/miniStore";
 import { withDomBinding, withHook } from "./fixtures/vanjs.setup.ts";
@@ -43,9 +34,7 @@ describe("VanJS", () => {
 
     it("stops on cleanup", () => {
       const stopSpy = vi.spyOn(Tween.prototype, "stop");
-      const [[pos, tween], dispose] = withHook(
-        () => createTween({ x: 0 })
-      );
+      const [[pos, tween], dispose] = withHook(() => createTween({ x: 0 }));
 
       tween.to({ x: 500 });
       tween.start();
@@ -61,9 +50,11 @@ describe("VanJS", () => {
     });
 
     it("auto-stops when DOM bindings are removed", async () => {
-      const [pos, tween, dispose] = withDomBinding(() =>
-        createTween({ x: 0 })
-      ) as unknown as [TweenProps, Tween<{ x: number }>, () => void];
+      const [_pos, tween, dispose] = withDomBinding(() => createTween({ x: 0 })) as unknown as [
+        TweenProps,
+        Tween<{ x: number }>,
+        () => void,
+      ];
 
       tween.to({ x: 500 }).duration(1).start();
       tween.update();
@@ -75,9 +66,11 @@ describe("VanJS", () => {
     });
 
     it("does not stop when bindings are still connected", async () => {
-      const [pos, tween, dispose] = withDomBinding(() =>
-        createTween({ x: 0 })
-      ) as unknown as [TweenProps, Tween<{ x: number }>, () => void];
+      const [_pos, tween, dispose] = withDomBinding(() => createTween({ x: 0 })) as unknown as [
+        TweenProps,
+        Tween<{ x: number }>,
+        () => void,
+      ];
 
       tween.to({ x: 500 }).duration(1).start();
       tween.update();
@@ -95,9 +88,11 @@ describe("VanJS", () => {
     });
 
     it("cleans up completed instances when observer fires", async () => {
-      const [pos, tween, dispose] = withDomBinding(() =>
-        createTween({ x: 0 })
-      ) as unknown as [TweenProps, Tween<{ x: number }>, () => void];
+      const [_pos, tween, _dispose] = withDomBinding(() => createTween({ x: 0 })) as unknown as [
+        TweenProps,
+        Tween<{ x: number }>,
+        () => void,
+      ];
 
       tween.to({ x: 500 }).duration(0.01).start();
       tween.update();
@@ -118,9 +113,11 @@ describe("VanJS", () => {
     });
 
     it("cleans up stopped instances when observer fires", async () => {
-      const [pos, tween, dispose] = withDomBinding(() =>
-        createTween({ x: 0 })
-      ) as unknown as [TweenProps, Tween<{ x: number }>, () => void];
+      const [_pos, tween, _dispose] = withDomBinding(() => createTween({ x: 0 })) as unknown as [
+        TweenProps,
+        Tween<{ x: number }>,
+        () => void,
+      ];
 
       tween.to({ x: 500 }).duration(1).start();
       tween.update();
@@ -141,12 +138,12 @@ describe("VanJS", () => {
 
   describe("createTimeline", () => {
     it("runs sequence and updates store", () => {
-      const [[pos, timeline], dispose] = withHook(
-        () => createTimeline({
+      const [[pos, timeline], dispose] = withHook(() =>
+        createTimeline({
           x: 0,
           y: 0,
           translate: { x: 0 },
-        })
+        }),
       );
 
       timeline
@@ -170,9 +167,7 @@ describe("VanJS", () => {
 
     it("stops on cleanup", () => {
       const stopSpy = vi.spyOn(Timeline.prototype, "stop");
-      const [[pos, timeline], dispose] = withHook(
-        () => createTimeline({ x: 0 })
-      );
+      const [[pos, timeline], dispose] = withHook(() => createTimeline({ x: 0 }));
 
       timeline.to({ x: 500 });
       timeline.play();
@@ -189,7 +184,7 @@ describe("VanJS", () => {
 
     it("auto-stops when DOM bindings are removed", async () => {
       const [_pos, timeline, dispose] = withDomBinding(() =>
-        createTimeline({ x: 0 })
+        createTimeline({ x: 0 }),
       ) as unknown as [TweenProps, Timeline<{ x: number }>, () => void];
 
       timeline.to({ x: 500, duration: 1 }).play();
@@ -200,7 +195,6 @@ describe("VanJS", () => {
       // await Promise.resolve();
       await vi.waitFor(() => {
         expect(timeline.isPlaying).toBe(false);
-
       }, 3000);
     });
   });
@@ -210,8 +204,14 @@ describe("VanJS", () => {
       x: 0,
       deep: { r: 0, g: 0, b: 0 },
       rgb: [0, 0, 0],
-      path: [["M", 0, 0], ["L", 0, 0]],
-      transform: [["rotate", 0, 0], ["translate", 0, 0]] as TransformStep[],
+      path: [
+        ["M", 0, 0],
+        ["L", 0, 0],
+      ],
+      transform: [
+        ["rotate", 0, 0],
+        ["translate", 0, 0],
+      ] as TransformStep[],
     } satisfies TweenProps;
     const store = miniStore(initialValues);
     miniStore(store);
@@ -228,11 +228,17 @@ describe("VanJS", () => {
 
     store.path[0][1] = 5;
     store.path[1][2] = 5;
-    expect(store.path).to.deep.equal([["M", 5, 0], ["L", 0, 5]]);
+    expect(store.path).to.deep.equal([
+      ["M", 5, 0],
+      ["L", 0, 5],
+    ]);
 
     store.transform[0][1] = 5;
     store.transform[1][2] = 5;
-    expect(store.transform).to.deep.equal([["rotate", 5, 0], ["translate", 0, 5]]);
+    expect(store.transform).to.deep.equal([
+      ["rotate", 5, 0],
+      ["translate", 0, 5],
+    ]);
   });
 
   // it("lifecycle tracks mounted instances", async () => {

@@ -1,5 +1,5 @@
 // Tween.spec.ts
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import {
   arrayConfig,
   Easing,
@@ -7,7 +7,6 @@ import {
   now,
   objectConfig,
   pathArrayConfig,
-  pathToString,
   setNow,
   Tween,
 } from "../src/index";
@@ -45,11 +44,7 @@ describe("Tween", () => {
   });
 
   it("should apply custom easing correctly", () => {
-    const tween = new Tween(target)
-      .to({ x: 100 })
-      .duration(1)
-      .easing(Easing.Quadratic.In)
-      .start();
+    const tween = new Tween(target).to({ x: 100 }).duration(1).easing(Easing.Quadratic.In).start();
 
     expect(tween.getDuration()).toBe(1);
     vi.advanceTimersByTime(500);
@@ -60,11 +55,7 @@ describe("Tween", () => {
   });
 
   it("should respect delay before starting", () => {
-    const tween = new Tween(target)
-      .to({ x: 100 })
-      .duration(1)
-      .delay(0.5)
-      .start();
+    const tween = new Tween(target).to({ x: 100 }).duration(1).delay(0.5).start();
 
     vi.advanceTimersByTime(400); // before delay ends
     tween.update();
@@ -76,21 +67,18 @@ describe("Tween", () => {
   });
 
   it("should resetState on second start", () => {
-    const tween = new Tween(target)
-      .to({ x: 100 })
-      .duration(0.1)
-      .start();
-      
+    const tween = new Tween(target).to({ x: 100 }).duration(0.1).start();
+
     tween.update();
     vi.advanceTimersByTime(100);
 
     tween.update();
     expect(target.x).toBe(100);
-    
+
     vi.advanceTimersByTime(100);
-    // @ts-expect-error - happy-dom seems to lack performance.now 
+    // @ts-expect-error - happy-dom seems to lack performance.now
     tween._startTime = 1;
-    tween.start()
+    tween.start();
 
     tween.update();
     vi.advanceTimersByTime(100);
@@ -100,10 +88,7 @@ describe("Tween", () => {
 
   it("should call onStart with object", () => {
     const mockStart = vi.fn();
-    const tween = new Tween(target)
-      .to({ x: 100 })
-      .duration(1)
-      .onStart(mockStart);
+    const tween = new Tween(target).to({ x: 100 }).duration(1).onStart(mockStart);
 
     tween.start();
     tween.update();
@@ -118,11 +103,7 @@ describe("Tween", () => {
 
   it("should call onUpdate with object, elapsed, eased progress", () => {
     const mockUpdate = vi.fn();
-    const tween = new Tween(target)
-      .to({ x: 100 })
-      .duration(1)
-      .onUpdate(mockUpdate)
-      .start();
+    const tween = new Tween(target).to({ x: 100 }).duration(1).onUpdate(mockUpdate).start();
 
     tween.update();
     vi.advanceTimersByTime(500);
@@ -136,11 +117,7 @@ describe("Tween", () => {
 
   it("should call onStop with object", () => {
     const mockStop = vi.fn();
-    const tween = new Tween(target)
-      .to({ x: 100 })
-      .duration(1)
-      .onStop(mockStop)
-      .start();
+    const tween = new Tween(target).to({ x: 100 }).duration(1).onStop(mockStop).start();
 
     tween.start(); // coverage
 
@@ -156,11 +133,7 @@ describe("Tween", () => {
 
   it("should complete and fire onComplete at elapsed === 1", () => {
     const mockComplete = vi.fn();
-    const tween = new Tween(target)
-      .to({ x: 100 })
-      .duration(1)
-      .onComplete(mockComplete)
-      .start();
+    const tween = new Tween(target).to({ x: 100 }).duration(1).onComplete(mockComplete).start();
 
     vi.advanceTimersByTime(1000);
     tween.update();
@@ -217,11 +190,7 @@ describe("Tween", () => {
   });
 
   it("should support overriding start values with .from()", () => {
-    const tween = new Tween(target)
-      .from({ x: -100 })
-      .to({ x: 100 })
-      .duration(1)
-      .start();
+    const tween = new Tween(target).from({ x: -100 }).to({ x: 100 }).duration(1).start();
 
     vi.advanceTimersByTime(500);
     tween.update();
@@ -230,9 +199,7 @@ describe("Tween", () => {
   });
 
   it("should support autostart with .update()", () => {
-    const tween = new Tween(target)
-      .to({ x: 100 })
-      .duration(1);
+    const tween = new Tween(target).to({ x: 100 }).duration(1);
 
     tween.start(); // should do nothing, added for coverage
     tween.update();
@@ -278,9 +245,7 @@ describe("Tween", () => {
     tween.update();
 
     expect(localTarget.color).to.deep.equal([0, 255, 0]);
-    expect(localTarget.path).to.deep.equal([["M", 10, 10], ["L", 150, 150], [
-      "Z",
-    ]]);
+    expect(localTarget.path).to.deep.equal([["M", 10, 10], ["L", 150, 150], ["Z"]]);
   });
 
   // coverage
@@ -317,9 +282,15 @@ describe("Tween", () => {
 
   it("should work with default delay, duration, yoyo, repeat, repeatDelay and easing values", () => {
     const tween = new Tween(target)
-      .from({ x: -100 }).to({ x: 50 })
-      .duration().yoyo().repeat().repeatDelay()
-      .easing().delay().start(now(), true);
+      .from({ x: -100 })
+      .to({ x: 50 })
+      .duration()
+      .yoyo()
+      .repeat()
+      .repeatDelay()
+      .easing()
+      .delay()
+      .start(now(), true);
     tween.update();
     vi.advanceTimersByTime(1000);
     tween.update();
@@ -340,12 +311,7 @@ describe("Tween", () => {
   });
 
   it("should do repeat and yoyo", () => {
-    const tween = new Tween(target)
-      .to({ x: 50 })
-      .duration(0.1)
-      .yoyo(true)
-      .repeat(1)
-      .start();
+    const tween = new Tween(target).to({ x: 50 }).duration(0.1).yoyo(true).repeat(1).start();
 
     tween.update();
     vi.advanceTimersByTime(10);
@@ -353,7 +319,7 @@ describe("Tween", () => {
     vi.advanceTimersByTime(90);
     tween.update();
 
-    expect(tween.state.x).toBe(50)
+    expect(tween.state.x).toBe(50);
 
     tween.update();
     vi.advanceTimersByTime(10);
@@ -361,7 +327,7 @@ describe("Tween", () => {
     vi.advanceTimersByTime(90);
     tween.update();
 
-    expect(tween.state.x).toBe(0)
+    expect(tween.state.x).toBe(0);
   });
 
   it("should do pause / resume", () => {
@@ -394,7 +360,7 @@ describe("Tween", () => {
     vi.advanceTimersByTime(50);
     tween.update();
 
-    expect(tween.state.x).toBe(25)
+    expect(tween.state.x).toBe(25);
 
     tween.update();
     tween.reverse();
@@ -402,19 +368,19 @@ describe("Tween", () => {
     vi.advanceTimersByTime(51);
     tween.update();
 
-    expect(tween.state.x).toBe(0)
+    expect(tween.state.x).toBe(0);
   });
 
   it("should be able to clear", () => {
     const tween = new Tween(target).to({ x: 50 });
-  
+
     tween.clear();
     // @ts-expect-error - testing
-    expect(tween._propsStart).toEqual({})
+    expect(tween._propsStart).toEqual({});
     // @ts-expect-error - testing
-    expect(tween._propsEnd).toEqual({})
+    expect(tween._propsEnd).toEqual({});
     // @ts-expect-error - testing
-    expect(tween._runtime.length).toBe(0)
+    expect(tween._runtime.length).toBe(0);
   });
 
   it("should be able to set a new now()", () => {

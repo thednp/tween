@@ -5,11 +5,13 @@ All notable changes to this project will be documented in this file.
 ## [0.1.5] - 2026-09-02
 
 ### Changed
+
 - Scheduled dependency update: `@thednp/dommatrix` `^3.1.1` → `^3.1.2`, `svg-path-commander` `^2.3.1` → `^2.3.2`, `svelte` `^5.56.10` → `^5.57.0`, `@types/node` `^26.4.0` → `^26.4.1`, `happy-dom` `^20.11.12` → `^20.12.2`; synced `inlinedDependencies` (`3.1.2`/`2.3.2`), `deno.json` imports, `deno.lock`, `pnpm-lock.yaml`, rebuilt `dist` and `src/Version.ts` (`0.1.5`)
 
 ## [0.1.4] - 2026-08-28
 
 ### Changed
+
 - Docs: `transformToString` JSDoc `DOMMatrix` → `CSSMatrix` and `src/extend/path.ts` type docs
 - Updated playground dependencies: `@thednp/tween` `^0.1.2` → `^0.1.3` in all 6 playgrounds
 - Rebuilt `dist`, synced `deno.json`/`src/Version.ts` (`0.1.4`)
@@ -17,9 +19,11 @@ All notable changes to this project will be documented in this file.
 ## [0.1.3] - 2026-08-28
 
 ### Added
+
 - `test/tween.bench.ts` — committed benchmark suite (`pnpm bench`, `vitest bench`) comparing the current source against the published `0.1.2` build (vendored as `test/fixtures/tween-0.1.2.mjs`): measured ~39x faster 500-entry `Timeline` updates (windowed binary search vs O(n) scan) and ~7.5x faster `transformToString` with matrix output (CSSMatrix vs native DOMMatrix); object (5/20 keys), transform (7 steps) and path interpolation scenarios at parity or slightly faster with DCE-safe checksums and JIT warmup
 
 ### Changed
+
 - Performance: `transformToString` now uses `@thednp/dommatrix` (CSSMatrix) instead of native `DOMMatrix`, with a reused scratch matrix for perspective steps
 - Performance: the runtime queue in `Runtime.ts` now uses a `Set` for O(1) membership checks and swap-and-pop removal (O(1) unlink per finished tween instead of O(n))
 - Performance: the per-frame `typeof` check on tween end values is hoisted into the runtime tuples as a precomputed `isNumeric` flag (`Tween` and `Timeline`, `src/types.ts:164`)
@@ -36,11 +40,13 @@ All notable changes to this project will be documented in this file.
 ## [0.1.2] - 2026-08-04
 
 ### Changed
+
 - Added full JSDoc coverage across the entire source: all types, interfaces, properties, classes, methods, functions, parameters and return values are now documented
 
 ## [0.1.1] - 2026-08-04
 
 ### Added
+
 - Deno/JSR compatibility: `deno.json` with exports for core and all six framework subpaths, `imports` map, tasks (`check`, `test`, `lint`, `format`, `fix`) and `publish.include` for JSR publishing
 - `scripts/update-deno.js` to sync `deno.json` and `src/Version.ts` from `package.json`
 - Root `deno.lock` for reproducible Deno checks and tests
@@ -49,6 +55,7 @@ All notable changes to this project will be documented in this file.
 - JSR badge and `deno add jsr:@thednp/tween` install instructions in README
 
 ### Changed
+
 - Migrated `src/types.d.ts` to `src/types.ts` and updated all imports
 - Added explicit types across the public API for JSR slow types compliance
 - `src/Version.ts` is now generated instead of importing `package.json`, fixing the dts build error
@@ -60,11 +67,13 @@ All notable changes to this project will be documented in this file.
 - Updated dependencies and playground configurations
 
 ### Removed
+
 - Per-playground lockfiles
 
 ## [0.1.0] - 2026-04-06
 
 ### Added
+
 - VanJS integration with `createTween` and `createTimeline` primitives
 - VanJS auto-cleanup via global MutationObserver and session-based state tracking
 - VanJS playground and test suite
@@ -72,6 +81,7 @@ All notable changes to this project will be documented in this file.
 - `pnpm fix:ts` command for auto-fixing lint issues
 
 ### Changed
+
 - Updated dependencies across all playgrounds
 - Improved `Tween.ts` and `Util.ts` internals
 - Extended `path.ts` extension functionality
@@ -82,11 +92,13 @@ All notable changes to this project will be documented in this file.
 - Updated Timeline and Tween wiki documentation
 
 ### Removed
+
 - `.npmignore` (replaced by `files` field in package.json)
 
 ## [0.0.5] - 2026-02-19
 
 ### Added
+
 - Svelte integration with `useTween` hook
 - Preact integration with `useTween` hook
 - Vue integration with `useTween` composable
@@ -95,6 +107,7 @@ All notable changes to this project will be documented in this file.
 - More wiki pages for framework-specific documentation
 
 ### Changed
+
 - Updated dependencies
 - Updated playground configurations
 - Improved miniStore implementation
@@ -106,6 +119,7 @@ All notable changes to this project will be documented in this file.
 ## [0.0.4] - 2026-01-31
 
 ### Added
+
 - React integration with `useTween` hook
 - SolidJS integration with `createTween` primitive
 - Playground for React and SolidJS
@@ -113,6 +127,7 @@ All notable changes to this project will be documented in this file.
 - CodeQL security scanning
 
 ### Changed
+
 - Fixed JSDocs
 - Updated README and wiki
 - Updated dependencies
@@ -121,11 +136,13 @@ All notable changes to this project will be documented in this file.
 ## [0.0.3] - 2026-01-26
 
 ### Added
+
 - `Easing.ts` with cubic-bezier and preset easing functions
 - `extend/` directory for array, object, path, transform interpolation
 - Wiki pages for Tween, Timeline, Easing, and Extend
 
 ### Changed
+
 - Fixed types
 - Code formatting
 - Typos fixed
@@ -134,6 +151,7 @@ All notable changes to this project will be documented in this file.
 ## [0.0.2] - 2026-01-25
 
 ### Added
+
 - `Timeline.ts` for sequencing multiple tweens
 - `Runtime.ts` for auto-managed RAF loop
 - `Now.ts` for time utilities
@@ -143,11 +161,13 @@ All notable changes to this project will be documented in this file.
 - Playground directory
 
 ### Changed
+
 - Initial commit structure refined
 
 ## [0.0.1] - 2026-01-25
 
 ### Added
+
 - Initial release of `@thednp/tween`
 - Core `Tween.ts` engine forked from [@tweenjs/tweenjs](https://github.com/tweenjs/tween.js)
 - TypeScript-first architecture

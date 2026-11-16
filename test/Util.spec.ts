@@ -1,5 +1,5 @@
 // Util.spec.ts
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 import {
   isArray,
   isDeepObject,
@@ -67,7 +67,7 @@ describe("Util", () => {
     expect(isDeepObject({ method: () => true })).toBe(false);
     expect(isDeepObject({ method: { subMethod: () => true } })).toBe(true);
   });
-  
+
   it("should detect array", () => {
     expect(isArray(1)).toBe(false);
     expect(isArray("yes")).toBe(false);
@@ -76,35 +76,53 @@ describe("Util", () => {
     expect(isArray([])).toBe(true);
     expect(isArray(() => true)).toBe(false);
   });
-  
+
   it("should deproxy", () => {
     const initialValues = {
       x: 0,
       deep: { r: 220, g: 0, b: 0 },
       rgb: [0, 0, 0],
-      path: [["M",0,0],["L",150,0]],
-      transform: [["rotate", 15, 45], ["translate", 15, 20]] as TransformStep[]
+      path: [
+        ["M", 0, 0],
+        ["L", 150, 0],
+      ],
+      transform: [
+        ["rotate", 15, 45],
+        ["translate", 15, 20],
+      ] as TransformStep[],
     } satisfies TweenProps;
     const store = miniStore(initialValues);
     expect(deproxy(store)).to.deep.equal(initialValues);
   });
-  
+
   it("should deepAssign", () => {
     const initialValues = {
       x: 0,
       deep: { r: 0, g: 0, b: 0 },
       rgb: [0, 0, 0],
-      path: [["M",0,0],["L",0,0]],
-      transform: [["rotate", 0, 0], ["translate", 0, 0]] as TransformStep[]
+      path: [
+        ["M", 0, 0],
+        ["L", 0, 0],
+      ],
+      transform: [
+        ["rotate", 0, 0],
+        ["translate", 0, 0],
+      ] as TransformStep[],
     } satisfies TweenProps;
 
     const to = {
       x: 0,
       deep: { r: 220, g: 0, b: 0 },
       rgb: [0, 0, 0],
-      path: [["M",0,0],["L",150,0]],
-      transform: [["rotate", 15, 45], ["translate", 15, 20]] as TransformStep[]
-    } satisfies TweenProps
+      path: [
+        ["M", 0, 0],
+        ["L", 150, 0],
+      ],
+      transform: [
+        ["rotate", 15, 45],
+        ["translate", 15, 20],
+      ] as TransformStep[],
+    } satisfies TweenProps;
 
     deepAssign(initialValues, to);
     expect(initialValues).to.deep.equal(to);

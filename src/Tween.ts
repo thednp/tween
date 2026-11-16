@@ -10,13 +10,7 @@ import type {
   TweenUpdateCallback,
   ValidationFunction,
 } from "./types.ts";
-import {
-  deepAssign,
-  deproxy,
-  isArray,
-  isObject,
-  validateValues,
-} from "./Util.ts";
+import { deepAssign, deproxy, isArray, isObject, validateValues } from "./Util.ts";
 import { addToQueue, removeFromQueue } from "./Runtime.ts";
 import { now } from "./Now.ts";
 
@@ -75,7 +69,7 @@ export class Tween<T extends TweenProps = TweenProps> {
   /** The absolute start timestamp of the current run */
   private _startTime: number = 0;
   /** The validation errors map, keyed by property name or `"init"` */
-  private _errors = new Map<string | "init", string>();
+  private _errors = new Map<string, string>();
   /** The registered interpolators, keyed by property name */
   private _interpolators = new Map<string | keyof T, InterpolatorFunction>();
   /** The registered validators, keyed by property name */
@@ -97,7 +91,7 @@ export class Tween<T extends TweenProps = TweenProps> {
   /** The `onRepeat` callback, fired on every repeat cycle */
   private _onRepeat?: TweenCallback<T>;
   /** The runtime tuples used by the update loop for interpolation */
-  private _runtime: (TweenRuntime<T>)[] = [];
+  private _runtime: TweenRuntime<T>[] = [];
   /**
    * Creates a new Tween instance.
    * @param initialValues - The initial state of the animated object
@@ -161,11 +155,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    */
   get totalDuration(): number {
     const repeat = this._initialRepeat;
-    return (
-      this._delay +
-      this._duration * (repeat + 1) +
-      this._repeatDelay * repeat
-    ) / 1000;
+    return (this._delay + this._duration * (repeat + 1) + this._repeatDelay * repeat) / 1000;
   }
 
   /**
@@ -199,16 +189,11 @@ export class Tween<T extends TweenProps = TweenProps> {
     // micro-optimization - don't reset state if never started
     if (this._startTime && !overrideStart) this._resetState();
 
-    // istanbul ignore else @preserve
+    // istanbul ignore else
     if (!this._startIsSet || /* istanbul ignore next */ overrideStart) {
       this._startIsSet = true;
 
-      this._setProps(
-        this.state,
-        this._propsStart,
-        this._propsEnd,
-        overrideStart,
-      );
+      this._setProps(this.state, this._propsStart, this._propsEnd, overrideStart);
     }
     this._isPlaying = true;
     this._startTime = time;
@@ -248,7 +233,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @returns this
    */
   reverse(): this {
-    // istanbul ignore next @preserve
+    // istanbul ignore next
     if (!this._isPlaying) return this;
 
     const currentTime = now();
@@ -256,7 +241,7 @@ export class Tween<T extends TweenProps = TweenProps> {
     this._startTime = currentTime - (this._duration - elapsed);
     this._reversed = !this._reversed;
 
-    // istanbul ignore else @preserve
+    // istanbul ignore else
     if (this._initialRepeat > 0) {
       this._repeat = this._initialRepeat - this._repeat;
     }
@@ -519,16 +504,10 @@ export class Tween<T extends TweenProps = TweenProps> {
       const endVal = reversed ? prop[3] : prop[4];
 
       if (prop[5]) {
-        state[property as keyof T] =
-          ((startVal as number) + ((endVal as number) - (startVal as number)) *
-              eased) as T[keyof T];
+        state[property as keyof T] = ((startVal as number) +
+          ((endVal as number) - (startVal as number)) * eased) as T[keyof T];
       } else {
-        interpolator(
-          targetObject as never,
-          startVal as never,
-          endVal as never,
-          eased,
-        );
+        interpolator(targetObject as never, startVal as never, endVal as never, eased);
       }
     }
 
@@ -543,9 +522,9 @@ export class Tween<T extends TweenProps = TweenProps> {
         this._onComplete?.(state);
         return false;
       }
-      // istanbul ignore else @preserve
+      // istanbul ignore else
       if (this._repeat !== Infinity) this._repeat--;
-      // istanbul ignore else @preserve
+      // istanbul ignore else
       if (this._yoyo) this._reversed = !reversed;
       this._startTime = time;
       this._startTime += this._repeatDelay;
@@ -628,10 +607,7 @@ export class Tween<T extends TweenProps = TweenProps> {
 
       // Save the starting value, but only once unless override is requested.
       // istanbul ignore else
-      if (
-        typeof propsStart[property] === "undefined" ||
-        overrideStartingValues
-      ) {
+      if (typeof propsStart[property] === "undefined" || overrideStartingValues) {
         // Update start property value
         if (isObject(objValue) || isArray(objValue)) {
           propsStart[property] = deproxy(objValue);
@@ -666,11 +642,11 @@ export class Tween<T extends TweenProps = TweenProps> {
    */
   private _evaluate(newObj?: Partial<T> | DeepPartial<T>) {
     // the reference of the initialization state is stored here
-    // istanbul ignore else @preserve
+    // istanbul ignore else
     if (!this.isValidState) {
       const temp = this._state;
       validateValues.call(this as unknown as Tween, temp);
-      // istanbul ignore else @preserve
+      // istanbul ignore else
       if (this.isValid) {
         this.state = temp;
         this._state = deproxy(temp);
@@ -686,7 +662,7 @@ export class Tween<T extends TweenProps = TweenProps> {
    * @internal
    */
   private _report() {
-    // istanbul ignore else @preserve
+    // istanbul ignore else
     if (!this.isValid) {
       const message = [
         "[Tween] failed validation:",

@@ -22,10 +22,7 @@ export type { TransformArray };
  * @param toMatrix An optional parameter to modify the function output
  * @returns The valid CSS transform string value
  */
-export const transformToString = (
-  steps: TransformStep[],
-  toMatrix: boolean = false,
-): string => {
+export const transformToString = (steps: TransformStep[], toMatrix: boolean = false): string => {
   if (toMatrix) {
     const matrix = new CSSMatrix();
     // reused scratch matrix for the perspective step
@@ -85,9 +82,7 @@ export const transformToString = (
         break;
       }
       case "translate": {
-        stringOutput += ` translate3d(${step[1]}px, ${step[2] || 0}px, ${
-          step[3] || 0
-        }px)`;
+        stringOutput += ` translate3d(${step[1]}px, ${step[2] || 0}px, ${step[3] || 0}px)`;
         break;
       }
       case "rotate": {
@@ -97,23 +92,19 @@ export const transformToString = (
           stringOutput += ` rotate(${step[1]}deg)`;
         } else {
           stringOutput += ` rotateX(${step[1]}deg)`;
-          // istanbul ignore else @preserve
+          // istanbul ignore else
           if (step[2] !== undefined) stringOutput += ` rotateY(${step[2]}deg)`;
-          // istanbul ignore else @preserve
+          // istanbul ignore else
           if (step[3] !== undefined) stringOutput += ` rotateZ(${step[3]}deg)`;
         }
         break;
       }
       case "rotateAxisAngle": {
-        stringOutput += ` rotate3d(${step[1]}, ${step[2]}, ${step[3]}, ${
-          step[4]
-        }deg)`;
+        stringOutput += ` rotate3d(${step[1]}, ${step[2]}, ${step[3]}, ${step[4]}deg)`;
         break;
       }
       case "scale": {
-        stringOutput += ` scale(${step[1]}, ${step[2] || step[1]}, ${
-          step[3] || 1
-        })`;
+        stringOutput += ` scale(${step[1]}, ${step[2] || step[1]}, ${step[3] || 1})`;
         break;
       }
       case "skewX": {
@@ -158,11 +149,7 @@ export const eulerToAxisAngle = (
  * @param z The rotateZ value
  * @returns The rotation quaternion
  */
-const eulerToQuaternion = (
-  x: number,
-  y: number,
-  z: number,
-): [number, number, number, number] => {
+const eulerToQuaternion = (x: number, y: number, z: number): [number, number, number, number] => {
   const cx = Math.cos(x / 2);
   const sx = Math.sin(x / 2);
   const cy = Math.cos(y / 2);
@@ -312,18 +299,14 @@ const supportedTransform = [
  */
 export const isTransformLike = (value: unknown): value is TransformLike =>
   isArray(value) &&
-  value.some(
-    (step) => isArray(step) && supportedTransform.includes(step[0] as never),
-  );
+  value.some((step) => isArray(step) && supportedTransform.includes(step[0] as never));
 
 /**
  * Check if a value is a valid `TransformArray` for interpolation.
  * @param value The incoming value `from()` / `to()`
  * @returns `true` when value is a valid `TransformArray`
  */
-export const isValidTransformArray = (
-  value: unknown,
-): value is TransformArray =>
+export const isValidTransformArray = (value: unknown): value is TransformArray =>
   isTransformLike(value) &&
   value.every(
     ([fn, ...values]) =>
@@ -332,9 +315,7 @@ export const isValidTransformArray = (
         values.length > 0 &&
         values.length <= 3 &&
         values.every(isNumber)) ||
-        ("rotateAxisAngle" === fn &&
-          (values as number[]).length === 4 &&
-          values.every(isNumber)) ||
+        ("rotateAxisAngle" === fn && (values as number[]).length === 4 && values.every(isNumber)) ||
         (["skewX", "skewY", "perspective"].includes(fn as string) &&
           (values as number[]).length === 1 &&
           isNumber((values as number[])[0]))),
@@ -371,14 +352,14 @@ export const validateTransform = (
       const fn = step[0];
       const fnRef = refStep[0];
 
-      // istanbul ignore else @preserve
+      // istanbul ignore else
       if (refStep) {
         if (fnRef !== fn || refStep.length !== step.length) {
           return [
             false,
             `Property "${propName}" mismatch at index ${i}":\n` +
-            `> step: ["${fn}", ${step.slice(1)}]\n` +
-            `> reference: ["${fnRef}", ${refStep.slice(1)}]`,
+              `> step: ["${fn}", ${step.slice(1).join(",")}]\n` +
+              `> reference: ["${fnRef}", ${refStep.slice(1).join(",")}]`,
           ];
         }
       }

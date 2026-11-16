@@ -3,12 +3,15 @@ import type { TweenProps } from "../../src/types.d.ts";
 
 export function withHook<T>(hookFactory: () => T) {
   const result = hookFactory();
-  return [result!, () => {
-    const arr = result as unknown as [unknown, { stop: () => void }];
-    if (arr && arr[1] && typeof arr[1].stop === "function") {
-      arr[1].stop();
-    }
-  }] as const;
+  return [
+    result!,
+    () => {
+      const arr = result as unknown as [unknown, { stop: () => void }];
+      if (arr && arr[1] && typeof arr[1].stop === "function") {
+        arr[1].stop();
+      }
+    },
+  ] as const;
 }
 
 export function withDomBinding<T extends TweenProps>(

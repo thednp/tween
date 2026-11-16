@@ -1,5 +1,5 @@
 // Svelte.svelte.test.ts
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import {
   createTimeline,
   createTween,
@@ -7,10 +7,7 @@ import {
   Tween,
   Timeline,
 } from "../src/svelte/index.svelte.ts";
-import {
-  type TransformStep,
-  type TweenProps,
-} from "../src/index";
+import { type TransformStep, type TweenProps } from "../src/index";
 import { withHook } from "./fixtures/setup.svelte.ts";
 
 describe("Svelte", () => {
@@ -24,9 +21,7 @@ describe("Svelte", () => {
 
   describe("createTween", () => {
     it("update store", async () => {
-      const [[state, tween], unmount] = await withHook(() =>
-        createTween({ x: 0 })
-      );
+      const [[state, tween], unmount] = await withHook(() => createTween({ x: 0 }));
 
       expect(state).to.deep.equal({ x: 0 });
       expect(tween).toBeDefined();
@@ -37,7 +32,7 @@ describe("Svelte", () => {
       tween.update();
       vi.advanceTimersByTime(200);
       tween.update();
-      vi.waitFor(() => {
+      void vi.waitFor(() => {
         expect(state.x).toBe(50);
       });
 
@@ -60,9 +55,7 @@ describe("Svelte", () => {
   describe("createTimeline", () => {
     it("updates store", async () => {
       // const [state, timeline] = createTimeline({x: 0});
-      const [[state, timeline], unmount] = await withHook(() =>
-        createTimeline({ x: 0 })
-      );
+      const [[state, timeline], unmount] = await withHook(() => createTimeline({ x: 0 }));
       timeline.to({ x: 50, duration: 0.2 });
 
       expect(state).to.deep.equal({ x: 0 });
@@ -73,7 +66,7 @@ describe("Svelte", () => {
       vi.advanceTimersByTime(200);
       timeline.update();
 
-      vi.waitFor(() => {
+      void vi.waitFor(() => {
         expect(state.x).toBe(50);
       });
       await unmount();
@@ -81,9 +74,7 @@ describe("Svelte", () => {
 
     it("stops on destroy", async () => {
       const stopSpy = vi.spyOn(Timeline.prototype, "stop");
-      const [[, timeline], unmount] = await withHook(() =>
-        createTimeline({ x: 0 })
-      );
+      const [[, timeline], unmount] = await withHook(() => createTimeline({ x: 0 }));
       timeline.to({ x: 50, duration: 0.2 }).play();
 
       await unmount();
@@ -96,8 +87,14 @@ describe("Svelte", () => {
       x: 0,
       deep: { r: 0, g: 0, b: 0 },
       rgb: [0, 0, 0],
-      path: [["M", 0, 0], ["L", 0, 0]],
-      transform: [["rotate", 0, 0], ["translate", 0, 0]] as TransformStep[],
+      path: [
+        ["M", 0, 0],
+        ["L", 0, 0],
+      ],
+      transform: [
+        ["rotate", 0, 0],
+        ["translate", 0, 0],
+      ] as TransformStep[],
     } satisfies TweenProps;
     const store = miniStore(initialValues);
     miniStore(store); // coverage
@@ -114,14 +111,16 @@ describe("Svelte", () => {
 
     store.path[0][1] = 5;
     store.path[1][2] = 5;
-    expect(store.path).to.deep.equal([["M", 5, 0], ["L", 0, 5]]);
+    expect(store.path).to.deep.equal([
+      ["M", 5, 0],
+      ["L", 0, 5],
+    ]);
 
     store.transform[0][1] = 5;
     store.transform[1][2] = 5;
-    expect(store.transform).to.deep.equal([["rotate", 5, 0], [
-      "translate",
-      0,
-      5,
-    ]]);
+    expect(store.transform).to.deep.equal([
+      ["rotate", 5, 0],
+      ["translate", 0, 5],
+    ]);
   });
 });

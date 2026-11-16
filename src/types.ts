@@ -8,9 +8,7 @@ import type { Timeline } from "./Timeline.ts";
  *
  * @template T - The type of the animated state object (defaults to `never`)
  */
-export type AnimationItem<T extends TweenProps = never> =
-  | Tween<T>
-  | Timeline<T>;
+export type AnimationItem<T extends TweenProps = never> = Tween<T> | Timeline<T>;
 
 /**
  * The callback signature used by the {@link Timeline} lifecycle events,
@@ -20,10 +18,7 @@ export type AnimationItem<T extends TweenProps = never> =
  * @param state - The current state of the animated object
  * @param progress - The current progress value in the `[0, 1]` range
  */
-export type TimelineCallback<T extends TweenProps> = (
-  state: T,
-  progress: number,
-) => void;
+export type TimelineCallback<T extends TweenProps> = (state: T, progress: number) => void;
 
 /**
  * The callback signature fired on every animation frame by the
@@ -33,10 +28,7 @@ export type TimelineCallback<T extends TweenProps> = (
  * @param obj - The current state of the animated object
  * @param elapsed - The current progress value in the `[0, 1]` range
  */
-export type TweenUpdateCallback<T extends TweenProps> = (
-  obj: T,
-  elapsed: number,
-) => void;
+export type TweenUpdateCallback<T extends TweenProps> = (obj: T, elapsed: number) => void;
 
 /**
  * The callback signature fired once by lifecycle events such as
@@ -89,20 +81,25 @@ export type Position = number | string;
  * @param t - The progress value in the `[0, 1]` range
  * @returns The mutated `target` value
  */
-export type InterpolatorFunction<
-  I extends TweenProps[never] = never,
-> = <T extends I>(target: T, start: T, end: T, t: number) => T;
+export type InterpolatorFunction<I extends TweenProps[never] = never> = <T extends I>(
+  target: T,
+  start: T,
+  end: T,
+  t: number,
+) => T;
 
 /**
  * The result of a validation call: either `[true]` when valid or
  * `[false, reason]` when the value is not valid.
  */
-export type ValidationResultEntry = [true] | [
-  /** prop name */
-  false,
-  /** reason */
-  string,
-];
+export type ValidationResultEntry =
+  | [true]
+  | [
+      /** prop name */
+      false,
+      /** reason */
+      string,
+    ];
 
 /**
  * A validation function that checks a property value and, optionally,
@@ -114,9 +111,11 @@ export type ValidationResultEntry = [true] | [
  * @param ref - The reference state value to compare against
  * @returns A {@link ValidationResultEntry} tuple
  */
-export type ValidationFunction<I extends Record<string, unknown> = never> = <
-  T extends I[keyof I],
->(propName: string, target: T, ref?: T) => ValidationResultEntry;
+export type ValidationFunction<I extends Record<string, unknown> = never> = <T extends I[keyof I]>(
+  propName: string,
+  target: T,
+  ref?: T,
+) => ValidationResultEntry;
 
 /**
  * The configuration object passed to `.use(propName, config)` for
@@ -169,7 +168,7 @@ export interface TimelineEntry<T extends TweenProps> {
   runtime: [
     propValue: T[keyof T],
     property: string | keyof T,
-    interpolator: InterpolatorFunction, /*| null*/
+    interpolator: InterpolatorFunction /*| null*/,
     startVal: T[keyof T],
     endVal: T[keyof T],
     isNumeric: boolean,
@@ -185,7 +184,7 @@ export interface TimelineEntry<T extends TweenProps> {
 export type TweenRuntime<T extends TweenProps> = [
   targetObject: T[keyof T],
   property: string | keyof T,
-  interpolator: InterpolatorFunction, /*| null*/
+  interpolator: InterpolatorFunction /*| null*/,
   startVal: T[keyof T],
   endVal: T[keyof T],
   isNumeric: boolean,
@@ -198,22 +197,21 @@ export type TweenRuntime<T extends TweenProps> = [
  * A single-level nested object of `string` keys mapping to plain
  * objects of `unknown` values.
  */
-export type DeepObject = Record<
-  string,
-  Record<string, unknown>
->;
+export type DeepObject = Record<string, Record<string, unknown>>;
 /**
  * Recursively makes every property of `T` optional, supporting
  * one level deep nested objects (e.g. `{ translate: { x, y } }`).
  *
  * @template T - The type to make deeply partial
  */
-export type DeepPartial<T> = T extends Record<string, T[keyof T]> ?
-    | Partial<T>
-    | {
-      [P in keyof T]?: DeepPartial<T[P]>;
-    }
-  : T;
+export type DeepPartial<T> =
+  T extends Record<string, T[keyof T]>
+    ?
+        | Partial<T>
+        | {
+            [P in keyof T]?: DeepPartial<T[P]>;
+          }
+    : T;
 
 /**
  * Supported types
@@ -236,10 +234,13 @@ export type BaseTweenProps = Record<string, number>;
  */
 export type TweenProps = Record<
   string,
-  number | ArrayVal | BaseTweenProps | [
-    string,
-    ...(CubicValues | LineValues | QuadValues | Vec3), // MorphPathArray | TransformArray
-  ][]
+  | number
+  | ArrayVal
+  | BaseTweenProps
+  | [
+      string,
+      ...(CubicValues | LineValues | QuadValues | Vec3), // MorphPathArray | TransformArray
+    ][]
 >;
 
 /**
@@ -268,12 +269,7 @@ export type PathLike = [PC, ...number[]][];
  * The values tuple for the `rotateAxisAngle` transform step:
  * `[originX, originY, originZ, angle]`.
  */
-export type RotateAxisAngle = [
-  originX: number,
-  originY: number,
-  originZ: number,
-  angle: number,
-];
+export type RotateAxisAngle = [originX: number, originY: number, originZ: number, angle: number];
 /** A generic 3D vector tuple, with optional `y` and `z` components */
 export type Vec3 = [number, number?, number?];
 /** The values tuple for a single-axis `rotateZ` transform step */
@@ -281,11 +277,7 @@ export type RotateZ = [rotateZ: number];
 /** The values tuple for a `rotate` transform step */
 export type Rotate = [rotateX: number, rotateY: number, rotateZ?: number];
 /** The values tuple for a `translate` transform step */
-export type Translate = [
-  translateX: number,
-  translateY?: number,
-  translateZ?: number,
-];
+export type Translate = [translateX: number, translateY?: number, translateZ?: number];
 /** The values tuple for a `scale` transform step */
 export type Scale = [scaleX: number, scaleY?: number, scaleZ?: number];
 

@@ -1,13 +1,13 @@
 /*!
-* @thednp/tween primitives for VanJS v0.1.5 (https://github.com/thednp/tween)
-* Copyright 2026 © thednp
-* Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
-*/
+ * @thednp/tween primitives for VanJS v0.1.6 (https://github.com/thednp/tween)
+ * Copyright 2026 © thednp
+ * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
+ */
 "use strict";
 
 import { Timeline, Tween, dummyInstance, isArray, isPlainObject, isServer, objectHasProp } from "@thednp/tween";
 import van from "vanjs-core";
-//#region src/vanjs/lifecycle.ts
+// src/vanjs/lifecycle.ts
 /** The set of tracked animation instances */
 const instances = /* @__PURE__ */ new Set();
 /** The global MutationObserver watching for removed DOM nodes */
@@ -42,6 +42,7 @@ function checkRemovedBindings() {
 		let hasActiveBinding = false;
 		for (const state of instance.states) {
 			const bindings = state._bindings;
+			// istanbul ignore else
 			if (bindings?.length) {
 				for (const b of bindings) if (b._dom?.isConnected) {
 					hasActiveBinding = true;
@@ -118,8 +119,7 @@ function mount(twObject, id) {
 function unmount(instance) {
 	instances.delete(instance);
 }
-//#endregion
-//#region src/vanjs/miniStore.ts
+// src/vanjs/miniStore.ts
 /** The marker property name used to flag already-proxied values */
 const STATE_PROXY = "_proxy";
 /** The descriptor used for the non-enumerable `_proxy` marker property */
@@ -261,8 +261,7 @@ function createMiniState(obj, parentReceiver) {
 function miniStore(init) {
 	return createMiniState(init, {});
 }
-//#endregion
-//#region src/vanjs/index.ts
+// src/vanjs/index.ts
 /**
 * VanJS integration for {@link @thednp/tween}.
 *
@@ -327,7 +326,6 @@ function createTimeline(initialValues) {
 	mount(timeline, id);
 	return [store, timeline];
 }
-//#endregion
 export { Timeline, Tween, createTimeline, createTween, miniStore };
 
 //# sourceMappingURL=vanjs.mjs.map

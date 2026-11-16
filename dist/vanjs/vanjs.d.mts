@@ -1,12 +1,11 @@
 /*!
-* @thednp/tween primitives for VanJS v0.1.5 (https://github.com/thednp/tween)
-* Copyright 2026 © thednp
-* Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
-*/
+ * @thednp/tween primitives for VanJS v0.1.6 (https://github.com/thednp/tween)
+ * Copyright 2026 © thednp
+ * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
+ */
 "use strict";
 
 import { Timeline, Tween, TweenProps } from "@thednp/tween";
-//#region src/vanjs/miniStore.d.ts
 /**
  * Creates a reactive store for the given initial values, where every
  * property is backed by a VanJS state. Reading a property inside a
@@ -18,9 +17,7 @@ import { Timeline, Tween, TweenProps } from "@thednp/tween";
  * @param init - The initial values object
  * @returns The reactive state object
  */
-declare function miniStore<T extends TweenProps>(init: T): T;
-//#endregion
-//#region src/vanjs/index.d.ts
+export declare function miniStore<T extends TweenProps>(init: T): T;
 /**
  * VanJS primitive for updating values with Tween.
  *
@@ -40,7 +37,7 @@ declare function miniStore<T extends TweenProps>(init: T): T;
  *    )
  * }
  */
-declare function createTween<T extends TweenProps>(initialValues: T): readonly [T, Tween<T>];
+export declare function createTween<T extends TweenProps>(initialValues: T): readonly [T, Tween<T>];
 /**
  * VanJS primitive for sequencing values update with Timeline.
  *
@@ -60,7 +57,6 @@ declare function createTween<T extends TweenProps>(initialValues: T): readonly [
  *    )
  * }
  */
-declare function createTimeline<T extends TweenProps>(initialValues: T): readonly [T, Timeline<T>];
-//#endregion
-export { Timeline, Tween, createTimeline, createTween, miniStore };
+export declare function createTimeline<T extends TweenProps>(initialValues: T): readonly [T, Timeline<T>];
+export { Timeline, Tween };
 //# sourceMappingURL=vanjs.d.mts.map

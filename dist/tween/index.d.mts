@@ -1,13 +1,12 @@
 /*!
-* @thednp/tween  v0.1.5 (https://github.com/thednp/tween)
-* Copyright 2026 © thednp
-* Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
-*/
+ * @thednp/tween  v0.1.6 (https://github.com/thednp/tween)
+ * Copyright 2026 © thednp
+ * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
+ */
 "use strict";
 
 import { equalizePaths, equalizeSegments, pathToString } from "svg-path-commander/util";
 import { MorphPathArray } from "svg-path-commander";
-//#region src/Tween.d.ts
 /**
  * Lightweight tween engine for interpolating values over time.
  * Supports numbers and via extensions it enxtends to arrays
@@ -26,7 +25,7 @@ import { MorphPathArray } from "svg-path-commander";
  *
  * @param initialValues The initial values object
  */
-declare class Tween<T extends TweenProps = TweenProps> {
+export declare class Tween<T extends TweenProps = TweenProps> {
   /**
    * The animated state object, mutated in place on every frame.
    * The values here are the ones interpolated between `from` / `to` values.
@@ -316,8 +315,6 @@ declare class Tween<T extends TweenProps = TweenProps> {
    */
   private _report;
 }
-//#endregion
-//#region src/Timeline.d.ts
 /**
  * Timeline orchestrates multiple tweens with scheduling, overlaps, labels and repeat.
  * Supports numbers and via extensions it enxtends to arrays
@@ -335,7 +332,7 @@ declare class Tween<T extends TweenProps = TweenProps> {
  *
  * @param initialValues The initial values object
  */
-declare class Timeline<T extends TweenProps = TweenProps> {
+export declare class Timeline<T extends TweenProps = TweenProps> {
   /**
    * The animated state object, mutated in place on every frame by
    * the active timeline entries.
@@ -440,7 +437,7 @@ declare class Timeline<T extends TweenProps = TweenProps> {
   /**
    * Returns the errors Map, mainly used by external validators.
    */
-  getErrors(): Map<string | "init", string>;
+  getErrors(): Map<string, string>;
   /**
    * Starts or resumes playback from the beginning (or current time if resumed).
    * Triggers the `onStart` callback if set.
@@ -457,6 +454,7 @@ declare class Timeline<T extends TweenProps = TweenProps> {
   /**
    * Resumes from paused state (adjusts internal clock).
    * Triggers the `onResume` callback if set.
+
    * @param time - Optional current timestamp (defaults to now)
    * @returns this
    */
@@ -632,8 +630,6 @@ declare class Timeline<T extends TweenProps = TweenProps> {
    */
   private _report;
 }
-//#endregion
-//#region src/types.d.ts
 /**
  * A union type that represents any animation instance that can be
  * added to the runtime queue: either a {@link Tween} or a {@link Timeline}.
@@ -863,8 +859,6 @@ type TransformStep = ["rotateAxisAngle", ...RotateAxisAngle] | ["translate", ...
 type TransformArray = TransformStep[];
 /** A transform-like value: an array of `[function, ...number[]]` tuples */
 type TransformLike = [TransformStep[0], ...number[]][];
-//#endregion
-//#region src/Easing.d.ts
 /**
  * A frozen collection of preset easing functions, grouped by name
  * (`Linear`, `Quadratic`, `Cubic`, `Quartic`, `Quintic`, `Sinusoidal`,
@@ -876,7 +870,7 @@ type TransformLike = [TransformStep[0], ...number[]][];
  * const tween = new Tween({ x: 0 }).to({ x: 300 }).easing(Easing.Elastic.Out);
  * ```
  */
-declare const Easing: {
+export declare const Easing: {
   Linear: EasingFunctionGroup & {
     None: EasingFunction;
   };
@@ -892,36 +886,34 @@ declare const Easing: {
   Bounce: EasingFunctionGroup;
   pow(power?: number): EasingFunctionGroup;
 };
-//#endregion
-//#region src/Util.d.ts
 /**
  * Checks if a value is a `string`.
  *
  * @param value - The value to check
  * @returns `true` when the value is a `string`
  */
-declare const isString: (value: unknown) => value is string;
+export declare const isString: (value: unknown) => value is string;
 /**
  * Checks if a value is a `number`.
  *
  * @param value - The value to check
  * @returns `true` when the value is a `number`
  */
-declare const isNumber: (value: unknown) => value is number;
+export declare const isNumber: (value: unknown) => value is number;
 /**
  * Checks if a value is an `Array`.
  *
  * @param value - The value to check
  * @returns `true` when the value is an `Array`
  */
-declare const isArray: (value: unknown) => value is Array<unknown>;
+export declare const isArray: (value: unknown) => value is Array<unknown>;
 /**
  * Checks if a value is a `function`.
  *
  * @param value - The value to check
  * @returns `true` when the value is a `function`
  */
-declare const isFunction: (value: unknown) => value is () => unknown;
+export declare const isFunction: (value: unknown) => value is () => unknown;
 /**
  * Checks if a value is a plain object (an object whose prototype
  * is `Object.prototype`), excluding `null`, `undefined` and arrays.
@@ -929,14 +921,14 @@ declare const isFunction: (value: unknown) => value is () => unknown;
  * @param value - The value to check
  * @returns `true` when the value is a plain object
  */
-declare const isObject: (value: unknown) => value is Record<string, never>;
+export declare const isObject: (value: unknown) => value is Record<string, never>;
 /**
  * Checks if a value is a plain object and not an array.
  *
  * @param value - The value to check
  * @returns `true` when the value is a plain non-array object
  */
-declare const isPlainObject: (value: unknown) => value is Record<string, never>;
+export declare const isPlainObject: (value: unknown) => value is Record<string, never>;
 /**
  * Checks if a value is a single-level nested object (a plain object
  * that contains at least one plain object value).
@@ -944,12 +936,12 @@ declare const isPlainObject: (value: unknown) => value is Record<string, never>;
  * @param value - The value to check
  * @returns `true` when the value is a {@link DeepObject}
  */
-declare const isDeepObject: (value: unknown) => value is DeepObject;
+export declare const isDeepObject: (value: unknown) => value is DeepObject;
 /**
  * A boolean that is `true` when running in a server environment
  * (e.g. SSR / Node.js), where `window` is not defined.
  */
-declare const isServer: boolean;
+export declare const isServer: boolean;
 /**
  * SSR helper to speed up UI frameworks render.
  *
@@ -973,7 +965,7 @@ declare function dummyMethod(this: typeof dummyInstance): typeof dummyInstance;
  * @param prop - The property name to look for
  * @returns `true` when the object has the property
  */
-declare const objectHasProp: <T extends object>(obj: T, prop: keyof T) => boolean;
+export declare const objectHasProp: <T extends object>(obj: T, prop: keyof T) => boolean;
 /**
  * A small utility to deep assign up to one level deep nested objects.
  * This is to prevent breaking reactivity of miniStore.
@@ -983,7 +975,7 @@ declare const objectHasProp: <T extends object>(obj: T, prop: keyof T) => boolea
  * @param target The target to assign values to
  * @param source The source object to assign values from
  */
-declare function deepAssign<T extends TweenProps>(target: T, source: T): void;
+export declare function deepAssign<T extends TweenProps>(target: T, source: T): void;
 /**
  * Creates a new object with the same structure of a target object / array
  * without its proxy elements / properties, only their values.
@@ -993,7 +985,7 @@ declare function deepAssign<T extends TweenProps>(target: T, source: T): void;
  * @param value An object / array with proxy elements
  * @returns the object / array value without proxy elements
  */
-declare const deproxy: <T>(value: T) => T;
+export declare const deproxy: <T>(value: T) => T;
 /**
  * Test values validity or their compatibility with the validated ones
  * in the state. This is something we don't want to do in the runtime
@@ -1003,9 +995,7 @@ declare const deproxy: <T>(value: T) => T;
  * @param reference The reference state value
  * @returns void
  */
-declare function validateValues<T extends TweenProps>(this: Timeline | Tween, target: Partial<T> | DeepPartial<T>, reference?: T): void;
-//#endregion
-//#region src/extend/array.d.ts
+export declare function validateValues<T extends TweenProps>(this: Timeline | Tween, target: Partial<T> | DeepPartial<T>, reference?: T): void;
 /**
  * Interpolates two `Array<number>` values.
  *
@@ -1017,13 +1007,13 @@ declare function validateValues<T extends TweenProps>(this: Timeline | Tween, ta
  * @param t The progress value
  * @returns The interpolated `Array<number>` value.
  */
-declare const interpolateArray: InterpolatorFunction<number[]>;
+export declare const interpolateArray: InterpolatorFunction<number[]>;
 /**
  * Check if a value is a valid `Array<number>` for interpolation.
  * @param target The array to check
  * @returns `true` is value is array and all elements are numbers
  */
-declare const isValidArray: <T extends number[]>(target: unknown) => target is T;
+export declare const isValidArray: <T extends number[]>(target: unknown) => target is T;
 /**
  * Check if an `Array<number>` is valid and compatible with a reference.
  *
@@ -1032,16 +1022,14 @@ declare const isValidArray: <T extends number[]>(target: unknown) => target is T
  * @returns [boolean, reason] tuple with validation state as boolean and,
  * if not valid, a reason why it's not valid
  */
-declare const validateArray: <T extends number[]>(propName: string, target: unknown, ref?: T) => ValidationResultEntry;
+export declare const validateArray: <T extends number[]>(propName: string, target: unknown, ref?: T) => ValidationResultEntry;
 /**
  * Config for .use(propName, arrayConfig)
  */
-declare const arrayConfig: {
+export declare const arrayConfig: {
   interpolate: InterpolatorFunction<number[]>;
   validate: typeof validateArray;
 };
-//#endregion
-//#region src/extend/path.d.ts
 /**
  * Interpolate `PathArray` values.
  *
@@ -1052,19 +1040,19 @@ declare const arrayConfig: {
  * @param t - The progress value
  * @returns The interpolated PathArray value
  */
-declare const interpolatePath: InterpolatorFunction<MorphPathArray>;
+export declare const interpolatePath: InterpolatorFunction<MorphPathArray>;
 /**
  * Check if an array of arrays is potentially a PathArray
  * @param value The incoming value `constructor()` `from()` / `to()`
  * @returns `true` when array is potentially a PathArray
  */
-declare const isPathLike: (value: unknown) => value is PathLike;
+export declare const isPathLike: (value: unknown) => value is PathLike;
 /**
  * Check if an array of arrays is a valid PathArray for interpolation
  * @param value The incoming value `from()` / `to()`
  * @returns `true` when array is valid
  */
-declare const isValidPath: (value: unknown) => value is MorphPathArray;
+export declare const isValidPath: (value: unknown) => value is MorphPathArray;
 /**
  * Validate a `PathArray` and check if it's compatible with a reference.
  *
@@ -1101,16 +1089,14 @@ declare const isValidPath: (value: unknown) => value is MorphPathArray;
  * @returns a tuple with validation result as a `boolean` and,
  * if not valid, a reason why value isn't
  */
-declare const validatePath: <T extends MorphPathArray>(propName: string, target: unknown, ref?: T) => ValidationResultEntry;
+export declare const validatePath: <T extends MorphPathArray>(propName: string, target: unknown, ref?: T) => ValidationResultEntry;
 /**
  * Config for .use(propName, pathArrayConfig)
  */
-declare const pathArrayConfig: {
+export declare const pathArrayConfig: {
   interpolate: InterpolatorFunction<MorphPathArray>;
   validate: typeof validatePath;
 };
-//#endregion
-//#region src/extend/object.d.ts
 /**
  * Single-level `Record<string, number>` object interpolate function.
  *
@@ -1130,7 +1116,7 @@ declare const pathArrayConfig: {
  * @param t The progress value
  * @returns The interpolated flat object with same structure.
  */
-declare const interpolateObject: InterpolatorFunction<BaseTweenProps>;
+export declare const interpolateObject: InterpolatorFunction<BaseTweenProps>;
 /**
  * Validate a plain `Record<string, number>` object and compare its compatibility
  * with a reference object.
@@ -1139,16 +1125,14 @@ declare const interpolateObject: InterpolatorFunction<BaseTweenProps>;
  * @param ref A reference object to compare our target to
  * @returns A [boolean, string?] tuple which represents [validity, "reason why not valid"]
  */
-declare const validateObject: (propName: string, target: unknown, ref?: BaseTweenProps) => ValidationResultEntry;
+export declare const validateObject: (propName: string, target: unknown, ref?: BaseTweenProps) => ValidationResultEntry;
 /**
  * Config for .use(propName, objectConfig)
  */
-declare const objectConfig: {
+export declare const objectConfig: {
   interpolate: InterpolatorFunction<BaseTweenProps>;
   validate: typeof validateObject;
 };
-//#endregion
-//#region src/extend/transform.d.ts
 /**
  * Returns a valid CSS transform string either with transform functions (Eg.: `translate(15px) rotate(25deg)`)
  * or `matrix(...)` / `matrix3d(...)`.
@@ -1158,7 +1142,7 @@ declare const objectConfig: {
  * @param toMatrix An optional parameter to modify the function output
  * @returns The valid CSS transform string value
  */
-declare const transformToString: (steps: TransformStep[], toMatrix?: boolean) => string;
+export declare const transformToString: (steps: TransformStep[], toMatrix?: boolean) => string;
 /**
  * Convert euler rotation to axis angle.
  * All values are degrees.
@@ -1167,7 +1151,7 @@ declare const transformToString: (steps: TransformStep[], toMatrix?: boolean) =>
  * @param z rotateZ value
  * @returns The axis angle tuple [vectorX, vectorY, vectorZ, angle]
  */
-declare const eulerToAxisAngle: (x: number, y: number, z: number) => [number, number, number, number];
+export declare const eulerToAxisAngle: (x: number, y: number, z: number) => [number, number, number, number];
 /**
  * Interpolates arrays of `TransformStep`s → returns interpolated `TransformStep`s.
  *
@@ -1199,34 +1183,32 @@ declare const eulerToAxisAngle: (x: number, y: number, z: number) => [number, nu
  * @param t The progress value
  * @returns The interpolated `TransformArray`
  */
-declare const interpolateTransform: InterpolatorFunction<TransformStep[]>;
+export declare const interpolateTransform: InterpolatorFunction<TransformStep[]>;
 /**
  * Check if a value is potentially a `TransformArray`.
  * @param value The incoming value `constructor()` `from()` / `to()`
  * @returns `true` when array is potentially a `TransformArray`
  */
-declare const isTransformLike: (value: unknown) => value is TransformLike;
+export declare const isTransformLike: (value: unknown) => value is TransformLike;
 /**
  * Check if a value is a valid `TransformArray` for interpolation.
  * @param value The incoming value `from()` / `to()`
  * @returns `true` when value is a valid `TransformArray`
  */
-declare const isValidTransformArray: (value: unknown) => value is TransformArray;
+export declare const isValidTransformArray: (value: unknown) => value is TransformArray;
 /**
  * Validator for `TransformArray` that checks
  * structure + parameter counts, and if provided,
  * the compatibility with a reference value.
  */
-declare const validateTransform: (propName: string, target: unknown, ref?: TransformArray) => ValidationResultEntry;
+export declare const validateTransform: (propName: string, target: unknown, ref?: TransformArray) => ValidationResultEntry;
 /**
  * Config for .use("transform", transformConfig)
  */
-declare const transformConfig: {
+export declare const transformConfig: {
   interpolate: InterpolatorFunction<TransformStep[]>;
   validate: typeof validateTransform;
 };
-//#endregion
-//#region src/Now.d.ts
 /**
  * The current time function used by the engine, defaults to
  * `globalThis.performance.now()`. Can be replaced with {@link setNow}
@@ -1239,40 +1221,35 @@ declare let _nowFunc: () => number;
  *
  * @returns The current time in milliseconds
  */
-declare const now: () => number;
+export declare const now: () => number;
 /**
  * Replaces the internal time function used by {@link now}.
  *
  * @param nowFunction - A function returning the current time in milliseconds
  */
-declare function setNow(nowFunction: typeof _nowFunc): void;
-//#endregion
-//#region src/Runtime.d.ts
+export declare function setNow(nowFunction: typeof _nowFunc): void;
 /**
  * The runtime queue holding all active {@link AnimationItem} instances
  * (Tween / Timeline) that are updated by the RAF loop.
  */
-declare const Queue: AnimationItem[];
+export declare const Queue: AnimationItem[];
 /**
  * The hot update loop updates all items in the queue,
  * and stops automatically when there are no items left.
  * @param t - Execution time, in milliseconds (defaults to {@link now})
  */
-declare function Runtime(t?: number): void;
+export declare function Runtime(t?: number): void;
 /**
  * Add a new item to the update loop.
  * If it's the first item, it will also start the update loop.
  * @param newItem - Tween / Timeline instance to add
  */
-declare function addToQueue<T extends TweenProps>(newItem: AnimationItem<T>): void;
+export declare function addToQueue<T extends TweenProps>(newItem: AnimationItem<T>): void;
 /**
  * Remove item from the update loop.
  * @param removedItem - Tween / Timeline instance to remove
  */
-declare function removeFromQueue<T extends TweenProps>(removedItem: AnimationItem<T>): void;
-//#endregion
-//#region src/Version.d.ts
-declare const version = "0.1.5";
-//#endregion
-export { type AnimationItem, type ArrayVal, type BaseTweenProps, type CubicValues, type DeepObject, type DeepPartial, Easing, type EasingFunction, type EasingFunctionGroup, type InterpolatorFunction, type LineValues, type MorphPathArray, type PathLike, type Position, type PropConfig, type QuadValues, Queue, type Rotate, type RotateAxisAngle, type RotateZ, Runtime, type Scale, Timeline, type TimelineCallback, type TimelineEntry, type TimelineEntryConfig, type TransformArray, type TransformLike, type TransformStep, type TransformStepInternal, type Translate, Tween, type TweenCallback, type TweenProps, type TweenRuntime, type TweenUpdateCallback, type ValidationFunction, type ValidationResultEntry, type Vec3, addToQueue, arrayConfig, deepAssign, deproxy, dummyInstance, equalizePaths, equalizeSegments, eulerToAxisAngle, interpolateArray, interpolateObject, interpolatePath, interpolateTransform, isArray, isDeepObject, isFunction, isNumber, isObject, isPathLike, isPlainObject, isServer, isString, isTransformLike, isValidArray, isValidPath, isValidTransformArray, now, objectConfig, objectHasProp, pathArrayConfig, pathToString, removeFromQueue, setNow, transformConfig, transformToString, validateArray, validateObject, validatePath, validateTransform, validateValues, version };
+export declare function removeFromQueue<T extends TweenProps>(removedItem: AnimationItem<T>): void;
+export declare const version = "0.1.6";
+export { type AnimationItem, type ArrayVal, type BaseTweenProps, type CubicValues, type DeepObject, type DeepPartial, type EasingFunction, type EasingFunctionGroup, type InterpolatorFunction, type LineValues, type MorphPathArray, type PathLike, type Position, type PropConfig, type QuadValues, type Rotate, type RotateAxisAngle, type RotateZ, type Scale, type TimelineCallback, type TimelineEntry, type TimelineEntryConfig, type TransformArray, type TransformLike, type TransformStep, type TransformStepInternal, type Translate, type TweenCallback, type TweenProps, type TweenRuntime, type TweenUpdateCallback, type ValidationFunction, type ValidationResultEntry, type Vec3, dummyInstance, equalizePaths, equalizeSegments, pathToString };
 //# sourceMappingURL=index.d.mts.map

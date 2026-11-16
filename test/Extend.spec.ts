@@ -1,5 +1,5 @@
 // Extend.spec.ts
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import {
   arrayConfig,
   objectConfig,
@@ -206,21 +206,21 @@ describe("Extend", () => {
 
   it("interpolates path", () => {
     const { interpolate } = pathArrayConfig;
-    const target: MorphPathArray = [
+    const target = [
       ["M", 0, 0],
       ["L", 0, 0],
       ["C", 0, 0, 0, 0, 0, 0],
-    ];
-    const a1: MorphPathArray = [
+    ] as unknown as MorphPathArray;
+    const a1 = [
       ["M", 0, 0],
       ["L", 0, 0],
       ["C", 0, 0, 0, 0, 0, 0],
-    ];
-    const a2: MorphPathArray = [
+    ] as unknown as MorphPathArray;
+    const a2 = [
       ["M", 10, 10],
       ["L", 50, 50],
       ["C", 50, 50, 25, 25, 100, 100],
-    ];
+    ] as unknown as MorphPathArray;
 
     expect(interpolate(target, a1, a2, 0)).to.deep.equal([
       ["M", 0, 0],
@@ -292,25 +292,20 @@ describe("Extend", () => {
 
   it("interpolates transform steps with no numeric params", () => {
     const { interpolate } = transformConfig;
-    const target: TransformArray = [["rotate"]];
-    const start: TransformArray = [["rotate"]];
-    const end: TransformArray = [["rotate"]];
+    const target = [["rotate"]] as unknown as TransformArray;
+    const start = [["rotate"]] as unknown as TransformArray;
+    const end = [["rotate"]] as unknown as TransformArray;
 
     expect(interpolate(target, start, end, 0.5)).to.deep.equal([["rotate"]]);
   });
 
   it("converts euler rotation to axis angle", () => {
-    const euler = [15,45,60] as [number, number, number];
+    const euler = [15, 45, 60] as [number, number, number];
     expect(eulerToAxisAngle(...euler)).to.deep.equal([
-      -0.320654507815536,
-      0.8566324123652592,
-      0.4041801537716228,
-      2.3080598353681774,
+      -0.320654507815536, 0.8566324123652592, 0.4041801537716228, 2.3080598353681774,
     ]);
-    const eulerZero = [0,0,0] as [number, number, number];
-    expect(eulerToAxisAngle(...eulerZero)).to.deep.equal([
-      0,0,1,0,
-    ]);
+    const eulerZero = [0, 0, 0] as [number, number, number];
+    expect(eulerToAxisAngle(...eulerZero)).to.deep.equal([0, 0, 1, 0]);
   });
 
   it("converts TransformArray to string", () => {

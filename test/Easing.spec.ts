@@ -1,5 +1,5 @@
 // Tween.spec.ts
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { Easing, type EasingFunction, Tween } from "../src";
 
 describe("Easing", () => {
@@ -19,9 +19,10 @@ describe("Easing", () => {
         // For regular groups (Linear, Quadratic, Cubic, etc.)
       } else if (groupValue && typeof groupValue === "object") {
         Object.entries(groupValue).forEach(([variant, fn]) => {
-          const fullName = variant === "None" && groupName === "Linear"
-            ? "Linear.None" // special case for Linear.None
-            : `${groupName}.${variant}`; // Quadratic.In, Bounce.Out, etc.
+          const fullName =
+            variant === "None" && groupName === "Linear"
+              ? "Linear.None" // special case for Linear.None
+              : `${groupName}.${variant}`; // Quadratic.In, Bounce.Out, etc.
 
           acc.push([fullName, fn as never]);
         });
@@ -29,7 +30,7 @@ describe("Easing", () => {
 
       return acc;
     },
-    [] as [string, typeof Easing["Linear"]["None"]][],
+    [] as [string, (typeof Easing)["Linear"]["None"]][],
   );
 
   beforeEach(() => {
@@ -70,13 +71,9 @@ describe("Easing", () => {
   ];
 
   // all easing functions except pow
-  for (
-    const [easingName, easingFn] of EasingEntries.concat(powEasingFunctions)
-  ) {
+  for (const [easingName, easingFn] of EasingEntries.concat(powEasingFunctions)) {
     it("should work with Easing." + easingName, () => {
-      const tween = new Tween(target).to({ x: 100 }).easing(easingFn).duration(
-        0.5,
-      ).start();
+      const tween = new Tween(target).to({ x: 100 }).easing(easingFn).duration(0.5).start();
 
       tween.update();
       vi.advanceTimersByTime(100);

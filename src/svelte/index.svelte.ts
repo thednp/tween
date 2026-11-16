@@ -7,13 +7,7 @@
  *
  * @module
  */
-import {
-  dummyInstance,
-  isServer,
-  Timeline,
-  Tween,
-  type TweenProps,
-} from "@thednp/tween";
+import { dummyInstance, isServer, Timeline, Tween, type TweenProps } from "@thednp/tween";
 import { onDestroy } from "svelte";
 import { miniStore } from "./miniStore.svelte.ts";
 
@@ -42,9 +36,7 @@ export { miniStore, Timeline, Tween };
  *
  * <div style={{ translate: `${state.x}px ${state.y}px` }} />
  */
-export function createTween<
-  T extends TweenProps,
->(initialValues: T): readonly [T, Tween<T>] {
+export function createTween<T extends TweenProps>(initialValues: T): readonly [T, Tween<T>] {
   if (isServer) {
     return [initialValues, dummyInstance as unknown as Tween<T>] as const;
   }
@@ -79,9 +71,7 @@ export function createTween<
  *
  * <div style={{ translate: `${state.x}px ${state.y}px` }} />
  */
-export function createTimeline<
-  T extends TweenProps,
->(initialValues: T): readonly [T, Timeline<T>] {
+export function createTimeline<T extends TweenProps>(initialValues: T): readonly [T, Timeline<T>] {
   if (isServer) {
     return [initialValues, dummyInstance as unknown as Timeline<T>] as const;
   }

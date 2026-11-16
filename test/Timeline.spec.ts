@@ -4,14 +4,8 @@
  * `advanceTimersByTime` should take 1 more milisecond to reach
  * the end values.
  */
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import {
-  arrayConfig,
-  Easing,
-  type MorphPathArray,
-  pathArrayConfig,
-  Timeline,
-} from "../src";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
+import { arrayConfig, Easing, type MorphPathArray, pathArrayConfig, Timeline } from "../src";
 import { objectConfig } from "../src/extend";
 
 describe("Timeline", () => {
@@ -73,8 +67,7 @@ describe("Timeline", () => {
   it("should config on the fly via event listeners", () => {
     const tl = new Timeline(target);
     const handleClick = () => {
-      tl
-        .clear() // coverage
+      tl.clear() // coverage
         .to({ x: 100, duration: 0.5 })
         .to({ y: 100, duration: 0.5 }) // starts at 1s mark
         .play();
@@ -92,9 +85,7 @@ describe("Timeline", () => {
   });
 
   it("should respect labels and seek", () => {
-    const tl = new Timeline(target)
-      .to({ x: 100, duration: 1 })
-      .to({ y: 100, duration: 1 });
+    const tl = new Timeline(target).to({ x: 100, duration: 1 }).to({ y: 100, duration: 1 });
 
     expect(tl.totalDuration).toEqual(2);
     expect(tl.duration).toEqual(2);
@@ -130,7 +121,7 @@ describe("Timeline", () => {
       .play();
 
     expect(tl.totalDuration).toBe(0.5);
-    
+
     vi.advanceTimersByTime(10);
     tl.update();
     vi.advanceTimersByTime(90);
@@ -141,7 +132,7 @@ describe("Timeline", () => {
     tl.update();
     vi.advanceTimersByTime(90);
     tl.update();
-    
+
     expect(tl.state.y).toBe(90);
 
     vi.advanceTimersByTime(10);
@@ -196,10 +187,7 @@ describe("Timeline", () => {
   });
 
   it("should repeat once and reset state", () => {
-    const tl = new Timeline(target)
-      .to({ x: 100, duration: 1 })
-      .repeat(1)
-      .play();
+    const tl = new Timeline(target).to({ x: 100, duration: 1 }).repeat(1).play();
 
     tl.update();
     expect(tl.isPlaying).toBe(true);
@@ -357,7 +345,14 @@ describe("Timeline", () => {
       x: number;
       color: [number, number, number];
       path: MorphPathArray;
-    } = { x: 0, color: [255, 0, 0], path: [["M", 0, 0], ["L", 50, 50]] };
+    } = {
+      x: 0,
+      color: [255, 0, 0],
+      path: [
+        ["M", 0, 0],
+        ["L", 50, 50],
+      ],
+    };
 
     const tl = new Timeline(localTarget)
       .use("color", arrayConfig) // for coverage
@@ -366,18 +361,27 @@ describe("Timeline", () => {
       .to({
         x: 20,
         color: [0, 255, 0],
-        path: [["M", 5, 5], ["L", 150, 150]],
+        path: [
+          ["M", 5, 5],
+          ["L", 150, 150],
+        ],
         duration: 0.5,
       })
       .to({
         x: 50,
         duration: 0.5,
       })
-      .to({
-        color: [0, 255, 0],
-        path: [["M", 10, 10], ["L", 50, 50]],
-        duration: 0.5,
-      }, "-=0.4")
+      .to(
+        {
+          color: [0, 255, 0],
+          path: [
+            ["M", 10, 10],
+            ["L", 50, 50],
+          ],
+          duration: 0.5,
+        },
+        "-=0.4",
+      )
       .play();
 
     // force timeline to use interpolate functions
@@ -394,6 +398,9 @@ describe("Timeline", () => {
 
     expect(localTarget.x).to.equal(50);
     expect(localTarget.color).to.deep.equal([0, 255, 0]);
-    expect(localTarget.path).to.deep.equal([["M", 10, 10], ["L", 50, 50]]);
+    expect(localTarget.path).to.deep.equal([
+      ["M", 10, 10],
+      ["L", 50, 50],
+    ]);
   });
 });

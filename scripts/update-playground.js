@@ -10,7 +10,6 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import mainPkg from "../package.json" with { type: "json" };
 
 const ROOT = path.resolve(new URL("..", import.meta.url).pathname);
 const EXAMPLES_DIR = path.join(ROOT, "playground");
@@ -25,7 +24,6 @@ async function latestPublished(name) {
 
 async function main() {
   const latest = await latestPublished(NAME);
-  // const latest = mainPkg.version;
   const dep = `^${latest}`;
   let updated = 0;
 

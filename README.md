@@ -6,7 +6,6 @@
 [![CI](https://github.com/thednp/tween/actions/workflows/ci.yml/badge.svg)](https://github.com/thednp/tween/actions/workflows/ci.yml)
 [![CDN](https://img.shields.io/jsdelivr/npm/hw/@thednp/tween)](https://www.jsdelivr.com/package/npm/@thednp/tween)
 
-
 A TypeScript-first tweening engine forked from the excellent [@tweenjs/tweenjs](https://github.com/tweenjs/tween.js).
 
 Popular UI frameworks supported:
@@ -20,38 +19,39 @@ Popular UI frameworks supported:
 
 Your favorite framework isn't listed? [Let us know](https://github.com/thednp/tween/issues/new)!
 
-
 ## Why @thednp/tween?
 
 **State-first architecture** with validation before runtime, not during. Explicit configuration, zero guesswork, minimal overhead.
 
 ### Key Benefits
 
-* **SSR-compatible hooks** for React, SolidJS, Svelte, Preact, and Vue — provide initial values for server rendering, skip initialization entirely on the server
-* **Predictable outcomes** through upfront value validation — invalid values prevent animation start with clear feedback
-* **Production-ready validation system** catches configuration errors before they break your app
-* **Natural reverse playback** via inverted easing (no `reverseEasing` option or `valuesStart` reassignment)
-* **Extensible interpolation** with built-in [extensions](wiki/Extend.md) for custom per-property validators and interpolators
+- **SSR-compatible hooks** for React, SolidJS, Svelte, Preact, and Vue — provide initial values for server rendering, skip initialization entirely on the server
+- **Predictable outcomes** through upfront value validation — invalid values prevent animation start with clear feedback
+- **Production-ready validation system** catches configuration errors before they break your app
+- **Natural reverse playback** via inverted easing (no `reverseEasing` option or `valuesStart` reassignment)
+- **Extensible interpolation** with built-in [extensions](wiki/Extend.md) for custom per-property validators and interpolators
 
 ### Performance Optimizations
 
-* **Single shared `requestAnimationFrame` loop** for all tweens/timelines with automatic start/stop
-* **Zero GC pressure** via specialized `miniStore` for framework integrations
-* **Tuple-based hot update runtime** eliminates object lookup
-* **No validation during updates**—all checks happen at initialization
-* **`while` loops throughout** for maximum speed
+- **Single shared `requestAnimationFrame` loop** for all tweens/timelines with automatic start/stop
+- **Zero GC pressure** via specialized `miniStore` for framework integrations
+- **Tuple-based hot update runtime** eliminates object lookup
+- **No validation during updates**—all checks happen at initialization
+- **`while` loops throughout** for maximum speed
 
 ### Documentation
 
 #### Core Features
-* [Tween Guide](wiki/Tween.md) - the official `Tween` documentation
-* [Timeline Guide](wiki/Timeline.md) - the official `Timeline` documentation
-* [Easing Guide](wiki/Easing.md) - the easing functions documentation
-* [Extend Guide](wiki/Extend.md) - the extensions documentation
-* [Troubleshooting](wiki/Troubleshooting.md) - a quick check on issues and how to solve them.
-* [Ministore](wiki/Ministore.md) - an inside look at `miniStore`.
+
+- [Tween Guide](wiki/Tween.md) - the official `Tween` documentation
+- [Timeline Guide](wiki/Timeline.md) - the official `Timeline` documentation
+- [Easing Guide](wiki/Easing.md) - the easing functions documentation
+- [Extend Guide](wiki/Extend.md) - the extensions documentation
+- [Troubleshooting](wiki/Troubleshooting.md) - a quick check on issues and how to solve them.
+- [Ministore](wiki/Ministore.md) - an inside look at `miniStore`.
 
 #### UI Frameworks
+
 [<img width="32" height="32" src="wiki/assets/react.svg" alt="React" />](wiki/React.md)
 [<img width="32" height="32" src="wiki/assets/solid.svg" alt="SolidJS" />](wiki/Solid.md)
 [<img width="32" height="32" src="wiki/assets/preact.svg" alt="Preact" />](wiki/Preact.md)
@@ -60,10 +60,11 @@ Your favorite framework isn't listed? [Let us know](https://github.com/thednp/tw
 [<img width="32" height="32" src="wiki/assets/vanjs.svg" alt="VanJS" />](wiki/VanJS.md)
 
 #### Other Sources
-* [The original Tween.js User Guide](https://github.com/tweenjs/tween.js/blob/main/docs/user_guide.md) can also provide valuable tips.
 
+- [The original Tween.js User Guide](https://github.com/tweenjs/tween.js/blob/main/docs/user_guide.md) can also provide valuable tips.
 
 ### Installation
+
 ```
 npm install @thednp/tween
 ```
@@ -100,13 +101,13 @@ Framework integrations are available as subpath exports: `@thednp/tween/react`, 
 
 To use `Tween` and `Timeline` with UI frameworks please check the dedicated sections: [React](wiki/React.md), [SolidJS](wiki/Solid.md), [Svelte](wiki/Svelte.md), [Preact](wiki/Preact.md) and [Vue](wiki/Vue.md).
 
-
 #### Using Tween
+
 ```ts
-import { Tween, Easing } from '@thednp/tween';
+import { Tween, Easing } from "@thednp/tween";
 
 // find some target
-const target = document.getElementById('my-target');
+const target = document.getElementById("my-target");
 
 // define a tween
 const tween = new Tween({ x: 0 })
@@ -115,42 +116,45 @@ const tween = new Tween({ x: 0 })
     // manipulate the DOM directly
     Object.assign(target.style, { translate: obj.x + "px" });
     // monitor progress of the tween
-    console.log(`Tween progress: ${Math.floor(elapsed * 100)}%`)
+    console.log(`Tween progress: ${Math.floor(elapsed * 100)}%`);
   });
 
 // override any value on the fly
-const moveRight = () => tween
-  .from({ x: 0 })               // override/reset start values
-  .to({ x: 150 })               // override end values
-  .easing(Easing.Quadratic.Out) // set a special easing function for every case
-  .duration(1.5)                // set duration as well in seconds
-  .start();                     // start the tween
+const moveRight = () =>
+  tween
+    .from({ x: 0 }) // override/reset start values
+    .to({ x: 150 }) // override end values
+    .easing(Easing.Quadratic.Out) // set a special easing function for every case
+    .duration(1.5) // set duration as well in seconds
+    .start(); // start the tween
 
-const moveLeft = () => tween
-  .from({ x: 150 })             // set a different from
-  .to({ x: -150 })              // set a different to
-  .easing(Easing.Elastic.Out)   // override easing
-  .duration(1.5)                // override duration in seconds
-  .start();                     // start the tween
+const moveLeft = () =>
+  tween
+    .from({ x: 150 }) // set a different from
+    .to({ x: -150 }) // set a different to
+    .easing(Easing.Elastic.Out) // override easing
+    .duration(1.5) // override duration in seconds
+    .start(); // start the tween
 
 // trigger any time
-const button1 = document.getElementById('my-button-1');
-const button2 = document.getElementById('my-button-2');
+const button1 = document.getElementById("my-button-1");
+const button2 = document.getElementById("my-button-2");
 
 button1.onclick = moveRight;
 button2.onclick = moveLeft;
 
 // The engine does requestAnimationFrame/cancelAnimationFrame for you
 ```
+
 For an extended guide, check the [Tween Wiki](wiki/Tween.md).
 
-
 #### Using Timeline
+
 ```ts
-import { Timeline, Easing } from '@thednp/tween';
+import { Timeline, Easing } from "@thednp/tween";
 
 // find some target
-const target = document.getElementById('my-target');
+const target = document.getElementById("my-target");
 
 // define a timeline
 const myTimeline = new Timeline({ x: 0, y: 0 })
@@ -162,96 +166,119 @@ const myTimeline = new Timeline({ x: 0, y: 0 })
       translate: obj.x + "px " + obj.y + "px",
     });
     // monitor progress of the timeline
-    console.log(`Timeline progress: ${Math.floor(elapsed * 100)}%`)
+    console.log(`Timeline progress: ${Math.floor(elapsed * 100)}%`);
   });
 
 // trigger any time
-const button = document.getElementById('my-button');
+const button = document.getElementById("my-button");
 
 button.onclick = myTimeline.play();
 
 // The engine does requestAnimationFrame/cancelAnimationFrame for you
 ```
-For an extended guide, check the [Timeline Wiki](wiki/Timeline.md).
 
+For an extended guide, check the [Timeline Wiki](wiki/Timeline.md).
 
 ### Core Features
 
 #### Tween
+
 Simple tween objects with essential controls, callbacks, and sequencing methods.
 
 #### Timeline
+
 Complex scheduling with per-property duration, delay, and easing. Includes `seek()` and `label()` for precise control.
 
 #### Extensions
+
 Built-in and custom per-property validators and interpolators. Single-level plain objects only.
 
 #### Validation System
+
 All values validated on initialization from `initialValues` (source of truth). Invalid configurations prevent execution with actionable feedback.
 
 #### Automatic RAF Loop
-Shared `requestAnimationFrame` loop starts on first `start()` / `play()`, stops when queue empties.
 
+Shared `requestAnimationFrame` loop starts on first `start()` / `play()`, stops when queue empties.
 
 #### Key Differences from Original
 
 **Not Implemented**
-* `chain()` feature
-* `onEveryStart`, `onFirstStart` callbacks
-* The original Tween.js [array interpolation](https://tweenjs.github.io/tween.js/examples/06_array_interpolation.html) 
-* Deeply nested objects
-* The original Tween.js [dynamic end values](https://tweenjs.github.io/tween.js/examples/07_dynamic_to.html)
+
+- `chain()` feature
+- `onEveryStart`, `onFirstStart` callbacks
+- The original Tween.js [array interpolation](https://tweenjs.github.io/tween.js/examples/06_array_interpolation.html)
+- Deeply nested objects
+- The original Tween.js [dynamic end values](https://tweenjs.github.io/tween.js/examples/07_dynamic_to.html)
 
 **Changes**
-* `duration()`, `delay()`, `repeatDelay()`, `seek()` accept values in **seconds** (converted to milliseconds internally)
-* Automatic RAF queue system (you don't need to define a global `requestAnimationFrame` update loop yourself)
-* Reverse playback via inverted easing (no `reverseEasing` option required)
-* Per-property extensions via `.use('propName', extensionConfig)`
 
+- `duration()`, `delay()`, `repeatDelay()`, `seek()` accept values in **seconds** (converted to milliseconds internally)
+- Automatic RAF queue system (you don't need to define a global `requestAnimationFrame` update loop yourself)
+- Reverse playback via inverted easing (no `reverseEasing` option required)
+- Per-property extensions via `.use('propName', extensionConfig)`
 
 ### Architecture Notes
 
 #### Global Update Loop
+
 Single `requestAnimationFrame` loop managed by `Runtime.ts`:
 
-* `tween.start()` / `timeline.play()` adds instance to global queue
-* `Runtime()` calls `.update(time)` on all queued items each frame
-* Instances returning false (finished/stopped) are removed
-* Empty queue triggers automatic `cancelAnimationFrame`
+- `tween.start()` / `timeline.play()` adds instance to global queue
+- `Runtime()` calls `.update(time)` on all queued items each frame
+- Instances returning false (finished/stopped) are removed
+- Empty queue triggers automatic `cancelAnimationFrame`
 
 #### Async Nature
+
 Updates are async by design:
 
-* `start()` / `play()` queues instance
-* Next RAF tick → `Runtime()` → `update(time)` → interpolation
-* DOM/state updates on subsequent frames
-* Visual changes sync with display refresh rate for smooth animations.
+- `start()` / `play()` queues instance
+- Next RAF tick → `Runtime()` → `update(time)` → interpolation
+- DOM/state updates on subsequent frames
+- Visual changes sync with display refresh rate for smooth animations.
 
 #### SSR Compatibility
-* No DOM access in core
-* RAF calls browser-only (via `Runtime()`)
-* `now()` defaults to `performance.now()` (can fallback to Date.now() for Node)
-* Framework hooks include SSR guards and provide values for server-rendered HTML
-* **Important**: Don't call `start()` / `play()` during SSR.
+
+- No DOM access in core
+- RAF calls browser-only (via `Runtime()`)
+- `now()` defaults to `performance.now()` (can fallback to Date.now() for Node)
+- Framework hooks include SSR guards and provide values for server-rendered HTML
+- **Important**: Don't call `start()` / `play()` during SSR.
 
 #### Workarounds
-* **Chaining** — use `onComplete` callback to trigger next tween/timeline
-* **Custom interpolation** — register per-property extensions with `.use()`
+
+- **Chaining** — use `onComplete` callback to trigger next tween/timeline
+- **Custom interpolation** — register per-property extensions with `.use()`
 
 ### Contributing
+
 For any issue or unclear guides, please [file an issue](https://github.com/thednp/tween/issues/new) and help make this guide better. Or feel free to submit a PR! Thank you!
 
 **How to contribute**:
-* fork the project
-* change code/docs & update tests
-* submit PR
 
+- fork the project
+- change code/docs & update tests
+- submit PR
+
+**Development**: the repo uses [vite-plus](https://viteplus.dev) (`vp`) for tests, lint, types, formatting and packaging, with pnpm as the package manager:
+
+```bash
+pnpm install       # or: vp install
+vp check           # format + lint + type checks (auto-fix with vp check --fix)
+vp test            # run the test suite (pnpm test)
+vp test bench      # run benchmarks (pnpm bench)
+vp pack            # build all entries into dist/ (pnpm build)
+```
+
+The Deno pipeline for JSR publishing is also available: `deno task check`, `deno task test`, `deno task lint`, `deno task format`, `deno publish --dry-run`. See [AGENTS.md](AGENTS.md) for the full command reference and architecture notes.
 
 ### Credits
-* @sole for the creation and maintaining of the original [tween.js](https://github.com/tweenjs/tween.js)
-* @dalisoft for his excellent [es6-tween](https://github.com/tweenjs/es6-tween)
-* CreateJS for their excellent [TweenJS](https://github.com/CreateJS/TweenJS)
 
+- @sole for the creation and maintaining of the original [tween.js](https://github.com/tweenjs/tween.js)
+- @dalisoft for his excellent [es6-tween](https://github.com/tweenjs/es6-tween)
+- CreateJS for their excellent [TweenJS](https://github.com/CreateJS/TweenJS)
 
 ### License
+
 [MIT License](LICENSE).

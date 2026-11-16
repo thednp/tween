@@ -1,7 +1,7 @@
 {
   "name": "react-tween",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@thednp/tween": "^0.1.4",
+    "@thednp/tween": "^0.1.5",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

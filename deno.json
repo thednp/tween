@@ -1,29 +1,29 @@
 {
   "name": "@thednp/tween",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "license": "MIT",
   "description": "🌸 A Typescript sourced tweening engine with Tween and Timeline",
   "keywords": [
-    "tween",
-    "timeline",
-    "react",
-    "solid-js",
-    "svelte",
-    "preact",
-    "vue",
-    "vanjs",
+    "SSR",
+    "animation",
+    "animation engine",
+    "animations",
     "cubic-bezier",
     "cubic-tween",
-    "easing",
     "ease",
+    "easing",
     "easing functions",
-    "animation engine",
-    "animation",
-    "animations",
-    "svg-morphing",
-    "SSR",
+    "preact",
+    "react",
     "server-side rendering",
-    "typescript"
+    "solid-js",
+    "svelte",
+    "svg-morphing",
+    "timeline",
+    "tween",
+    "typescript",
+    "vanjs",
+    "vue"
   ],
   "minimumDependencyAge": 0,
   "exports": {
@@ -37,23 +37,24 @@
   },
   "imports": {
     "@thednp/tween": "./src/index.ts",
-    "@sveltejs/vite-plugin-svelte": "npm:@sveltejs/vite-plugin-svelte@^7.3.0",
-    "@vitest/coverage-istanbul": "npm:@vitest/coverage-istanbul@^4.1.11",
-    "@vitest/ui": "npm:@vitest/ui@^4.1.11",
-    "happy-dom": "npm:happy-dom@^20.12.2",
-    "preact": "npm:preact@^10.29.8",
-    "react": "npm:react@^19.2.8",
-    "solid-js": "npm:solid-js@^1.9.15",
-    "svelte": "npm:svelte@^5.57.0",
+    "@sveltejs/vite-plugin-svelte": "npm:@sveltejs/vite-plugin-svelte@^7.3.1",
+    "@vitest/coverage-istanbul": "npm:@vitest/coverage-istanbul@^5.1.0",
+    "@vitest/ui": "npm:@vitest/ui@^5.1.0",
+    "happy-dom": "npm:happy-dom@^21.0.4",
+    "preact": "npm:preact@^11.2.0",
+    "react": "npm:react@^19.3.1",
+    "solid-js": "npm:solid-js@^1.9.19",
+    "svelte": "npm:svelte@^5.57.3",
     "svelte-preprocess": "npm:svelte-preprocess@^6.0.5",
-    "svg-path-commander/util": "npm:svg-path-commander@^2.3.2/util",
-    "vanjs-core": "npm:vanjs-core@^1.6.1",
-    "vitest": "npm:vitest@^4.1.11",
-    "vue": "npm:vue@^3.5.42"
+    "svg-path-commander/util": "npm:svg-path-commander@^2.3.4/util",
+    "vanjs-core": "npm:vanjs-core@^1.6.2",
+    "vitest": "npm:vitest@^5.1.0",
+    "vue": "npm:vue@^3.5.45"
   },
   "tasks": {
     "test": "deno task clean-coverage && vitest",
-    "test-ui": "deno task clean-coverage && vitest --ui",
+    "test:ui": "deno task clean-coverage && vitest --ui",
+    "test:watch": "deno task clean-coverage && vitest --ui --watch",
     "clean-coverage": "rm -rf coverage .nyc_output",
     "lint": "deno lint src",
     "check": "deno check src/index.ts src/react/index.ts src/preact/index.ts src/solid/index.ts src/svelte/index.svelte.ts src/vue/index.ts src/vanjs/index.ts",
@@ -75,12 +76,5 @@
       "LICENSE"
     ]
   },
-  "exclude": [
-    "coverage",
-    "dist",
-    "experiments",
-    "node_modules",
-    "playground",
-    "test"
-  ]
+  "exclude": ["coverage", "dist", "experiments", "node_modules", "playground", "test"]
 }

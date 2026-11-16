@@ -7,13 +7,7 @@
  *
  * @module
  */
-import {
-  dummyInstance,
-  isServer,
-  Timeline,
-  Tween,
-  type TweenProps,
-} from "@thednp/tween";
+import { dummyInstance, isServer, Timeline, Tween, type TweenProps } from "@thednp/tween";
 import { onUnmounted } from "vue";
 import { miniStore } from "./miniStore.ts";
 
@@ -43,9 +37,7 @@ export { miniStore, Timeline, Tween };
  *  <div :style="{ translate: `${state.x}px ${state.y}px` }" />
  * </template>
  */
-export function useTween<
-  T extends TweenProps,
->(initialValues: T): readonly [T, Tween<T>] {
+export function useTween<T extends TweenProps>(initialValues: T): readonly [T, Tween<T>] {
   if (isServer) {
     return [initialValues, dummyInstance as unknown as Tween<T>] as const;
   }
@@ -82,9 +74,7 @@ export function useTween<
  *  <div :style="{ translate: `${state.x}px ${state.y}px` }" />
  * </template>
  */
-export function useTimeline<
-  T extends TweenProps,
->(initialValues: T): readonly [T, Timeline<T>] {
+export function useTimeline<T extends TweenProps>(initialValues: T): readonly [T, Timeline<T>] {
   if (isServer) {
     return [initialValues, dummyInstance as unknown as Timeline<T>] as const;
   }

@@ -1,6 +1,6 @@
 import * as React from "react";
-import { createRoot } from 'react-dom/client';
-import { vi } from "vitest"
+import { createRoot } from "react-dom/client";
+import { vi } from "vite-plus/test";
 
 export async function withHook<T>(hookFactory: () => T) {
   let result: T;
@@ -12,7 +12,7 @@ export async function withHook<T>(hookFactory: () => T) {
     return "";
   };
 
-  const container = document.createElement('div');
+  const container = document.createElement("div");
   document.body.appendChild(container);
   const root = createRoot(container);
 

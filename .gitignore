@@ -9,3 +9,4 @@ coverage
 **/bun.lockb
 **/deno.lock
 !/deno.lock
+.vitest/

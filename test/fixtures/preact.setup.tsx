@@ -1,15 +1,15 @@
-import { render, h } from 'preact';
-import { vi } from "vitest"
+import { render, h } from "preact";
+import { vi } from "vite-plus/test";
 
 export async function withHook<T>(hookFactory: () => T) {
   let result: T | undefined;
 
   const DummyComponent = () => {
     result = hookFactory();
-    return h('div', null);
+    return h("div", null);
   };
 
-  const container = document.createElement('div');
+  const container = document.createElement("div");
   document.body.appendChild(container);
 
   render(h(DummyComponent, null), container);

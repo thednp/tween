@@ -182,9 +182,7 @@ function createMiniState<T extends TweenProps>(
  * @returns An object with the reactive `state` and a `subscribe` method
  * that registers listeners and returns an unsubscribe function
  */
-export function miniStore<
-  T extends TweenProps,
->(
+export function miniStore<T extends TweenProps>(
   init: T,
 ): { readonly state: T; subscribe(listener: Listener<T>): () => void } {
   const listeners = new Set<Listener<T>>();
@@ -216,21 +214,16 @@ export function miniStore<
  * @param initialValue - The initial values object
  * @returns The reactive state object
  */
-export function useMiniStore<
-  T extends TweenProps,
->(initialValue: T): T {
+export function useMiniStore<T extends TweenProps>(initialValue: T): T {
   const storeRef = useRef<ReturnType<typeof miniStore<T>>>(null);
   const [, setVersion] = useState(0);
 
-  // istanbul ignore else @preserve
+  // istanbul ignore else
   if (!storeRef.current) {
     storeRef.current = miniStore(initialValue);
   }
 
-  useEffect(
-    () => storeRef.current!.subscribe(() => setVersion((v) => (v + 1) % 3)),
-    [],
-  );
+  useEffect(() => storeRef.current!.subscribe(() => setVersion((v) => (v + 1) % 3)), []);
 
   return storeRef.current!.state;
 }

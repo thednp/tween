@@ -164,8 +164,6 @@ function createMiniState<T extends TweenProps>(
  * @param init - The initial values object
  * @returns The reactive state object
  */
-export function miniStore<
-  T extends TweenProps,
->(init: T): T {
+export function miniStore<T extends TweenProps>(init: T): T {
   return createMiniState(init, {}) as T;
 }
