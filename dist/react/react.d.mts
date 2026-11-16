@@ -3,7 +3,6 @@
  * Copyright 2026 © thednp
  * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
  */
-"use strict";
 
 import { Timeline, Tween, TweenProps } from "@thednp/tween";
 /**

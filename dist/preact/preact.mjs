@@ -3,7 +3,6 @@
  * Copyright 2026 © thednp
  * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
  */
-"use strict";
 
 import { useEffect, useRef, useState } from "preact/hooks";
 import { Timeline, Tween, dummyInstance, isArray, isPlainObject, isServer, objectHasProp } from "@thednp/tween";

@@ -20,10 +20,9 @@ const banner = `/*!
  * Copyright ${year} © ${pkg.author}
  * Licensed under MIT (https://github.com/thednp/tween/blob/master/LICENSE)
  */
-"use strict";
 `;
 const miniBanner = `/*! @thednp/tween $package v${pkg.version} | ${pkg.author} © ${year} | ${pkg.license}-License */
-"use strict";`;
+`;
 
 const baseConfig: UserConfig = {
   deps: {

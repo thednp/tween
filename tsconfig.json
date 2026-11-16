@@ -23,6 +23,6 @@
     "noEmit": true,
     "checkJs": true
   },
-  "include": ["src", "playground"],
+  "include": ["src"],
   "exclude": ["node_modules", "experiments", "coverage", "dist"]
 }
